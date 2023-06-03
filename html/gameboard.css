@@ -6,6 +6,18 @@ body{
     width: 100vw;
     align-items: center;
 }
-.hexagons{
-    
+
+.ex{
+    clip-path: polygon(50% 0%, 100%, 50% 1, 0 5);
+    color: rgb(152, 1, 1);
+    font-size: 40 vh;
 }
+
+.hexagons{
+    display: grid;
+    grid-gap: 10 vh;
+    grid-template-columns: repeat(auto-fit, 25vh);
+    color: rgb(29, 185, 29); 
+    font-size: 15vh;
+}
+
