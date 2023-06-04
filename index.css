@@ -1,1 +1,16 @@
-h1 {text-align: center;}
+#gameArea{
+    border: 4px solid green;
+}
+body{
+    height: 1vh;
+    background: linear-gradient(
+        0deg,
+        rgb(4, 113, 255) 100%,
+        rgba(255, 50, 5) 0%
+    );
+    text-align: center;
+    overflow: hidden; 
+}
+h1{
+    font-family: Arial;
+}
