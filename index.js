@@ -21,18 +21,24 @@ function drawGame(){
 
 //Randomly create the board
 function createBoard(){
-    var x_i = 0.5*hex_side;
-    var ret = [];
-    while (x_i < width){
-        ret.push([x_i, x_i + hex_side]);
-        x_i += 2*hex_side;
+    var y_i = 0.0;
+    while (y_i < height){
+        var x_i = 0.5*hex_side;
+        while (x_i < width){
+            ret.push([x_i, y_i]);
+            ret.push([x_i + hex_side, y_i])
+            x_i += hex_width*hex_side;
+        }
+        y_i += hex_height*hex_side;
     }
 
+    /*
     x_i = 2*hex_side;
     while (x_i < width){
         ret.push([x_i, x_i + hex_side]);
         x_i += 2*hex_side;
     }
+    */
 
     return ret; 
 }
