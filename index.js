@@ -1,17 +1,24 @@
 const canvas = document.getElementById('gameArea');
+const ctx = canvas.getContext('2d');
 
 const width = window.innerWidth;
 const height = window.innerHeight;
 
-const hex_side = width/40.0;
-const hex_height = Math.sqrt(3);
-const hex_c_to_c = 2.0;
-
 canvas.width = width;
 canvas.height = height;
 
-const ctx = canvas.getContext('2d');
+//HEXAGON CONSTANTS
+const hex_side = canvas.width/40.0;
+const hex_height = Math.sqrt(3);
+const hex_c_to_c = 2.0;
 
+//to keep track of which tiles have been used already
+var tile_set = Set();
+
+/*center is [x, y] where x is the x-coord of the center 
+of this tile and y is the y-coord of the center
+vertices is an array of the vertices making up the hexagon
+of this tile*/
 class Tile{
     constructor(center, vertices){
         this.center = center;
@@ -19,10 +26,16 @@ class Tile{
     }
 }
 
+/*node is a tile;
+neighbors is an object that is a hashmap 
+where the keys are the direction (n, ne, se, s, sw, nw) 
+to get to the tile the and the values are tiles; will not
+get collisions between the strings used as keys
+because none of the strings are the same*/
 class Graph{
-    constructor(node, edges){
-        this.node = node; //this tile
-        this.edges = edges; //edges are other tiles [nw, n, ne, se, s, sw]
+    constructor(node, neighbors){
+        this.node = node; 
+        this.neighbors = neighbors; 
     }
 }
 
@@ -33,12 +46,33 @@ function drawGame(){
     drawBoard(points);
 }
 
-//Randomly create the board
+//Returns a graph where the nodes are tiles
 function createTiles(){
 
-    ret = [];
-    var center = [hex_side, hex_height/2.0];
+    var neighbors = {};
 
+    var graph = new Graph(null, neigbors);
+    
+    /* TWO ROWS IDEA
+    var top_center = [hex_side, hex_height/2.0];
+    var bot_center = [center_0[0]+hex_side+(hex_side/2), center_0[1]*2.0];
+
+    var top_row_0 = createTile(top_center);
+    var bot_row_0 = createTile(bot_center);
+
+    var x_i_top = top_center[0];
+
+    var x_i_bot = bot_center[0];
+    */
+
+    
+
+
+    return ret; 
+}
+
+//creates a single tile and returns it; takes in an array of two points
+function createTile(center){
     var w = [center[0] - hex_side, center[1]];
     var nw = [center[0] - (hex_side/2.0), center[1] + hex_height/2.0];
     var ne = [nw[0] + hex_side, nw[1]];
@@ -48,15 +82,10 @@ function createTiles(){
 
     //array of arrays of floats
     var vertices = [w, nw, ne, e, se, sw];
-
-    const t = new Tile([center_x, center_y], vertices);
-
-    ret.append(t)
-
-    return ret; 
-}
-function createTile(center){
+    var t = new Tile(center, vertices);
     
+    return t; 
+
 }
 
 function drawBoard(points){
