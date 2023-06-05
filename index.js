@@ -3,9 +3,9 @@ const canvas = document.getElementById('gameArea');
 const width = window.innerWidth;
 const height = window.innerHeight;
 
-const hex_side = width/40;
+const hex_side = width/40.0;
 const hex_height = Math.sqrt(3);
-const hex_width = 2.0;
+const hex_c_to_c = 2.0;
 
 canvas.width = width;
 canvas.height = height;
@@ -13,16 +13,16 @@ canvas.height = height;
 const ctx = canvas.getContext('2d');
 
 class Tile{
-    constructor(center, side_length){
+    constructor(center, vertices){
         this.center = center;
-        this.side_length = side_length;
+        this.vertices = vertices;
     }
 }
 
 class Graph{
     constructor(node, edges){
-        this.node = node;
-        this.edges = edges;
+        this.node = node; //this tile
+        this.edges = edges; //edges are other tiles [nw, n, ne, se, s, sw]
     }
 }
 
@@ -37,29 +37,26 @@ function drawGame(){
 function createTiles(){
 
     ret = [];
+    var center = [hex_side, hex_height/2.0];
 
-    const t = new Tile([0, 0], 5.0);
+    var w = [center[0] - hex_side, center[1]];
+    var nw = [center[0] - (hex_side/2.0), center[1] + hex_height/2.0];
+    var ne = [nw[0] + hex_side, nw[1]];
+    var e = [w[0] + hex_c_to_c, w[1]];
+    var se = [ne[0], ne[1] - hex_height];
+    var sw = [nw[0], nw[1] - hex_height];
 
-    var y_i = 1.0;
-    while (y_i < height){
-        var x_i = 0.5*hex_side;
-        while (x_i < width){
-            ret.push([x_i, y_i]);
-            ret.push([x_i + hex_side, y_i])
-            x_i += hex_width*hex_side;
-        }
-        y_i += hex_height*hex_side;
-    }
+    //array of arrays of floats
+    var vertices = [w, nw, ne, e, se, sw];
 
-    /*
-    x_i = 2*hex_side;
-    while (x_i < width){
-        ret.push([x_i, x_i + hex_side]);
-        x_i += 2*hex_side;
-    }
-    */
+    const t = new Tile([center_x, center_y], vertices);
+
+    ret.append(t)
 
     return ret; 
+}
+function createTile(center){
+    
 }
 
 function drawBoard(points){
