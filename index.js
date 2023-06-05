@@ -12,6 +12,54 @@ const hex_side = canvas.width/40.0;
 const hex_height = Math.sqrt(3);
 const hex_c_to_c = 2.0;
 
+//Queue Class for creating board
+class Queue {
+    constructor() {
+        this.items = {}
+        this.first_item = 0
+        this.next_item = 0
+    }
+    enqueue(item) {
+        this.items[this.next_item] = item
+        this.next_item++
+        return item + ' inserted'
+    }
+    dequeue() {
+        if (first_item < this.next_item){
+            const item = this.items[this.first_item]
+            delete this.items[this.first_item]
+            this.first_item++
+            return item
+        }
+    }
+    peek() {
+        return this.items[this.first_item]
+    }
+    get printQueue() {
+        return this.items;
+    }
+}
+
+//ENUM FOR NEIGHBORS OF A GIVEN TILE
+const Neighbor = {
+    N: 0,
+    NE: 1, 
+    SE: 2, 
+    S: 3, 
+    SW: 4, 
+    NW: 5
+}
+
+//ENUM FOR VERTICES OF A GIVEN TILE
+const Vertex = {
+    W: 0,
+    NW: 1, 
+    NE: 2, 
+    E: 3, 
+    SE: 4, 
+    SW: 5
+}
+
 //to keep track of which tiles have been used already
 var tile_set = Set();
 
@@ -42,30 +90,19 @@ class Graph{
 //Game Loop
 function drawGame(){
     clearScreen();
-    var points = createTiles()
+    let points = createTiles()
     drawBoard(points);
 }
 
 //Returns a graph where the nodes are tiles
 function createTiles(){
 
-    var neighbors = {};
+    let neighbors = {};
 
-    var graph = new Graph(null, neigbors);
+    let graph = new Graph(null, neighbors);
     
-    /* TWO ROWS IDEA
-    var top_center = [hex_side, hex_height/2.0];
-    var bot_center = [center_0[0]+hex_side+(hex_side/2), center_0[1]*2.0];
-
-    var top_row_0 = createTile(top_center);
-    var bot_row_0 = createTile(bot_center);
-
-    var x_i_top = top_center[0];
-
-    var x_i_bot = bot_center[0];
-    */
-
-    
+    let start = [canvas.width/2.0, canvas.height/2.0];
+    let start_tile = createTile(start);
 
 
     return ret; 
@@ -73,16 +110,16 @@ function createTiles(){
 
 //creates a single tile and returns it; takes in an array of two points
 function createTile(center){
-    var w = [center[0] - hex_side, center[1]];
-    var nw = [center[0] - (hex_side/2.0), center[1] + hex_height/2.0];
-    var ne = [nw[0] + hex_side, nw[1]];
-    var e = [w[0] + hex_c_to_c, w[1]];
-    var se = [ne[0], ne[1] - hex_height];
-    var sw = [nw[0], nw[1] - hex_height];
+    const w = [center[0] - hex_side, center[1]];
+    const nw = [center[0] - (hex_side/2.0), center[1] + hex_height/2.0];
+    const ne = [nw[0] + hex_side, nw[1]];
+    const e = [w[0] + hex_c_to_c, w[1]];
+    const se = [ne[0], ne[1] - hex_height];
+    const sw = [nw[0], nw[1] - hex_height];
 
     //array of arrays of floats
-    var vertices = [w, nw, ne, e, se, sw];
-    var t = new Tile(center, vertices);
+    const vertices = [w, nw, ne, e, se, sw];
+    const t = new Tile(center, vertices);
     
     return t; 
 
