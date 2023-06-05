@@ -12,16 +12,35 @@ canvas.height = height;
 
 const ctx = canvas.getContext('2d');
 
+class Tile{
+    constructor(center, side_length){
+        this.center = center;
+        this.side_length = side_length;
+    }
+}
+
+class Graph{
+    constructor(node, edges){
+        this.node = node;
+        this.edges = edges;
+    }
+}
+
 //Game Loop
 function drawGame(){
     clearScreen();
-    var points = createBoard()
+    var points = createTiles()
     drawBoard(points);
 }
 
 //Randomly create the board
-function createBoard(){
-    var y_i = 0.0;
+function createTiles(){
+
+    ret = [];
+
+    const t = new Tile([0, 0], 5.0);
+
+    var y_i = 1.0;
     while (y_i < height){
         var x_i = 0.5*hex_side;
         while (x_i < width){
@@ -60,7 +79,7 @@ function drawBoard(points){
 
 function clearScreen(){
     ctx.fillStyle = "brown";
-    ctx.fillRect(0,0, width, height);
+    ctx.fillRect(0,0, canvas.width, canvas.height);
 }
 
 drawGame();
