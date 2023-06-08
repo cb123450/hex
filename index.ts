@@ -1,3 +1,53 @@
+const canvas: HTMLCanvasElement = <HTMLCanvasElement> document.getElementById('gameArea');
+const ctx = canvas.getContext('2d');
+
+const width: number = window.innerWidth;
+const height: number = window.innerHeight;
+
+canvas.width = width;
+canvas.height = height;
+
+//HEXAGON CONSTANTS
+const hex_side: number = canvas.width/40.0;
+const hex_height: number = Math.sqrt(3)*hex_side; //from edge to opposite edge
+const hex_width: number = 2.0*hex_side; //from corner to opposite corner
+
+/*
+ORIENTATION OF HEXAGON ON BOARD ->
+ __
+/  \
+\__/
+*/
+
+/*ENUM FOR NEIGHBORS OF A GIVEN TILE
+ _N_
+/   \
+\___/
+  S
+*/
+const Neighbor = {
+    N: 0,
+    NE: 1, 
+    SE: 2, 
+    S: 3, 
+    SW: 4, 
+    NW: 5
+}
+
+/*ENUM FOR VERTICES OF A GIVEN TILE
+NW__
+ /  \
+ \__/
+    SE
+*/
+const Vertex = {
+    NW: 0, 
+    NE: 1, 
+    E: 2, 
+    SE: 3, 
+    SW: 4, 
+    W: 5
+}
 /*
 ---center is [x, y] where x is the x-coord of the center 
 of this tile and y is the y-coord of the center
@@ -60,14 +110,13 @@ class Graph<T>{
         let curr_str = curr_tile.hash();
         let adj_str = adj_tile.hash();
         if (this.vertices.has(curr_str)){
-            let d = this.edges[curr_str];
-            d[adj_str] = adj_tile;
+            this.edges[curr_str].set(adj_str, adj_tile);
         }
         else{
             this.vertices.add(curr_str)
             this.edges[curr_str] = new Map<string, T>();
-            let d = this.edges[curr_str];
-            d[adj_str] = adj_tile;
+            this.edges[curr_str].set(adj_str, adj_tile);
+            console.log("test")
         }
     }
 
@@ -124,56 +173,6 @@ class Queue<T> implements Queue<T>{
 }
 
 /**************************************** */
-const canvas: HTMLCanvasElement = <HTMLCanvasElement> document.getElementById('gameArea');
-const ctx = canvas.getContext('2d');
-
-const width: number = window.innerWidth;
-const height: number = window.innerHeight;
-
-canvas.width = width;
-canvas.height = height;
-
-//HEXAGON CONSTANTS
-const hex_side: number = canvas.width/40.0;
-const hex_height: number = Math.sqrt(3)*hex_side; //from edge to opposite edge
-const hex_width: number = 2.0*hex_side; //from corner to opposite corner
-
-/*
-ORIENTATION OF HEXAGON ON BOARD ->
- __
-/  \
-\__/
-*/
-
-/*ENUM FOR NEIGHBORS OF A GIVEN TILE
- _N_
-/   \
-\___/
-  S
-*/
-const Neighbor = {
-    N: 0,
-    NE: 1, 
-    SE: 2, 
-    S: 3, 
-    SW: 4, 
-    NW: 5
-}
-
-/*ENUM FOR VERTICES OF A GIVEN TILE
-NW__
- /  \
- \__/
-    SE
-*/
-const Vertex = {
-    NW: 0, 
-    NE: 1, 
-    E: 2, 
-    SE: 3, 
-    SW: 4, 
-    W: 5
-}
 
 //Game Loop
 function drawGame(){
