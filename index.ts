@@ -48,7 +48,7 @@ class Queue implements Queue{
         }
     }
     size(){
-        return this.size;
+        return this.num_elements;
     }
     peek() {
         return this.items[this.first_item];
@@ -132,37 +132,39 @@ class Tile {
 -There will be no collisions in any dictionary bc each tile has a unique center
 -This graph is undirected
 */
-interface Graph {
-    vertices: Set<string>;
-    edges: Map<string, Map<string, <T>>>;
+interface Graph<T> {
+    vertices;
+    edges;
 }
 
-class Graph{
+class Graph<T>{
     constructor(){
-        this.vertices = new Set(); 
-        this.edges = new Map<string, Map<string, <T>>>();
+        this.vertices = new Set<T>; 
+        this.edges = new Map();
     }
 
     /*
     ---str_vertex is the string representing the center of the current vertex
     ---adj_vertex is the adjacent Tile object
     */
-    addEdge(curr_tile: Tile, adj_tile: Tile){
+    addEdge(curr_tile, adj_tile){
         let curr_str = curr_tile.hash();
+        let adj_str = adj_tile.hash();
         if (this.vertices.has(curr_str)){
             let d = this.edges[curr_str];
-            d[adj_tile.hash()] = adj_tile;
+            d[adj_str] = adj_tile;
         }
         else{
             this.vertices.add(curr_str)
-            this.edges[curr_str] = new Map<string, Tile>();
+            this.edges[curr_str] = new Map<string, T>();
             let d = this.edges[curr_str];
-            d[adj_tile.hash()] = adj_tile;
+            d[adj_str] = adj_tile;
         }
     }
-
     addVertex(curr_tile){
-
+        if (!this.vertices.has(curr_tile.hash())){
+            this.vertices.add(curr_tile.hash());
+        }
     }
 }
 
@@ -191,15 +193,14 @@ function createTiles(){
     let start = [canvas.width/2.0, canvas.height/2.0];
     let start_tile = createTile(start);
 
-    var s = start[0] + (start[1] + '');
-    tile_set.add(s);
     const q = new Queue();
     q.enqueue(start_tile);
 
-    let graph = new Graph(start_tile, {});
+    let graph = new Graph();
+    graph.addVertex(start_tile);
 
     while (q.size() != 0){
-        t = q.dequeue();
+        let t: Tile = q.dequeue();
         let neighbors = get_neighbors(t.get_center());
         graph.neighbors = neighbors;
 
@@ -210,10 +211,6 @@ function createTiles(){
         }
 
     }
-
-
-
-
     return ret; 
 }
 
@@ -227,11 +224,9 @@ function createTile(center){
     const sw = [nw[0], nw[1] + hex_height];
 
     //array of arrays of doubles
-    const vertices = [w, nw, ne, e, se, sw];
+    const vertices: Array<Array<number>> = [w, nw, ne, e, se, sw];
     const t = new Tile(center, vertices);
-    
     return t; 
-
 }
 
 function drawBoard(points){
