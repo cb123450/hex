@@ -53,8 +53,8 @@ export class Graph<T>{
     }
 
     /*
-    ---str_vertex is the string representing the center of the current vertex
-    ---adj_vertex is the adjacent Tile object
+    ---curr_tile is the current Tile object
+    ---adj_tile is the adjacent Tile object
     */
     addEdge(curr_tile, adj_tile){
         let curr_str = curr_tile.hash();

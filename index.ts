@@ -54,8 +54,8 @@ const Vertex = {
 //Game Loop
 function drawGame(){
     clearScreen();
-    let points = createTiles()
-    drawBoard(points);
+    let g : Graph<Tile> = createTiles();
+    drawTiles(g);
 }
 
 function clearScreen(){
@@ -91,27 +91,26 @@ function createTiles(){
     let visited = new Set();
 
     while (q.size() != 0){
-        let t : Tile | undefined = q.dequeue();
-        if(t != undefined){
-            if (!visited.has(t.hash())){
-                visited.add(t.hash())
+        let curr_tile : Tile | undefined = q.dequeue();
+        if(curr_tile != undefined && !visited.has(curr_tile.hash())){
+            visited.add(curr_tile.hash())
+            graph.addVertex(curr_tile)
 
-                let neighbors : Array<Array<number>> = get_neighbors(t.get_center());
-                let i = 0;
-                while (i < neighbors.length){
-                    
-                    if (!visited.has(s)){
-                        visited.add(s);
-                        let tile : Tile = createTile(neighbors[i]);
-                        graph.addVertex(tile);
-                    }
-                    i += 1;
+            let neighbors : Array<Array<number>> = get_neighbors(curr_tile.get_center());
+            
+            for (let n_center of neighbors){
+                let adj_tile : Tile = createTile(n_center);
+
+                if (!visited.has(adj_tile.hash())){
+                    q.enqueue(adj_tile);
                 }
+                
+                graph.addEdge(curr_tile, adj_tile);
             }
         }
 
     }
-    return ret; 
+    return graph; 
 }
 
 //creates a single tile and returns it; takes in an array of two points
@@ -129,17 +128,19 @@ function createTile(center){
     return t; 
 }
 
-function drawBoard(points){
-    ctx.strokeStyle = "black";
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    
-    i = 0
-    while (i < points.length-1){
-        ctx.moveTo(points[i][0], points[i][1]);
-        ctx.lineTo(points[i+1][0], points[i+1][1])
-        ctx.stroke();
-        i += 2;
+function drawTiles(points : Graph<Tile>){
+    if (ctx != null){
+        ctx.strokeStyle = "black";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        
+        let i = 0
+        while (i < points.length-1){
+            ctx.moveTo(points[i][0], points[i][1]);
+            ctx.lineTo(points[i+1][0], points[i+1][1])
+            ctx.stroke();
+            i += 2;
+        }
     }
 
 }
