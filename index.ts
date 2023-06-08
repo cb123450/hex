@@ -20,24 +20,30 @@ ORIENTATION OF HEXAGON ON BOARD ->
 */
 
 //Queue Class for creating board
-class Queue {
+
+interface Queue {
+    items: Array<any>;
+    first_item: number;
+    next_item: number;
+    num_elements: number;
+}
+class Queue implements Queue{
     constructor() {
-        this.items = {};
+        this.items = new Array<any>;
         this.first_item = 0;
         this.next_item = 0;
-        this.size = 0;
+        this.num_elements = 0;
     }
     enqueue(item) {
         this.items[this.next_item] = item;
         this.next_item++;
-        this.size += 1.
+        this.num_elements += 1.
     }
     dequeue() {
-        if (first_item < this.next_item){
+        if (this.first_item < this.next_item){
             const item = this.items[this.first_item];
-            delete this.items[this.first_item];
             this.first_item++;
-            this.size -= 1;
+            this.num_elements -= 1;
             return item;
         }
     }
@@ -90,7 +96,14 @@ of this tile and y is the y-coord of the center
 ---vertices is an array of the vertices making up the hexagon
 of this tile
 */
-class Tile{
+interface Tile {
+    center: Array<number>;
+    vertices: Array<Array<number>>;
+    get_center() : Array<number>;
+    get_vertices() : Array<Array<number>>;
+    hash() : string;
+}
+class Tile {
     constructor(center, vertices){
         this.center = center;
         this.vertices = vertices;
@@ -101,8 +114,8 @@ class Tile{
     get_vertices(){
         return this.vertices;
     }
-    get_center_string(){
-        const center_str = center[0] + '_' + center[1];
+    hash() : string{
+        const center_str = this.center[0] + '_' + this.center[1];
         return center_str;
     }
 }
@@ -112,34 +125,44 @@ class Tile{
 
 ---vertices is the set of vertices in a graph; it contains strings
 
---edges will be an adjacency list. 
+--edges will be an adjacency list implemented with a hashmap. 
     --key is the string representing the center of the tile
     --value is a hashmap of its neighbors (Tile objects)
 
 -There will be no collisions in any dictionary bc each tile has a unique center
 -This graph is undirected
 */
+interface Graph {
+    vertices: Set<string>;
+    edges: Map<string, Map<string, <T>>>;
+}
+
 class Graph{
     constructor(){
-        this.vertices = Set(); 
-        this.edges = {};
+        this.vertices = new Set(); 
+        this.edges = new Map<string, Map<string, <T>>>();
     }
 
     /*
     ---str_vertex is the string representing the center of the current vertex
     ---adj_vertex is the adjacent Tile object
     */
-    addEdge(str_vertex, adj_tile){
-        if (this.vertices.has(str_vertex)){
-            let d = this.edges[str_vertex];
-            d[adj_vert.get_center_string()] = adj_tile;
+    addEdge(curr_tile: Tile, adj_tile: Tile){
+        let curr_str = curr_tile.hash();
+        if (this.vertices.has(curr_str)){
+            let d = this.edges[curr_str];
+            d[adj_tile.hash()] = adj_tile;
         }
         else{
-            this.vertices.add(str_vertex)
-            this.edges[str_vertex] = {};
-            let d = this.edges[str_vertex];
-            d[adj_vert.get_center_string()] = adj_tile;
+            this.vertices.add(curr_str)
+            this.edges[curr_str] = new Map<string, Tile>();
+            let d = this.edges[curr_str];
+            d[adj_tile.hash()] = adj_tile;
         }
+    }
+
+    addVertex(curr_tile){
+
     }
 }
 
@@ -149,9 +172,6 @@ function drawGame(){
     let points = createTiles()
     drawBoard(points);
 }
-
-//to keep track of which tiles have been used already
-var tile_set = Set();
 
 function get_neighbors(point){
     let n = [point[0], point[1] - hex_height];
