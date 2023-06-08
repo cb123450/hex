@@ -1,3 +1,5 @@
+import {Queue, Tile, Graph} from "./util";
+
 const canvas: HTMLCanvasElement = <HTMLCanvasElement> document.getElementById('gameArea');
 const ctx = canvas.getContext('2d');
 
@@ -19,52 +21,12 @@ ORIENTATION OF HEXAGON ON BOARD ->
 \__/
 */
 
-//Queue Class for creating board
-
-interface Queue {
-    items: Array<any>;
-    first_item: number;
-    next_item: number;
-    num_elements: number;
-}
-class Queue implements Queue{
-    constructor() {
-        this.items = new Array<any>;
-        this.first_item = 0;
-        this.next_item = 0;
-        this.num_elements = 0;
-    }
-    enqueue(item) {
-        this.items[this.next_item] = item;
-        this.next_item++;
-        this.num_elements += 1.
-    }
-    dequeue() {
-        if (this.first_item < this.next_item){
-            const item = this.items[this.first_item];
-            this.first_item++;
-            this.num_elements -= 1;
-            return item;
-        }
-    }
-    size(){
-        return this.num_elements;
-    }
-    peek() {
-        return this.items[this.first_item];
-    }
-    get printQueue() {
-        return this.items;
-    }
-}
-
 /*ENUM FOR NEIGHBORS OF A GIVEN TILE
  _N_
 /   \
 \___/
   S
 */
-
 const Neighbor = {
     N: 0,
     NE: 1, 
@@ -89,85 +51,6 @@ const Vertex = {
     W: 5
 }
 
-/*
----center is [x, y] where x is the x-coord of the center 
-of this tile and y is the y-coord of the center
-
----vertices is an array of the vertices making up the hexagon
-of this tile
-*/
-interface Tile {
-    center: Array<number>;
-    vertices: Array<Array<number>>;
-    get_center() : Array<number>;
-    get_vertices() : Array<Array<number>>;
-    hash() : string;
-}
-class Tile {
-    constructor(center, vertices){
-        this.center = center;
-        this.vertices = vertices;
-    }
-    get_center(){
-        return this.center;
-    }
-    get_vertices(){
-        return this.vertices;
-    }
-    hash() : string{
-        const center_str = this.center[0] + '_' + this.center[1];
-        return center_str;
-    }
-}
-
-/*
----node is a tile
-
----vertices is the set of vertices in a graph; it contains strings
-
---edges will be an adjacency list implemented with a hashmap. 
-    --key is the string representing the center of the tile
-    --value is a hashmap of its neighbors (Tile objects)
-
--There will be no collisions in any dictionary bc each tile has a unique center
--This graph is undirected
-*/
-interface Graph<T> {
-    vertices;
-    edges;
-}
-
-class Graph<T>{
-    constructor(){
-        this.vertices = new Set<T>; 
-        this.edges = new Map();
-    }
-
-    /*
-    ---str_vertex is the string representing the center of the current vertex
-    ---adj_vertex is the adjacent Tile object
-    */
-    addEdge(curr_tile, adj_tile){
-        let curr_str = curr_tile.hash();
-        let adj_str = adj_tile.hash();
-        if (this.vertices.has(curr_str)){
-            let d = this.edges[curr_str];
-            d[adj_str] = adj_tile;
-        }
-        else{
-            this.vertices.add(curr_str)
-            this.edges[curr_str] = new Map<string, T>();
-            let d = this.edges[curr_str];
-            d[adj_str] = adj_tile;
-        }
-    }
-    addVertex(curr_tile){
-        if (!this.vertices.has(curr_tile.hash())){
-            this.vertices.add(curr_tile.hash());
-        }
-    }
-}
-
 //Game Loop
 function drawGame(){
     clearScreen();
@@ -175,7 +58,14 @@ function drawGame(){
     drawBoard(points);
 }
 
-function get_neighbors(point){
+function clearScreen(){
+    if (ctx != null){
+        ctx.fillStyle = "brown";
+        ctx.fillRect(0,0, canvas.width, canvas.height);
+    }
+}
+
+function get_neighbors(point: Array<number>): Array<Array<number>>{
     let n = [point[0], point[1] - hex_height];
     let ne = [point[0] + (3.0/2.0)*(hex_side), point[1] - (hex_height/2.0)];
     let se = [ne[0], ne[1] + hex_height];
@@ -187,27 +77,37 @@ function get_neighbors(point){
 }
 //Returns a graph where the nodes are tiles
 function createTiles(){
-
-    let neighbors = {};
     
-    let start = [canvas.width/2.0, canvas.height/2.0];
-    let start_tile = createTile(start);
+    let start: Array<number> = [canvas.width/2.0, canvas.height/2.0];
 
-    const q = new Queue();
+    let start_tile: Tile = createTile(start);
+
+    const q = new Queue<Tile>();
     q.enqueue(start_tile);
 
-    let graph = new Graph();
+    let graph = new Graph<Tile>();
     graph.addVertex(start_tile);
 
+    let visited = new Set();
+
     while (q.size() != 0){
-        let t: Tile = q.dequeue();
-        let neighbors = get_neighbors(t.get_center());
-        graph.neighbors = neighbors;
+        let t : Tile | undefined = q.dequeue();
+        if(t != undefined){
+            if (!visited.has(t.hash())){
+                visited.add(t.hash())
 
-        let i = 0;
-        while (i < neighbors.length){
-
-            i += 1;
+                let neighbors : Array<Array<number>> = get_neighbors(t.get_center());
+                let i = 0;
+                while (i < neighbors.length){
+                    
+                    if (!visited.has(s)){
+                        visited.add(s);
+                        let tile : Tile = createTile(neighbors[i]);
+                        graph.addVertex(tile);
+                    }
+                    i += 1;
+                }
+            }
         }
 
     }
@@ -244,9 +144,5 @@ function drawBoard(points){
 
 }
 
-function clearScreen(){
-    ctx.fillStyle = "brown";
-    ctx.fillRect(0,0, canvas.width, canvas.height);
-}
-
 drawGame();
+
