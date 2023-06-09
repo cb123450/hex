@@ -91,15 +91,15 @@ class Tile {
 -There will be no collisions in any dictionary bc each tile has a unique center
 -This graph is undirected
 */
-interface Graph<T> {
-    vertices;
-    edges;
+interface Graph<Hashable, T> {
+    vertices_set;
+    adj_list;
 }
 
-class Graph<T>{
+class Graph<Hashable, T>{
     constructor(){
-        this.vertices = new Set<T>; 
-        this.edges = new Map();
+        this.vertices_set = new Set<Hashable>; 
+        this.adj_list = new Map<Hashable, Map<Hashable, T>>();
     }
 
     /*
@@ -109,29 +109,30 @@ class Graph<T>{
     addEdge(curr_tile, adj_tile){
         let curr_str = curr_tile.hash();
         let adj_str = adj_tile.hash();
-        if (this.vertices.has(curr_str)){
-            this.edges[curr_str].set(adj_str, adj_tile);
+
+        if (this.vertices_set.has(curr_str)){
+            this.adj_list[curr_str][adj_str] = adj_tile;
         }
         else{
-            this.vertices.add(curr_str)
-            this.edges[curr_str] = new Map<string, T>();
-            this.edges[curr_str].set(adj_str, adj_tile);
-            console.log("test")
+            this.vertices_set.add(curr_str)
+            this.adj_list[curr_str] = new Map<Hashable, T>;
+            this.adj_list[curr_str][adj_str] = adj_tile;
         }
     }
 
     addVertex(curr_tile){
-        if (!this.vertices.has(curr_tile.hash())){
-            this.vertices.add(curr_tile.hash());
+        if (!this.vertices_set.has(curr_tile.hash())){
+            this.vertices_set.add(curr_tile.hash());
+            this.adj_list[curr_tile.hash()] = new Map<Hashable, T>;
         }
     }
     
-    getVertices() : Set<T>{
-        return this.vertices;
+    getVerticesSet() : Set<Hashable>{
+        return this.vertices_set;
     }
 
-    getEdges(){
-        return this.edges;
+    getAdjacencyList() : Map<Hashable, Map<Hashable, T>>{
+        return this.adj_list;
     }
 }
 
@@ -177,8 +178,8 @@ class Queue<T> implements Queue<T>{
 //Game Loop
 function drawGame(){
     clearScreen();
-    let g : Graph<Tile> = createTiles();
-    drawTiles(g);
+    let g : Graph<string, Tile> = createTiles();
+    //drawTiles(g);
 }
 
 function clearScreen(){
@@ -198,23 +199,27 @@ function get_neighbors(point: Array<number>): Array<Array<number>>{
 
     return [n, ne, se, s, sw, nw];
 }
+
 //Returns a graph where the nodes are tiles
-function createTiles(){
+function createTiles() : Graph<string, Tile>{
     
     let start: Array<number> = [canvas.width/2.0, canvas.height/2.0];
 
+    
     let start_tile: Tile = createTile(start);
 
     const q = new Queue<Tile>();
     q.enqueue(start_tile);
 
-    let graph = new Graph<Tile>();
-    graph.addVertex(start_tile);
+    let graph = new Graph<string, Tile>();
 
-    let visited = new Set();
+    
+    let visited = new Set<string>();
 
     while (q.size() != 0){
         let curr_tile : Tile | undefined = q.dequeue();
+
+        
         if(curr_tile != undefined && !visited.has(curr_tile.hash())){
             visited.add(curr_tile.hash())
             graph.addVertex(curr_tile)
@@ -233,7 +238,9 @@ function createTiles(){
         }
 
     }
+    
     return graph; 
+    
 }
 
 //creates a single tile and returns it; takes in an array of two points
@@ -251,13 +258,14 @@ function createTile(center){
     return t; 
 }
 
-function drawTiles(points : Graph<Tile>){
+/*
+function drawTiles(points : Graph<string, Tile>){
     if (ctx != null){
         ctx.strokeStyle = "black";
         ctx.lineWidth = 2;
         ctx.beginPath();
         
-        const tiles : Set<Tile>= points.getVertices();
+        const tiles : Set<string>= points.getAdjacencyList();
         let k = 0;
         while (k < tiles.size){
             let t : Tile= tiles[k]
@@ -276,8 +284,8 @@ function drawTiles(points : Graph<Tile>){
             k += 1;
         }
     }
-
 }
+*/
 
 drawGame();
 
