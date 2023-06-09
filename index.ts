@@ -189,7 +189,7 @@ function clearScreen(){
     }
 }
 
-function get_neighbors(point: Array<number>): Array<Array<number>>{
+function get_neighbors(point: Array<number>): Array<Array<number>> {
     let n = [point[0], point[1] - hex_height];
     let ne = [point[0] + (3.0/2.0)*(hex_side), point[1] - (hex_height/2.0)];
     let se = [ne[0], ne[1] + hex_height];
@@ -197,7 +197,9 @@ function get_neighbors(point: Array<number>): Array<Array<number>>{
     let sw = [point[0] - (3.0/2.0)*(hex_side), se[1]];
     let nw = [sw[0], ne[1]];
 
-    return [n, ne, se, s, sw, nw];
+    let ret = [n, ne, se, s, sw, nw];
+
+    return ret;
 }
 
 //Returns a graph where the nodes are tiles
@@ -219,7 +221,6 @@ function createTiles() : Graph<string, Tile>{
     while (q.size() != 0){
         let curr_tile : Tile | undefined = q.dequeue();
 
-        
         if(curr_tile != undefined && !visited.has(curr_tile.hash())){
             visited.add(curr_tile.hash())
             graph.addVertex(curr_tile)
@@ -227,16 +228,21 @@ function createTiles() : Graph<string, Tile>{
             let neighbors : Array<Array<number>> = get_neighbors(curr_tile.get_center());
             
             for (let n_center of neighbors){
-                let adj_tile : Tile = createTile(n_center);
+                if (n_center[0] >= 0 && n_center[0] <= canvas.width 
+                    && n_center[1] >= 0 && n_center[1] <= canvas.height){
+                    
+                    console.log(n_center);
 
-                if (!visited.has(adj_tile.hash())){
-                    q.enqueue(adj_tile);
+                    let adj_tile : Tile = createTile(n_center);
+
+                    if (!visited.has(adj_tile.hash())){
+                        q.enqueue(adj_tile);
+                    }
+                    
+                    graph.addEdge(curr_tile, adj_tile);
                 }
-                
-                graph.addEdge(curr_tile, adj_tile);
             }
         }
-
     }
     
     return graph; 
