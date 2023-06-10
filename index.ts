@@ -116,7 +116,7 @@ class Graph<Hashable, T>{
             this.adj_list[curr_str][adj_str] = adj_tile;
         }
         else{
-            this.vertices[curr_str] = curr_tile;
+            this.vertices.set(curr_str, curr_tile);
             this.adj_list[curr_str] = new Map<Hashable, T>;
             this.adj_list[curr_str][adj_str] = adj_tile;
         }
@@ -124,7 +124,7 @@ class Graph<Hashable, T>{
 
     addVertex(curr_tile){
         if (!this.vertices.has(curr_tile.hash())){
-            this.vertices[curr_tile.hash()] = curr_tile;
+            this.vertices.set(curr_tile.hash(), curr_tile);
             this.adj_list[curr_tile.hash()] = new Map<Hashable, T>;
         }
     }
@@ -214,18 +214,17 @@ function createTiles() : Graph<string, Tile>{
     const q = new Queue<Tile>();
     q.enqueue(start_tile);
 
-    let graph = new Graph<string, Tile>();
-
+    let g = new Graph<string, Tile>();
     
     let visited = new Set<string>();
 
-    let z = 1;
+    let z = 3;
     while (z != 0){
         let curr_tile : Tile | undefined = q.dequeue();
 
         if(curr_tile != undefined && !visited.has(curr_tile.hash())){
             visited.add(curr_tile.hash())
-            graph.addVertex(curr_tile)
+            g.addVertex(curr_tile)
 
             let neighbors : Array<Array<number>> = get_neighbors(curr_tile.get_center());
             
@@ -238,8 +237,7 @@ function createTiles() : Graph<string, Tile>{
                     if (!visited.has(adj_tile.hash())){
                         q.enqueue(adj_tile);
                     }
-                    
-                    graph.addEdge(curr_tile, adj_tile);
+                    g.addEdge(curr_tile, adj_tile);
                 }
             }
         }
@@ -247,7 +245,7 @@ function createTiles() : Graph<string, Tile>{
         z -= 1;
     }
 
-    return graph; 
+    return g; 
     
 }
 
@@ -274,11 +272,9 @@ function drawTiles(points : Graph<string, Tile>){
         ctx.beginPath();
         
         const tile_map : Map<string, Tile>= points.getVertices();
+        console.log(tile_map)
         const iterator1 = tile_map.values();
 
-        if (tile_map.size == 0){
-            console.log("Test")
-        }
         let k = 0;
         while (k < tile_map.size){
             let t : Tile = iterator1.next().value;
