@@ -1,3 +1,5 @@
+import { createWatchCompilerHost, visitNodes } from "typescript";
+
 const canvas: HTMLCanvasElement = <HTMLCanvasElement> document.getElementById('gameArea');
 const ctx = canvas.getContext('2d');
 
@@ -92,13 +94,13 @@ class Tile {
 -This graph is undirected
 */
 interface Graph<Hashable, T> {
-    vertices_set;
+    vertices;
     adj_list;
 }
 
 class Graph<Hashable, T>{
     constructor(){
-        this.vertices_set = new Set<Hashable>; 
+        this.vertices = new Map<Hashable, T>; 
         this.adj_list = new Map<Hashable, Map<Hashable, T>>();
     }
 
@@ -110,25 +112,25 @@ class Graph<Hashable, T>{
         let curr_str = curr_tile.hash();
         let adj_str = adj_tile.hash();
 
-        if (this.vertices_set.has(curr_str)){
+        if (this.vertices.has(curr_str)){
             this.adj_list[curr_str][adj_str] = adj_tile;
         }
         else{
-            this.vertices_set.add(curr_str)
+            this.vertices[curr_str] = curr_tile;
             this.adj_list[curr_str] = new Map<Hashable, T>;
             this.adj_list[curr_str][adj_str] = adj_tile;
         }
     }
 
     addVertex(curr_tile){
-        if (!this.vertices_set.has(curr_tile.hash())){
-            this.vertices_set.add(curr_tile.hash());
+        if (!this.vertices.has(curr_tile.hash())){
+            this.vertices[curr_tile.hash()] = curr_tile;
             this.adj_list[curr_tile.hash()] = new Map<Hashable, T>;
         }
     }
     
-    getVerticesSet() : Set<Hashable>{
-        return this.vertices_set;
+    getVertices() : Map<Hashable, T>{
+        return this.vertices;
     }
 
     getAdjacencyList() : Map<Hashable, Map<Hashable, T>>{
@@ -179,7 +181,7 @@ class Queue<T> implements Queue<T>{
 function drawGame(){
     clearScreen();
     let g : Graph<string, Tile> = createTiles();
-    //drawTiles(g);
+    drawTiles(g);
 }
 
 function clearScreen(){
@@ -206,7 +208,6 @@ function get_neighbors(point: Array<number>): Array<Array<number>> {
 function createTiles() : Graph<string, Tile>{
     
     let start: Array<number> = [canvas.width/2.0, canvas.height/2.0];
-
     
     let start_tile: Tile = createTile(start);
 
@@ -218,7 +219,8 @@ function createTiles() : Graph<string, Tile>{
     
     let visited = new Set<string>();
 
-    while (q.size() != 0){
+    let z = 1;
+    while (z != 0){
         let curr_tile : Tile | undefined = q.dequeue();
 
         if(curr_tile != undefined && !visited.has(curr_tile.hash())){
@@ -231,8 +233,6 @@ function createTiles() : Graph<string, Tile>{
                 if (n_center[0] >= 0 && n_center[0] <= canvas.width 
                     && n_center[1] >= 0 && n_center[1] <= canvas.height){
                     
-                    console.log(n_center);
-
                     let adj_tile : Tile = createTile(n_center);
 
                     if (!visited.has(adj_tile.hash())){
@@ -243,8 +243,10 @@ function createTiles() : Graph<string, Tile>{
                 }
             }
         }
+
+        z -= 1;
     }
-    
+
     return graph; 
     
 }
@@ -264,17 +266,22 @@ function createTile(center){
     return t; 
 }
 
-/*
+
 function drawTiles(points : Graph<string, Tile>){
     if (ctx != null){
         ctx.strokeStyle = "black";
         ctx.lineWidth = 2;
         ctx.beginPath();
         
-        const tiles : Set<string>= points.getAdjacencyList();
+        const tile_map : Map<string, Tile>= points.getVertices();
+        const iterator1 = tile_map.values();
+
+        if (tile_map.size == 0){
+            console.log("Test")
+        }
         let k = 0;
-        while (k < tiles.size){
-            let t : Tile= tiles[k]
+        while (k < tile_map.size){
+            let t : Tile = iterator1.next().value;
             const vertices : Array<Array<number>> = t.get_vertices();
             
             let i = 0;
@@ -287,11 +294,13 @@ function drawTiles(points : Graph<string, Tile>){
             ctx.moveTo(vertices[i][0], vertices[i][1]);
             ctx.lineTo(vertices[0][0], vertices[0][1]);
             ctx.stroke();
-            k += 1;
+            k += 1
         }
     }
 }
-*/
 
 drawGame();
+
+
+
 
