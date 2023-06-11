@@ -10,46 +10,17 @@ canvas.width = width;
 canvas.height = height;
 
 //HEXAGON CONSTANTS
-const hex_side: number = canvas.width/40.0;
-const hex_height: number = Math.sqrt(3)*hex_side; //from edge to opposite edge
-const hex_width: number = 2.0*hex_side; //from corner to opposite corner
+const hex_side: number = canvas.width/14.0; //11 by 11 board but divide by 14.0 for extra space
+const hex_height: number = 2.0*hex_side; //from edge to opposite edge
+const hex_width: number = Math.sqrt(3)*hex_side; //from corner to opposite corner
 
 /*
-ORIENTATION OF HEXAGON ON BOARD ->
- __
-/  \
-\__/
+ORIENTATION OF HEXAGON ON BOARD -> 
+/\
+||
+\/
 */
 
-/*ENUM FOR NEIGHBORS OF A GIVEN TILE
- _N_
-/   \
-\___/
-  S
-*/
-const Neighbor = {
-    N: 0,
-    NE: 1, 
-    SE: 2, 
-    S: 3, 
-    SW: 4, 
-    NW: 5
-}
-
-/*ENUM FOR VERTICES OF A GIVEN TILE
-NW__
- /  \
- \__/
-    SE
-*/
-const Vertex = {
-    NW: 0, 
-    NE: 1, 
-    E: 2, 
-    SE: 3, 
-    SW: 4, 
-    W: 5
-}
 /*
 ---center is [x, y] where x is the x-coord of the center 
 of this tile and y is the y-coord of the center
@@ -207,10 +178,12 @@ function get_neighbors(point: Array<number>): Array<Array<number>> {
 //Returns a graph where the nodes are tiles
 function createTiles() : Graph<string, Tile>{
     
-    let start: Array<number> = [canvas.width/2.0, canvas.height/2.0];
+    let start: Array<number> = [hex_width/2.0, hex_height/2.0];
     
     let start_tile: Tile = createTile(start);
 
+
+    
     const q = new Queue<Tile>();
     q.enqueue(start_tile);
 
@@ -218,7 +191,7 @@ function createTiles() : Graph<string, Tile>{
     
     let visited = new Set<string>();
 
-    let z = 3;
+    let z = 1000;
     while (z != 0){
         let curr_tile : Tile | undefined = q.dequeue();
 
