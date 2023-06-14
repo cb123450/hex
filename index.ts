@@ -10,7 +10,7 @@ canvas.width = width;
 canvas.height = height;
 
 //HEXAGON CONSTANTS
-const hex_side: number = canvas.width/14.0; //11 by 11 board but divide by 14.0 for extra space
+const hex_side: number = canvas.width/30.0; //11 by 11 board but divide by 14.0 for extra space
 const hex_height: number = 2.0*hex_side; //from edge to opposite edge
 const hex_width: number = Math.sqrt(3)*hex_side; //from corner to opposite corner
 
@@ -20,6 +20,30 @@ ORIENTATION OF HEXAGON ON BOARD ->
 ||
 \/
 */
+
+/*
+NW/\NE
+ W||E
+SW\/SE
+*/
+interface Dir {
+    x: number;
+    y: number;
+}
+class Dir {
+    
+    static NW = new Dir(-hex_width/2.0, -(hex_side/2.0) - hex_side);
+    static NE = new Dir(-hex_width/2.0, -(hex_side/2.0) - hex_side);
+    static E = new Dir(hex_width, 0.0);
+    static SE = new Dir(hex_width/2.0, hex_side/2.0 + hex_side);
+    static SW = new Dir(-hex_width/2.0, hex_side/2.0 + hex_side);
+    static W = new Dir(-hex_width, 0.0);
+    
+    constructor(x, y){
+        this.x = x;
+        this.y = y;
+    }
+}
 
 /*
 ---center is [x, y] where x is the x-coord of the center 
@@ -182,57 +206,31 @@ function createTiles() : Graph<string, Tile>{
     
     let start_tile: Tile = createTile(start);
 
-
-    
-    const q = new Queue<Tile>();
-    q.enqueue(start_tile);
-
     let g = new Graph<string, Tile>();
-    
-    let visited = new Set<string>();
 
-    let z = 1000;
-    while (z != 0){
-        let curr_tile : Tile | undefined = q.dequeue();
-
-        if(curr_tile != undefined && !visited.has(curr_tile.hash())){
-            visited.add(curr_tile.hash())
-            g.addVertex(curr_tile)
-
-            let neighbors : Array<Array<number>> = get_neighbors(curr_tile.get_center());
-            
-            for (let n_center of neighbors){
-                if (n_center[0] >= 0 && n_center[0] <= canvas.width 
-                    && n_center[1] >= 0 && n_center[1] <= canvas.height){
-                    
-                    let adj_tile : Tile = createTile(n_center);
-
-                    if (!visited.has(adj_tile.hash())){
-                        q.enqueue(adj_tile);
-                    }
-                    g.addEdge(curr_tile, adj_tile);
-                }
-            }
-        }
-
-        z -= 1;
-    }
+    g.addVertex(start_tile)
 
     return g; 
     
 }
 
-//creates a single tile and returns it; takes in an array of two points
+/*creates a single tile and returns it; takes in an array of two points
+  n
+nw/\ne 
+sw||se
+  \/
+  s
+*/
 function createTile(center){
-    const w = [center[0] - hex_side, center[1]];
-    const nw = [center[0] - (hex_side/2.0), center[1] - hex_height/2.0];
-    const ne = [nw[0] + hex_side, nw[1]];
-    const e = [w[0] + hex_width, w[1]];
-    const se = [ne[0], ne[1] + hex_height];
-    const sw = [nw[0], nw[1] + hex_height];
+    const nw = [center[0] + -hex_width/2.0, center[1] + -hex_side/2.0];
+    const n = [center[0] + 0.0 , center[1] + -hex_side];
+    const ne = [center[0] + hex_width/2.0, center[1] + -hex_side/2.0];
+    const se = [center[0] + hex_width/2.0, center[1] + hex_side/2.0];
+    const s = [center[0] + 0.0, center[1] + hex_side];
+    const sw = [center[0] + -hex_width/2.0, center[1] + hex_side/2.0];
 
     //array of arrays of doubles
-    const vertices: Array<Array<number>> = [w, nw, ne, e, se, sw];
+    const vertices: Array<Array<number>> = [nw, n, ne, se, s, sw];
     const t = new Tile(center, vertices);
     return t; 
 }
@@ -245,7 +243,7 @@ function drawTiles(points : Graph<string, Tile>){
         ctx.beginPath();
         
         const tile_map : Map<string, Tile>= points.getVertices();
-        console.log(tile_map)
+
         const iterator1 = tile_map.values();
 
         let k = 0;
