@@ -1,4 +1,5 @@
-import { createWatchCompilerHost, visitNodes } from "typescript";
+import { timeStamp } from "console";
+import { convertTypeAcquisitionFromJson, createWatchCompilerHost, visitNodes } from "typescript";
 
 const canvas: HTMLCanvasElement = <HTMLCanvasElement> document.getElementById('gameArea');
 const ctx = canvas.getContext('2d');
@@ -25,6 +26,8 @@ ORIENTATION OF HEXAGON ON BOARD ->
 NW/\NE
  W||E
 SW\/SE
+
+The directions refer to the direction to the adjacent neighbor
 */
 interface Dir {
     x: number;
@@ -43,6 +46,14 @@ class Dir {
         this.x = x;
         this.y = y;
     }
+
+    getX() : number{
+        return this.x;
+    }
+
+    getY() : number{
+        return this.y;
+    }
 }
 
 /*
@@ -55,14 +66,21 @@ of this tile
 interface Tile {
     center: Array<number>;
     vertices: Array<Array<number>>;
+    color : string;
+    visited : boolean;
     get_center() : Array<number>;
     get_vertices() : Array<Array<number>>;
     hash() : string;
+    get_visited() : boolean;
+    visit();
+    unvisit();
 }
 class Tile {
     constructor(center, vertices){
         this.center = center;
         this.vertices = vertices;
+        this.color = "blue";
+        this.visited = false;
     }
     get_center(){
         return this.center;
@@ -74,6 +92,22 @@ class Tile {
         const center_str = this.center[0] + '_' + this.center[1];
         return center_str;
     }
+    set_color(color : string){
+        this.color = color;
+    }
+    get_color() : string{
+        return this.color;
+    }
+    get_visited_flag() : boolean{
+        return this.visited;
+    }
+    visit(){
+        this.visited = true;
+    } 
+    unvisit(){
+        this.visited = false;
+    }
+    
 }
 
 /*
@@ -91,6 +125,11 @@ class Tile {
 interface Graph<Hashable, T> {
     vertices;
     adj_list;
+    addEdge(curr_tile, adj_tile);
+    addVertex(curr_tile);
+    getVertices();
+    getAdjacencyList();
+    unvisit_all();
 }
 
 class Graph<Hashable, T>{
@@ -130,6 +169,15 @@ class Graph<Hashable, T>{
 
     getAdjacencyList() : Map<Hashable, Map<Hashable, T>>{
         return this.adj_list;
+    }
+
+    unvisitAll(){
+        let iter = this.vertices.values();
+        while (iter.hasNext()){
+            let t : Tile = iter.next();
+            t.unvisit();
+        }
+        
     }
 }
 
@@ -177,24 +225,89 @@ function drawGame(){
     clearScreen();
     let g : Graph<string, Tile> = createTiles();
     drawTiles(g);
+    changeColor(g);
 }
 
 function clearScreen(){
     if (ctx != null){
-        ctx.fillStyle = "brown";
+        ctx.fillStyle = "green";
         ctx.fillRect(0,0, canvas.width, canvas.height);
     }
 }
 
-function get_neighbors(point: Array<number>): Array<Array<number>> {
-    let n = [point[0], point[1] - hex_height];
-    let ne = [point[0] + (3.0/2.0)*(hex_side), point[1] - (hex_height/2.0)];
-    let se = [ne[0], ne[1] + hex_height];
-    let s = [n[0], point[1] + hex_height];
-    let sw = [point[0] - (3.0/2.0)*(hex_side), se[1]];
-    let nw = [sw[0], ne[1]];
+/* Test to see if I can change the tiles colors
+*/
+function changeColor(g: Graph<string, Tile>) {
+    const q = new Queue<Tile>();
+    let visited = new Set<string>();
+    let adj_list : Map<string, Tile> = g.getVertices();
 
-    let ret = [n, ne, se, s, sw, nw];
+    let iterator = adj_list.values();
+
+    let start_tile = iterator.next().value;
+
+    q.enqueue(start_tile);
+    visited.add(start_tile);
+    //Run a BFS from 'start_tile'
+
+    while (q.size() != 0){
+        const t : Tile | undefined = q.dequeue();
+        if (t != undefined){
+            //color the vertex
+            let vertices : number[][] = t.get_vertices();
+            if (ctx != null){
+                ctx.beginPath();
+                ctx.moveTo(vertices[0][0], vertices[0][1]);
+                
+                let k = 1;
+                while (k < vertices.length){
+                    let v : number[] = vertices[k];
+                    ctx.lineTo(v[0], v[1]);
+                    ctx.moveTo(v[0], v[1]);
+                    k += 1;
+                }
+                ctx.lineTo(vertices[0][0], vertices[0][1]);
+                ctx.moveTo(vertices[0][0], vertices[0][1]);
+                ctx.closePath();
+                ctx.fillStyle = "red";
+                ctx.fill();
+            }
+
+            let neighbors : number[][]= get_neighbors(t.get_center());
+
+            let i = 0;
+            while (i < neighbors.length){
+                let adj_tile : Tile = createTile(neighbors[i]);
+                if (!visited.has(adj_tile.hash())){
+                    q.enqueue(adj_tile);
+                    visited.add(adj_tile.hash());
+                }
+            }
+        }
+    }
+
+    
+
+}
+
+/*
+Returns a 2D array of the centers of the tiles neighbors
+
+NW/\NE
+ W||E
+SW\/SE
+
+The directions refer to the direction to the adjacent neighbor
+*/
+function get_neighbors(point: Array<number>): Array<Array<number>> {
+    let nw = [point[0] + Dir.NW.getX(), point[1] + Dir.NW.getY()];
+    let ne = [point[0] + Dir.NE.getX(), point[1] + Dir.NE.getY()];
+    let e = [point[0] + Dir.E.getX(), point[1] + Dir.E.getY()];
+    let se = [point[0] + Dir.SE.getX(), point[1] + Dir.SE.getY()];
+    let sw = [point[0] + Dir.SW.getX(), point[1] + Dir.SW.getY()];
+    let w = [point[0] + Dir.W.getX(), point[1] + Dir.W.getY()];
+
+    let ret = [nw, ne, e, se, sw, w];
 
     return ret;
 }
@@ -262,9 +375,10 @@ nw/\ne
 sw||se
   \/
   s
+  The directions refer to the position of the vertices of the tile
 */
 function createTile(center){
-    const nw = [center[0] + -hex_width/2.0, center[1] + -hex_side/2.0];
+    const nw = [center[0]  - hex_width/2.0, center[1] + -hex_side/2.0];
     const n = [center[0] + 0.0 , center[1] + -hex_side];
     const ne = [center[0] + hex_width/2.0, center[1] + -hex_side/2.0];
     const se = [center[0] + hex_width/2.0, center[1] + hex_side/2.0];
@@ -274,6 +388,7 @@ function createTile(center){
     //array of arrays of doubles
     const vertices: Array<Array<number>> = [nw, n, ne, se, s, sw];
     const t = new Tile(center, vertices);
+
     return t; 
 }
 
