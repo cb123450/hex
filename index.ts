@@ -208,7 +208,26 @@ function createTiles() : Graph<string, Tile>{
 
     let g = new Graph<string, Tile>();
 
-    g.addVertex(start_tile)
+    var row : number = 0;
+
+    while (row < 11){
+        var col : number = 0;
+        while (col < 11){
+            let init_center = [start[0] + col*hex_width, start[1]];
+            let init_tile = createTile(init_center);
+            g.addVertex(init_tile)
+
+            //add left tile as neighbor of this tile and vice versa
+            if (col >= 1){
+                
+            }
+
+            col += 1;
+        }
+        start[0] += hex_width/2.0;
+        start[1] += hex_side + .5*hex_side;
+        row += 1;
+    }
 
     return g; 
     
