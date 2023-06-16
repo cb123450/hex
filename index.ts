@@ -252,28 +252,28 @@ function changeColor(g: Graph<string, Tile>) {
 
     while (q.size() != 0){
         const t : Tile | undefined = q.dequeue();
+        console.log("test")
         if (t != undefined){
             //color the vertex
             let vertices : number[][] = t.get_vertices();
             if (ctx != null){
                 ctx.beginPath();
-                ctx.moveTo(vertices[0][0], vertices[0][1]);
                 
-                let k = 1;
-                while (k < vertices.length){
-                    let v : number[] = vertices[k];
-                    ctx.lineTo(v[0], v[1]);
-                    ctx.moveTo(v[0], v[1]);
+                let k = 0;
+                while (k < vertices.length-1){
+                    ctx.moveTo(vertices[k][0], vertices[k][1]);
+                    ctx.lineTo(vertices[k+1][0], vertices[k+1][1]);
                     k += 1;
                 }
+                ctx.moveTo(vertices[vertices.length-1][0], vertices[vertices.length-1][1]);
                 ctx.lineTo(vertices[0][0], vertices[0][1]);
-                ctx.moveTo(vertices[0][0], vertices[0][1]);
+
                 ctx.closePath();
                 ctx.fillStyle = "red";
                 ctx.fill();
             }
 
-            let neighbors : number[][]= get_neighbors(t.get_center());
+            let neighbors : number[][] = get_neighbors(t.get_center());
 
             let i = 0;
             while (i < neighbors.length){
@@ -282,6 +282,7 @@ function changeColor(g: Graph<string, Tile>) {
                     q.enqueue(adj_tile);
                     visited.add(adj_tile.hash());
                 }
+                i += 1;
             }
         }
     }
@@ -299,7 +300,7 @@ SW\/SE
 
 The directions refer to the direction to the adjacent neighbor
 */
-function get_neighbors(point: Array<number>): Array<Array<number>> {
+function get_neighbors(point: number[]): number[][] {
     let nw = [point[0] + Dir.NW.getX(), point[1] + Dir.NW.getY()];
     let ne = [point[0] + Dir.NE.getX(), point[1] + Dir.NE.getY()];
     let e = [point[0] + Dir.E.getX(), point[1] + Dir.E.getY()];
