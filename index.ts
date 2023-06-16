@@ -210,6 +210,15 @@ function createTiles() : Graph<string, Tile>{
 
     var row : number = 0;
 
+    var tile_array: Tile[][] = [];
+
+    var index : number = 0;
+
+    while (index < 11){
+        tile_array[index] = [];
+        index += 1;
+    }
+
     while (row < 11){
         var col : number = 0;
         while (col < 11){
@@ -217,11 +226,25 @@ function createTiles() : Graph<string, Tile>{
             let init_tile = createTile(init_center);
             g.addVertex(init_tile)
 
-            //add left tile as neighbor of this tile and vice versa
-            if (col >= 1){
-                
-            }
+            tile_array[row][col] = init_tile;
 
+            
+            if (col >= 1){
+                //add an edge between left neighbor of this tile and curr tile
+                g.addEdge(tile_array[row][col], tile_array[row][col-1]);
+                g.addEdge(tile_array[row][col-1], tile_array[row][col]);
+            }
+            if (row >= 1){
+                //add an edge between NW neighbor of this tile and curr tile
+                g.addEdge(tile_array[row-1][col], tile_array[row][col]);
+                g.addEdge(tile_array[row][col], tile_array[row-1][col]);
+
+                if (col < 10){
+                    //add an edge between NE neighbor of this tile and curr tile
+                    g.addEdge(tile_array[row-1][col+1], tile_array[row][col]);
+                    g.addEdge(tile_array[row][col], tile_array[row-1][col+1]);
+                }
+            }
             col += 1;
         }
         start[0] += hex_width/2.0;
