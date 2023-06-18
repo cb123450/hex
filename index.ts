@@ -10,6 +10,7 @@ const height: number = window.innerHeight;
 canvas.width = width;
 canvas.height = height;
 
+
 //HEXAGON CONSTANTS
 const hex_side: number = canvas.width/30.0; //11 by 11 board but divide by 14.0 for extra space
 const hex_height: number = 2.0*hex_side; //from edge to opposite edge
@@ -347,7 +348,7 @@ function createTiles() : Graph<string, Tile>{
             var b = document.createElement("button");
             var body = document.getElementsByTagName("body")[0];
             b.innerHTML = "Button b";
-            body.appendChild(b);
+            canvas.appendChild(b);
 
             b.style.left = init_center[0] + "px";
             b.style.top = (75 + init_center[1]) + 'px';
