@@ -1,8 +1,12 @@
 h1{
     font-family: Arial;
 }
-
+#gameArea{
+    position: absolute;
+    border: 4px solid rgba(0, 0, 0, 0.788);
+}
 body{
+    position: static;
     height: 100%;
     width: 100%;
     background: linear-gradient(
@@ -12,9 +16,6 @@ body{
     );
     text-align: center;
     overflow: hidden; 
-}
-#gameArea{
-    border: 4px solid rgba(0, 0, 0, 0.788);
 }
 button {
     position:absolute;
@@ -30,4 +31,18 @@ button {
 }
 button:hover {
     background: yellow;
+}
+buttons{
+    position: absolute;
+    top: 10px;
+    bottom: 20px;
+    left: 0px;
+    right: 10px;
+}
+container{
+    position: relative;
+    top: 0%;
+    bottom: 100%;
+    left: 0%;
+    right: 100%;
 }

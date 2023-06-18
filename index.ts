@@ -1,15 +1,26 @@
 import { timeStamp } from "console";
 import { convertTypeAcquisitionFromJson, createWatchCompilerHost, isModuleBody, visitNodes } from "typescript";
 
-const canvas: HTMLCanvasElement = <HTMLCanvasElement> document.getElementById('gameArea');
-const ctx = canvas.getContext('2d');
-
 const width: number = window.innerWidth;
 const height: number = window.innerHeight;
+
+//set dimensions of parent container of canvas and buttons
+const container = document.getElementById("container");
+if (container != null){
+    container.style.width = width + ''
+    container.style.height = height + ''
+}
+
+const canvas: HTMLCanvasElement = <HTMLCanvasElement> document.getElementById('gameArea');
+const ctx = canvas.getContext('2d');
 
 canvas.width = width;
 canvas.height = height;
 
+canvas.style.top = "10%";
+canvas.style.bottom = "100%";
+canvas.style.left = "0%";
+canvas.style.right = "90%";
 
 //HEXAGON CONSTANTS
 const hex_side: number = canvas.width/30.0; //11 by 11 board but divide by 14.0 for extra space
@@ -346,12 +357,11 @@ function createTiles() : Graph<string, Tile>{
             tile_array[row][col] = init_tile;
 
             var b = document.createElement("button");
-            var body = document.getElementsByTagName("body")[0];
+            var buttons = document.getElementById("buttons");
             b.innerHTML = "Button b";
-            canvas.appendChild(b);
-
-            b.style.left = init_center[0] + "px";
-            b.style.top = (75 + init_center[1]) + 'px';
+            if (buttons != null){
+                buttons.appendChild(b);
+            }
 
             b.addEventListener("click", function(){
                 alert("did something");
@@ -439,7 +449,6 @@ function drawTiles(points : Graph<string, Tile>){
 }
 
 drawGame();
-
 
 
 

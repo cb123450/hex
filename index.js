@@ -1,11 +1,21 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var canvas = document.getElementById('gameArea');
-var ctx = canvas.getContext('2d');
 var width = window.innerWidth;
 var height = window.innerHeight;
+//set dimensions of parent container of canvas and buttons
+var container = document.getElementById("container");
+if (container != null) {
+    container.style.width = width + '';
+    container.style.height = height + '';
+}
+var canvas = document.getElementById('gameArea');
+var ctx = canvas.getContext('2d');
 canvas.width = width;
 canvas.height = height;
+canvas.style.top = "10%";
+canvas.style.bottom = "100%";
+canvas.style.left = "0%";
+canvas.style.right = "90%";
 //HEXAGON CONSTANTS
 var hex_side = canvas.width / 30.0; //11 by 11 board but divide by 14.0 for extra space
 var hex_height = 2.0 * hex_side; //from edge to opposite edge
@@ -239,11 +249,11 @@ function createTiles() {
             g.addVertex(init_tile);
             tile_array[row][col] = init_tile;
             var b = document.createElement("button");
-            var body = document.getElementsByTagName("body")[0];
+            var buttons = document.getElementById("buttons");
             b.innerHTML = "Button b";
-            canvas.appendChild(b);
-            b.style.left = init_center[0] + "px";
-            b.style.top = (75 + init_center[1]) + 'px';
+            if (buttons != null) {
+                buttons.appendChild(b);
+            }
             b.addEventListener("click", function () {
                 alert("did something");
             });
