@@ -15,6 +15,34 @@ const hex_side: number = canvas.width/30.0; //11 by 11 board but divide by 14.0 
 const hex_height: number = 2.0*hex_side; //from edge to opposite edge
 const hex_width: number = Math.sqrt(3)*hex_side; //from corner to opposite corner
 
+var b = document.createElement("button");
+var body = document.getElementsByTagName("body")[0];
+//body.style.
+b.innerHTML = "Button b";
+body.appendChild(b);
+
+//b.style.left = init_center[0] + 'px';
+//b.style.top = init_center[1] + 'px';
+
+b.addEventListener("click", function(){
+    alert("did something");
+});
+
+
+var c = document.createElement("button");
+var body = document.getElementsByTagName("body")[0];
+//body.style.
+c.innerHTML = "Button c";
+body.appendChild(c);
+
+//b.style.left = init_center[0] + 'px';
+//b.style.top = init_center[1] + 'px';
+c.style.left = "400px";
+
+c.addEventListener("click", function(){
+    alert("did something");
+});
+
 /*
 ORIENTATION OF HEXAGON ON BOARD -> 
 /\
@@ -343,19 +371,6 @@ function createTiles() : Graph<string, Tile>{
             g.addVertex(init_tile)
 
             tile_array[row][col] = init_tile;
-            
-            var b = document.createElement("button");
-            var body = document.getElementsByTagName("body")[0];
-            //body.style.
-            b.innerHTML = "Button";
-            body.appendChild(b);
-
-            //b.style.left = init_center[0] + 'px';
-            //b.style.top = init_center[1] + 'px';
-
-            b.addEventListener("click", function(){
-                alert("did something");
-            });
 
             if (col >= 1){
                 //add an edge between left neighbor of this tile and curr tile
