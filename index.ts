@@ -1,5 +1,5 @@
 import { timeStamp } from "console";
-import { convertTypeAcquisitionFromJson, createWatchCompilerHost, visitNodes } from "typescript";
+import { convertTypeAcquisitionFromJson, createWatchCompilerHost, isModuleBody, visitNodes } from "typescript";
 
 const canvas: HTMLCanvasElement = <HTMLCanvasElement> document.getElementById('gameArea');
 const ctx = canvas.getContext('2d');
@@ -225,13 +225,15 @@ function drawGame(){
     clearScreen();
     let g : Graph<string, Tile> = createTiles();
     drawTiles(g);
-    changeColor(g);
+    //changeColor(g);
 }
 
 function clearScreen(){
     if (ctx != null){
         ctx.fillStyle = "green";
-        ctx.fillRect(0,0, canvas.width, canvas.height);
+        const w : number = 17 * hex_width;
+        var h : number = 6 * hex_side + 6 * hex_height;
+        ctx.fillRect(0,0, w, h);
     }
 }
 
@@ -341,8 +343,20 @@ function createTiles() : Graph<string, Tile>{
             g.addVertex(init_tile)
 
             tile_array[row][col] = init_tile;
-
             
+            var b = document.createElement("button");
+            var body = document.getElementsByTagName("body")[0];
+            //body.style.
+            b.innerHTML = "Button";
+            body.appendChild(b);
+
+            //b.style.left = init_center[0] + 'px';
+            //b.style.top = init_center[1] + 'px';
+
+            b.addEventListener("click", function(){
+                alert("did something");
+            });
+
             if (col >= 1){
                 //add an edge between left neighbor of this tile and curr tile
                 g.addEdge(tile_array[row][col], tile_array[row][col-1]);
