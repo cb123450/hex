@@ -68,6 +68,26 @@ while (row < 12){
         +'\n}';
         sheet.insertRule(style_middle, sheet.cssRules.length);
 
+        //Add buttons
+        var b = document.createElement("button");        
+        div_elem_middle.appendChild(b);
+        b.addEventListener("click", function(){
+            alert("did something");
+        });
+
+        b.id = div_elem_middle.id + '_button';
+
+        var button_style = '#' + b.id + 
+        ' {\n' 
+        + 'height: ' + side_length + 'px;\n' 
+        + 'width: ' + width + 'px;\n'
+        + 'background-color: rgb(102, 204, 136);\n'
+        + 'border: 0px;\n'
+        + ''
+        +'\n}';
+
+        sheet.insertRule(button_style, sheet.cssRules.length);
+
         var style_bottom = '#' + div_elem_bottom.id + 
         ' {\n' 
         + 'width: 0;'
