@@ -5,10 +5,10 @@ var width = root3 * side_length;
 var border_bottom_top = side_length - (side_length / 2.0);
 var border_left_right = (root3 / 2.0) * side_length;
 var grid_container = document.getElementById("grid-container");
-var row = 0;
-while (row < 11) {
-    var col = 0;
-    while (col < 11) {
+var row = 1;
+while (row < 12) {
+    var col = 1;
+    while (col < 12) {
         //Create new html element
         var div_elem = document.createElement("div");
         div_elem.id = 'r' + row + 'c' + col;
@@ -23,9 +23,10 @@ while (row < 11) {
         div_elem.appendChild(div_elem_bottom);
         grid_container === null || grid_container === void 0 ? void 0 : grid_container.appendChild(div_elem);
         var sheet = window.document.styleSheets[0];
+        var num = col + row;
         var style = '#' + div_elem.id +
             ' {\n'
-            + 'grid-column: ' + col + ';\n'
+            + 'grid-column: ' + num + ';\n'
             + 'grid-row: ' + row + ';\n}';
         sheet.insertRule(style, sheet.cssRules.length);
         var style_top = '#' + div_elem_top.id +

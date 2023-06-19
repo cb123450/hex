@@ -7,10 +7,10 @@ var border_left_right = (root3/2.0)*side_length;
 
 var grid_container = document.getElementById("grid-container");
 
-var row : number = 0;
-while (row < 11){
-    var col : number = 0;
-    while (col < 11){
+var row : number = 1;
+while (row < 12){
+    var col : number = 1;
+    while (col < 12){
         //Create new html element
         var div_elem : HTMLDivElement = document.createElement("div");
         div_elem.id = 'r' + row + 'c' + col;
@@ -32,9 +32,10 @@ while (row < 11){
 
         var sheet = window.document.styleSheets[0];
 
+        var num = col + row;
         var style = '#' + div_elem.id + 
         ' {\n' 
-        + 'grid-column: ' + col + ';\n' 
+        + 'grid-column: ' + num + ';\n' 
         + 'grid-row: ' + row + ';\n}';
         sheet.insertRule(style, sheet.cssRules.length);
 

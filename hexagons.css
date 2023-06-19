@@ -1,8 +1,16 @@
 .grid-container {
+    --side_length: 10;
+    --root3: 1.73205;
+    --height: calc(5*2);
+    --width: calc(var(--root3)*var(--side_length));
+
+    height: 75%;
+    width: 75%;
     display: grid;
-    grid-template-rows: repeat(21, 1fr);
-    grid-template-columns: repeat(21, 1fr);
-    gap: 3px;
+    grid-template-rows: repeat(21, minmax(20px, 20px));
+    grid-template-columns: repeat(21, minmax(18px, 18px));
+    gap: 1px;
+    justify-content: stretch;
 }
 
 .hex_top{
