@@ -4,10 +4,17 @@
     grid-template-columns: repeat(21, 1fr);
     gap: 3px;
 }
-/*
-.r1c1 {
-    grid-column: 1;
-    grid-row: 1;
-    background-color: red;
+
+.hex_top{
+    --side_length: 5;
+    --root3: 1.73205;
+    --height: calc(5*2);
+    --width: calc(var(--root3)*var(--side_length));
+
+    width: 5;
+    height: 5;
+    background-color: black;
+    border-bottom: var(--side_length)-calc(var(--side_length)/2.0)px solid black;
+    border-left: calc(var(--width/2.0))px solid transparent;
+    border-right: calc(var(--width/2.0))px solid transparent;
 }
-*/
