@@ -31,26 +31,28 @@ while (row < 11) {
         var style_top = '#' + div_elem_top.id +
             ' {\n'
             + 'width: 0;'
-            + 'border-bottom: ' + border_bottom_top + 'px solid #6C6;'
+            + 'border-bottom: ' + border_bottom_top + 'px solid #6C8;'
             + 'border-left: ' + border_left_right + 'px solid transparent;'
             + 'border-right: ' + border_left_right + 'px solid transparent;'
-            + ';\n}';
+            + '\n}';
         sheet.insertRule(style_top, sheet.cssRules.length);
-        /*
         var style_middle = '#' + div_elem_middle.id +
-        ' {\n'
-        + 'grid-column: ' + col + ';\n'
-        + 'grid-row: ' + row + ';\n'
-        + 'border: 10px solid #6C6;\n}';
+            ' {\n'
+            + 'grid-column: ' + col + ';\n'
+            + 'grid-row: ' + row + ';\n'
+            + 'width: ' + width + 'px;\n'
+            + 'height: ' + height + 'px;\n'
+            + 'background: #6C8;'
+            + '\n}';
         sheet.insertRule(style_middle, sheet.cssRules.length);
-
         var style_bottom = '#' + div_elem_bottom.id +
-        ' {\n'
-        + 'grid-column: ' + col + ';\n'
-        + 'grid-row: ' + row + ';\n'
-        + 'border: 10px solid #6C6;\n}';
+            ' {\n'
+            + 'width: 0;'
+            + 'border-top: ' + border_bottom_top + 'px solid #6C8;'
+            + 'border-left: ' + border_left_right + 'px solid transparent;'
+            + 'border-right: ' + border_left_right + 'px solid transparent;'
+            + '\n}';
         sheet.insertRule(style_bottom, sheet.cssRules.length);
-        */
         col += 1;
     }
     row += 1;
