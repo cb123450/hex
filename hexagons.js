@@ -33,7 +33,7 @@ while (row < 14) {
             + 'grid-column: ' + num + ';\n'
             + 'grid-row: ' + row + ';\n}';
         sheet.insertRule(style, sheet.cssRules.length);
-        if (row == 1) {
+        if (row == 1 && col >= 3) {
             var upper_border = document.createElement("div");
             upper_border.id = 'r' + row + 'c' + col + "_upper_border";
             hex_container.appendChild(upper_border);
@@ -41,6 +41,8 @@ while (row < 14) {
             var style_upper_border = '#' + upper_border.id
                 + ' {\n'
                 + 'width: 0;'
+                + 'position: relative;'
+                + 'left: 0px;'
                 + 'border-top: ' + 10 + 'px solid blue;'
                 + 'border-bottom: ' + 10 + 'px solid blue;'
                 + 'border-left: ' + 10 + 'px solid blue;'
@@ -54,7 +56,7 @@ while (row < 14) {
         }
         else if (col == 13) {
         }
-        else {
+        else if (row > 1 && row < 14 && col > 1 && col < 14) {
             //UPPER
             var upper = document.createElement("div");
             upper.id = 'r' + row + 'c' + col + "_upper";
