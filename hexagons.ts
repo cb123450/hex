@@ -1,4 +1,4 @@
-var side_length = window.innerWidth/33;
+var side_length = window.innerWidth/40;
 var root3 = 1.73205;
 var height = 2*side_length;
 var width = root3*side_length;
@@ -6,9 +6,10 @@ var border_bottom_top = side_length - (side_length/2.0);
 var border_left_right = (root3/2.0)*side_length;
 
 var grid_container = document.getElementById("grid-container");
+
 if (grid_container != null){
     grid_container.style.gridTemplateRows = "repeat(21, minmax(" + height + "px, " + height + "px))";
-    grid_container.style.gridTemplateColumns = "repeat(21, minmax(" + width + "px, " + width + "px))";
+    grid_container.style.gridTemplateColumns = "repeat(25, minmax(" + width + "px, " + width + "px))";
 }
 
 var row : number = 1;
@@ -25,7 +26,7 @@ while (row < 14){
 
         var num = col + row;
         var right_offset = (width/2.0)*(row-1);
-        var top_offset = -9 * (row-1);
+        var top_offset = -6 * (row-1);
 
         var style = '#' + hex_container.id + 
         ' {\n' 
@@ -42,6 +43,7 @@ while (row < 14){
 
         
         if (row == 1 && col >= 3){
+            //TOP BORDER
             var upper_border : HTMLDivElement = document.createElement("div");            
             upper_border.id = 'r' + row + 'c' + col + "_upper_border";
             hex_container.appendChild(upper_border);
@@ -51,24 +53,87 @@ while (row < 14){
             + ' {\n' 
             + 'width: 0;'
             + 'position: relative;'
-            + 'left: 0px;'
-            + 'border-top: ' +  10 + 'px solid blue;'
-            + 'border-bottom: ' + 10 + 'px solid blue;'
-            + 'border-left: ' + 10 + 'px solid blue;'
-            + 'border-right: ' + 10 + 'px solid blue;'
+            + 'left: ' + -width/2.0 + 'px;'
+            + 'z-index: -1;'
+            + 'top: ' + height/1.25 + 'px;'
+            + 'border-bottom: ' +  side_length/2.0 + 'px solid red;'
+            + 'border-top: ' +  side_length/4.0 + 'px solid red;'
+            + 'border-left: ' + width/2.0 + 'px solid red;'
+            + 'border-right: ' + width/2.0 + 'px solid red;'
              + '\n}';
             sheet.insertRule(style_upper_border, sheet.cssRules.length);
         }
-        else if (row == 13){
+        else if (row == 13 && col >= 2 && col <= 12){
+            //BOTTOM BORDER
+            var lower_border : HTMLDivElement = document.createElement("div");            
+            lower_border.id = 'r' + row + 'c' + col + "_lower_border";
+            hex_container.appendChild(lower_border);
+            console.log(lower_border.id);
+
+            var style_lower_border = '#' + lower_border.id
+            + ' {\n' 
+            + 'width: 0;'
+            + 'position: relative;'
+            + 'left: ' + -width/1.7 + 'px;'
+            + 'z-index: -1;'
+            + 'top: ' + - height/9.0 + 'px;'
+            + 'border-bottom: ' +  side_length/2.8 + 'px solid red;'
+            + 'border-top: ' +  side_length/4.0 + 'px solid red;'
+            + 'border-left: ' + width/2.0 + 'px solid red;'
+            + 'border-right: ' + width/2.0 + 'px solid red;'
+             + '\n}';
+            sheet.insertRule(style_lower_border, sheet.cssRules.length);
+        }
+        else if (col == 1 && row >= 3){
+            //LEFT BORDER
+            var left_border : HTMLDivElement = document.createElement("div");            
+            left_border.id = 'r' + row + 'c' + col + "_left_border";
+            hex_container.appendChild(left_border);
+            console.log(left_border.id);
+
+            const rotation: number = 6.0/36.0;
+            
+            var style_left_border = '#' + left_border.id
+            + ' {\n' 
+            + 'width: 0;'
+            + 'position: relative;'
+            + 'left: ' + width/7.5 + 'px;'
+            + 'z-index: -1;'
+            + 'top: ' + -height/3.4 + 'px;'
+            + 'border-bottom: ' +  side_length/2.8 + 'px solid blue;'
+            + 'border-top: ' +  side_length/4.0 + 'px solid blue;'
+            + 'border-left: ' + width/2.0 + 'px solid blue;'
+            + 'border-right: ' + width/2.0 + 'px solid blue;'
+            + 'transform: rotate(' + rotation + 'turn);'
+             + '\n}';
+            sheet.insertRule(style_left_border, sheet.cssRules.length);
+        }
+        else if (col == 13 && row <= 12){
+            //RIGHT BORDER
+            var right_border : HTMLDivElement = document.createElement("div");            
+            right_border.id = 'r' + row + 'c' + col + "_right_border";
+            hex_container.appendChild(right_border);
+            console.log(right_border.id);
+
+            const rotation: number = 6.0/36.0;
+            
+            var style_right_border = '#' + right_border.id
+            + ' {\n' 
+            + 'width: 0;'
+            + 'position: relative;'
+            + 'left: ' + -width/1.4 + 'px;'
+            + 'z-index: -1;'
+            + 'top: ' + height/6.5 + 'px;'
+            + 'border-bottom: ' +  side_length/2.8 + 'px solid blue;'
+            + 'border-top: ' +  side_length/4.0 + 'px solid blue;'
+            + 'border-left: ' + width/2.0 + 'px solid blue;'
+            + 'border-right: ' + width/2.0 + 'px solid blue;'
+            + 'transform: rotate(' + rotation + 'turn);'
+             + '\n}';
+            sheet.insertRule(style_right_border, sheet.cssRules.length);
 
         }
-        else if (col == 1){
-
-        }
-        else if (col == 13){
-
-        }
-        else if (row > 1 && row < 14 && col > 1 && col < 14){
+        else if (row > 1 && row < 13 && col > 1 && col < 13){
             //UPPER
             var upper : HTMLDivElement = document.createElement("div");
             upper.id = 'r' + row + 'c' + col + "_upper";
