@@ -49,7 +49,6 @@ class Tile {
     unvisit(){
         this.visited = false;
     }
-    
 }
 
 /*
@@ -160,10 +159,11 @@ class Queue<T> implements Queue<T>{
     }
 }
 //END----------Tile, Graph, and Queue DATA STRUCTURES---------
+var turn: number = 0;
 
 function drawBoard() : Tile[][] {
     //Create tile array to aid in creaetion of graph
-    
+    turn = 0;
     let tile_array : Tile[][] = [];
     var index : number = 0;
     while (index < 11){
@@ -333,11 +333,11 @@ function drawBoard() : Tile[][] {
                 +'\n}';
                 sheet.insertRule(style_middle, sheet.cssRules.length);
 
-                //Add buttons
+                //ADD BUTTON TO MIDDLE
                 var b = document.createElement("button");        
                 middle.appendChild(b);
                 b.addEventListener("click", function(){
-                    alert("did something");
+                    buttonPressed(row, col);
                 });
 
                 b.id = middle.id + '_button';
@@ -419,6 +419,44 @@ function createTiles(t : Tile[][]) : Graph<string, Tile>{
     
 }
 
+function buttonPressed(row : number, col : number){
+    const element_id: string = 'r' + row + 'c' + col;
+    let hex_upper : HTMLElement | null = document.getElementById(element_id + "_upper");
+    let hex_middle : HTMLElement | null = document.getElementById(element_id + "_middle");
+    let hex_lower : HTMLElement | null = document.getElementById(element_id + "_lower");
+
+    if (turn % 2 == 0){
+        //change to red
+        //upper
+        if (hex_upper != null){
+            hex_upper.style.borderBottom = border_bottom_top + 'px solid red;'
+        }
+        //middle
+        if (hex_middle != null){
+            hex_middle.style.background = "red";
+        }
+        //bottom
+        if (hex_lower != null){
+            hex_lower.style.borderTop = border_bottom_top + 'px solid red;'
+        }
+    }
+    else{
+        //change to blue
+        //upper
+        if (hex_upper != null){
+            hex_upper.style.borderBottom = border_bottom_top + 'px solid blue;'
+        }
+        //middle
+        if (hex_middle != null){
+            hex_middle.style.background = "blue";
+        }
+        //bottom
+        if (hex_lower != null){
+            hex_lower.style.borderTop = border_bottom_top + 'px solid blue;'
+        }
+    }
+}
+
 /*
 ENUM for red player and blue player
 */
@@ -442,7 +480,6 @@ function checkWin(player : Player){
 */
 function playGame(): number{
     let curr_player : Player = Player.Red;
-    let turn: number = 0;
 
     while (!checkWin(curr_player)){
         //CONNECT BUTTONS AND ACCESS CSS STYLE SHEETS TO CHANGE COLORS AND CHECK THAT BUTTON HASN'T ALREADY BEEN PRESSED
@@ -462,6 +499,7 @@ else{
     //BLUE PLAYER HAS WON
 }
 
+drawBoard();
 
 
 
