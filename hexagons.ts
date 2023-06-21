@@ -159,11 +159,9 @@ class Queue<T> implements Queue<T>{
     }
 }
 //END----------Tile, Graph, and Queue DATA STRUCTURES---------
-var turn: number = 0;
 
 function drawBoard() : Tile[][] {
     //Create tile array to aid in creaetion of graph
-    turn = 0;
     let tile_array : Tile[][] = [];
     var index : number = 0;
     while (index < 11){
@@ -336,9 +334,8 @@ function drawBoard() : Tile[][] {
                 //ADD BUTTON TO MIDDLE
                 var b = document.createElement("button");        
                 middle.appendChild(b);
-                b.addEventListener("click", function(){
-                    buttonPressed(row, col);
-                });
+                b.addEventListener("click", 
+                    () => buttonPressed(row, col));
 
                 b.id = middle.id + '_button';
 
@@ -420,12 +417,13 @@ function createTiles(t : Tile[][]) : Graph<string, Tile>{
 }
 
 function buttonPressed(row : number, col : number){
+    
     const element_id: string = 'r' + row + 'c' + col;
     let hex_upper : HTMLElement | null = document.getElementById(element_id + "_upper");
     let hex_middle : HTMLElement | null = document.getElementById(element_id + "_middle");
     let hex_lower : HTMLElement | null = document.getElementById(element_id + "_lower");
 
-    if (turn % 2 == 0){
+    if (getTurn() % 2 == 0){
         //change to red
         //upper
         if (hex_upper != null){
@@ -473,24 +471,38 @@ function checkWin(player : Player){
     return false;
 }
 
+/* turn variable and accessor and incrementer*/
+var turn: number = 0;
+
+function getTurn() : number {
+    return turn;
+}
+
+function incrementTurn(){
+    turn += 1;
+}
 
 /*
 * Run the game
 * Red goes first and moves on even turn numbers 0, 2, 4, ...
 */
 function playGame(): number{
+    turn = 0;
     let curr_player : Player = Player.Red;
 
     while (!checkWin(curr_player)){
         //CONNECT BUTTONS AND ACCESS CSS STYLE SHEETS TO CHANGE COLORS AND CHECK THAT BUTTON HASN'T ALREADY BEEN PRESSED
-        turn += 1;
+        incrementTurn();
     }
 
-    return turn;
+    return getTurn();
 }
 
 let tile_array : Tile[][] = drawBoard();
-let graph : Graph<string, Tile> = createTiles(tile_array);
+
+let g : Graph<string, Tile> = createTiles(tile_array);
+
+/*
 let winner = playGame();
 if (winner % 2 == 1){
     //RED PLAYER HAS WON
@@ -498,9 +510,7 @@ if (winner % 2 == 1){
 else{
     //BLUE PLAYER HAS WON
 }
-
-drawBoard();
-
+*/
 
 
 

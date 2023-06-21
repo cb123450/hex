@@ -109,10 +109,8 @@ var Queue = /** @class */ (function () {
     return Queue;
 }());
 //END----------Tile, Graph, and Queue DATA STRUCTURES---------
-var turn = 0;
 function drawBoard() {
     //Create tile array to aid in creaetion of graph
-    turn = 0;
     var tile_array = [];
     var index = 0;
     while (index < 11) {
@@ -262,9 +260,7 @@ function drawBoard() {
                 //ADD BUTTON TO MIDDLE
                 var b = document.createElement("button");
                 middle.appendChild(b);
-                b.addEventListener("click", function () {
-                    buttonPressed(row, col);
-                });
+                b.addEventListener("click", function () { return buttonPressed(row, col); });
                 b.id = middle.id + '_button';
                 var button_style = '#' + b.id +
                     ' {\n'
@@ -333,9 +329,12 @@ function buttonPressed(row, col) {
     var hex_upper = document.getElementById(element_id + "_upper");
     var hex_middle = document.getElementById(element_id + "_middle");
     var hex_lower = document.getElementById(element_id + "_lower");
-    if (turn % 2 == 0) {
+    if (getTurn() % 2 == 0) {
         //change to red
         //upper
+        if (hex_upper == null) {
+            console.log("Test");
+        }
         if (hex_upper != null) {
             hex_upper.style.borderBottom = border_bottom_top + 'px solid red;';
         }
@@ -379,24 +378,35 @@ var Player;
 function checkWin(player) {
     return false;
 }
+/* turn variable and accessor and incrementer*/
+var turn = 0;
+function getTurn() {
+    return turn;
+}
+function incrementTurn() {
+    turn += 1;
+}
 /*
 * Run the game
 * Red goes first and moves on even turn numbers 0, 2, 4, ...
 */
 function playGame() {
+    turn = 0;
     var curr_player = Player.Red;
     while (!checkWin(curr_player)) {
         //CONNECT BUTTONS AND ACCESS CSS STYLE SHEETS TO CHANGE COLORS AND CHECK THAT BUTTON HASN'T ALREADY BEEN PRESSED
-        turn += 1;
+        incrementTurn();
     }
-    return turn;
+    return getTurn();
 }
 var tile_array = drawBoard();
-var graph = createTiles(tile_array);
-var winner = playGame();
-if (winner % 2 == 1) {
+var g = createTiles(tile_array);
+/*
+let winner = playGame();
+if (winner % 2 == 1){
     //RED PLAYER HAS WON
 }
-else {
+else{
     //BLUE PLAYER HAS WON
 }
+*/
