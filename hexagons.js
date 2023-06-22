@@ -121,13 +121,15 @@ function drawBoard() {
         grid_container.style.gridTemplateRows = "repeat(21, minmax(" + height + "px, " + height + "px))";
         grid_container.style.gridTemplateColumns = "repeat(25, minmax(" + width + "px, " + width + "px))";
     }
+    /* Listen to parent of the tiles to improve efficiency */
+    grid_container === null || grid_container === void 0 ? void 0 : grid_container.addEventListener("click", buttonHandler, false);
     var row = 1;
     while (row < 14) {
         var col = 1;
         while (col < 14) {
             //Create new html element
             var hex_container = document.createElement("div");
-            hex_container.id = 'r' + row + 'c' + col;
+            hex_container.id = 'r_' + row + '_c_' + col;
             grid_container === null || grid_container === void 0 ? void 0 : grid_container.appendChild(hex_container);
             var sheet = window.document.styleSheets[0];
             var num = col + row;
@@ -148,7 +150,7 @@ function drawBoard() {
             if (row == 1 && col >= 3) {
                 //TOP BORDER
                 var upper_border = document.createElement("div");
-                upper_border.id = 'r' + row + 'c' + col + "_upper_border";
+                upper_border.id = hex_container.id + "_upper_border";
                 hex_container.appendChild(upper_border);
                 var style_upper_border = '#' + upper_border.id
                     + ' {\n'
@@ -167,7 +169,7 @@ function drawBoard() {
             else if (row == 13 && col >= 2 && col <= 12) {
                 //BOTTOM BORDER
                 var lower_border = document.createElement("div");
-                lower_border.id = 'r' + row + 'c' + col + "_lower_border";
+                lower_border.id = hex_container.id + "_lower_border";
                 hex_container.appendChild(lower_border);
                 var style_lower_border = '#' + lower_border.id
                     + ' {\n'
@@ -186,7 +188,7 @@ function drawBoard() {
             else if (col == 1 && row >= 3) {
                 //LEFT BORDER
                 var left_border = document.createElement("div");
-                left_border.id = 'r' + row + 'c' + col + "_left_border";
+                left_border.id = hex_container.id + "_left_border";
                 hex_container.appendChild(left_border);
                 var rotation = 6.0 / 36.0;
                 var style_left_border = '#' + left_border.id
@@ -207,7 +209,7 @@ function drawBoard() {
             else if (col == 13 && row <= 12) {
                 //RIGHT BORDER
                 var right_border = document.createElement("div");
-                right_border.id = 'r' + row + 'c' + col + "_right_border";
+                right_border.id = hex_container.id + "_right_border";
                 hex_container.appendChild(right_border);
                 var rotation = 6.0 / 36.0;
                 if (row == 1) {
@@ -230,7 +232,7 @@ function drawBoard() {
             else if (row > 1 && row < 13 && col > 1 && col < 13) {
                 //UPPER
                 var upper = document.createElement("div");
-                upper.id = 'r' + row + 'c' + col + "_upper";
+                upper.id = hex_container.id + "_upper";
                 hex_container.appendChild(upper);
                 var style_upper = '#' + upper.id +
                     ' {\n'
@@ -242,7 +244,7 @@ function drawBoard() {
                 sheet.insertRule(style_upper, sheet.cssRules.length);
                 //MIDDLE
                 var middle = document.createElement("div");
-                middle.id = 'r' + row + 'c' + col + "_middle";
+                middle.id = hex_container.id + "_middle";
                 hex_container.appendChild(middle);
                 var style_middle = '#' + middle.id +
                     ' {\n'
@@ -253,32 +255,9 @@ function drawBoard() {
                     + 'background: #6C8;'
                     + '\n}';
                 sheet.insertRule(style_middle, sheet.cssRules.length);
-                middle.addEventListener("click", handler, false);
-                /*
-                //ADD BUTTON TO MIDDLE
-                //createElement accepts a tag name as a paremeter
-                var b = document.createElement("button");
-                b.className = "button" + hex_container.id;
-                b.addEventListener("click",
-                    () => buttonPressed(hex_container.id));
-                
-                b.id = middle.id + '_button';
-                middle.appendChild(b);
-                var button_style = '#' + b.id +
-
-                ' {\n'
-                + 'height: ' + side_length + 'px;\n'
-                + 'width: ' + width + 'px;\n'
-                + 'background-color: rgb(102, 204, 136);\n'
-                + 'border: 0px;\n'
-                + ''
-                +'\n}';
-
-                sheet.insertRule(button_style, sheet.cssRules.length);
-                */
                 //LOWER
                 var lower = document.createElement("div");
-                lower.id = 'r' + row + 'c' + col + "_lower";
+                lower.id = hex_container.id + "_lower";
                 hex_container.appendChild(lower);
                 var style_lower = '#' + lower.id +
                     ' {\n'
@@ -329,42 +308,54 @@ function createTiles(t) {
     }
     return g;
 }
-function handler(evt) {
-    var hex_id = (evt.currentTarget.id).split('_')[0];
-    var hex_upper = document.getElementById(hex_id + "_upper");
-    var hex_middle = document.getElementById(hex_id + "_middle");
-    var hex_lower = document.getElementById(hex_id + "_lower");
-    //grid-container is not null by children are
-    if (getTurn() % 2 == 0) {
-        //change to red
-        //upper
-        if (hex_upper != null) {
-            console.log("test");
-            hex_upper.style.borderBottomColor = "red";
+var turn = 0;
+function buttonHandler(evt) {
+    var test_arr = (evt.target.id).split('_');
+    var r = test_arr[0];
+    var r_coord = parseInt(test_arr[1]);
+    var c = test_arr[2];
+    var c_coord = parseInt(test_arr[3]);
+    //RECONSTRUCT hex_id
+    var hex_id = test_arr.slice(0, -1).join('_');
+    if (r === 'r' && c === 'c' && r_coord >= 2 && r_coord <= 12 && c_coord >= 2 && c_coord <= 12) {
+        console.log(hex_id);
+        var hex_upper = document.getElementById(hex_id + "_upper");
+        var hex_middle = document.getElementById(hex_id + "_middle");
+        var hex_lower = document.getElementById(hex_id + "_lower");
+        //grid-container is not null by children are
+        if (turn % 2 == 0) {
+            //change to red
+            //upper
+            if (hex_upper != null) {
+                hex_upper.style.borderBottomColor = "red";
+            }
+            //middle
+            if (hex_middle != null) {
+                hex_middle.style.background = "red";
+            }
+            //bottom
+            if (hex_lower != null) {
+                hex_lower.style.borderTopColor = "red";
+            }
+            turn += 1;
         }
-        //middle
-        if (hex_middle != null) {
-            hex_middle.style.background = "red";
+        else {
+            //change to blue
+            //upper
+            if (hex_upper != null) {
+                hex_upper.style.borderBottomColor = "blue";
+            }
+            //middle
+            if (hex_middle != null) {
+                hex_middle.style.background = "blue";
+            }
+            //bottom
+            if (hex_lower != null) {
+                hex_lower.style.borderTopColor = "blue";
+            }
+            turn += 1;
         }
-        //bottom
-        if (hex_lower != null) {
-            hex_lower.style.borderTopColor = "red";
-        }
-    }
-    else {
-        //change to blue
-        //upper
-        if (hex_upper != null) {
-            hex_upper.style.borderBottomColor = "blue";
-        }
-        //middle
-        if (hex_middle != null) {
-            hex_middle.style.background = "blue";
-        }
-        //bottom
-        if (hex_lower != null) {
-            hex_lower.style.borderTopColor = "blue";
-        }
+        evt.stopPropagation();
     }
 }
 /*
@@ -382,31 +373,21 @@ var Player;
 function checkWin(player) {
     return false;
 }
-/* turn variable and accessor and incrementer*/
-var turn = 0;
-function getTurn() {
-    return turn;
-}
-function incrementTurn() {
-    turn += 1;
-}
 /*
 * Run the game
 * Red goes first and moves on even turn numbers 0, 2, 4, ...
 */
 function playGame() {
-    turn = 0;
+    var count = 0;
     var curr_player = Player.Red;
-    while (!checkWin(curr_player)) {
-        //CONNECT BUTTONS AND ACCESS CSS STYLE SHEETS TO CHANGE COLORS AND CHECK THAT BUTTON HASN'T ALREADY BEEN PRESSED
-        incrementTurn();
+    while (count < 100) {
+        count += 1;
     }
-    return getTurn();
 }
 var tile_array = drawBoard();
 var g = createTiles(tile_array);
+playGame();
 /*
-let winner = playGame();
 if (winner % 2 == 1){
     //RED PLAYER HAS WON
 }
