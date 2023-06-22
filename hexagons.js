@@ -130,6 +130,7 @@ function drawBoard() {
             //Create new html element
             var hex_container = document.createElement("div");
             hex_container.id = 'r_' + row + '_c_' + col;
+            hex_container.className = "false";
             grid_container === null || grid_container === void 0 ? void 0 : grid_container.appendChild(hex_container);
             var sheet = window.document.styleSheets[0];
             var num = col + row;
@@ -316,12 +317,12 @@ function buttonHandler(evt) {
     var c = test_arr[2];
     var c_coord = parseInt(test_arr[3]);
     //RECONSTRUCT hex_id
-    var hex_id = test_arr.slice(0, -1).join('_');
-    if (r === 'r' && c === 'c' && r_coord >= 2 && r_coord <= 12 && c_coord >= 2 && c_coord <= 12) {
-        console.log(hex_id);
-        var hex_upper = document.getElementById(hex_id + "_upper");
-        var hex_middle = document.getElementById(hex_id + "_middle");
-        var hex_lower = document.getElementById(hex_id + "_lower");
+    var hex_container_id = test_arr.slice(0, -1).join('_');
+    var hex_container = document.querySelector("#" + hex_container_id);
+    if ((hex_container === null || hex_container === void 0 ? void 0 : hex_container.className) == 'false' && r === 'r' && c === 'c' && r_coord >= 2 && r_coord <= 12 && c_coord >= 2 && c_coord <= 12) {
+        var hex_upper = document.getElementById(hex_container_id + "_upper");
+        var hex_middle = document.getElementById(hex_container_id + "_middle");
+        var hex_lower = document.getElementById(hex_container_id + "_lower");
         //grid-container is not null by children are
         if (turn % 2 == 0) {
             //change to red
@@ -338,6 +339,7 @@ function buttonHandler(evt) {
                 hex_lower.style.borderTopColor = "red";
             }
             turn += 1;
+            hex_container.className = "true";
         }
         else {
             //change to blue
@@ -354,6 +356,7 @@ function buttonHandler(evt) {
                 hex_lower.style.borderTopColor = "blue";
             }
             turn += 1;
+            hex_container.className = "true";
         }
         evt.stopPropagation();
     }

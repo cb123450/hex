@@ -185,6 +185,7 @@ function drawBoard() : Tile[][] {
             //Create new html element
             var hex_container : HTMLDivElement = document.createElement("div");
             hex_container.id = 'r_' + row + '_c_' + col;
+            hex_container.className = "false";
 
             grid_container?.appendChild(hex_container);
 
@@ -409,14 +410,15 @@ function buttonHandler(evt){
     let c_coord : number = parseInt(test_arr[3]);
 
     //RECONSTRUCT hex_id
-    let hex_id : string = test_arr.slice(0, -1).join('_');
+    let hex_container_id : string = test_arr.slice(0, -1).join('_');
+
+    let hex_container = document.querySelector("#" + hex_container_id);
 
 
-    if (r === 'r' && c === 'c' && r_coord >= 2 && r_coord <= 12 && c_coord >= 2 && c_coord <= 12){
-        console.log(hex_id)
-        let hex_upper : HTMLElement | null = document.getElementById(hex_id + "_upper");
-        let hex_middle : HTMLElement | null = document.getElementById(hex_id + "_middle");
-        let hex_lower : HTMLElement | null = document.getElementById(hex_id + "_lower");
+    if (hex_container?.className == 'false' && r === 'r' && c === 'c' && r_coord >= 2 && r_coord <= 12 && c_coord >= 2 && c_coord <= 12){
+        let hex_upper : HTMLElement | null = document.getElementById(hex_container_id + "_upper");
+        let hex_middle : HTMLElement | null = document.getElementById(hex_container_id + "_middle");
+        let hex_lower : HTMLElement | null = document.getElementById(hex_container_id + "_lower");
 
         //grid-container is not null by children are
         if (turn % 2 == 0){
@@ -434,6 +436,7 @@ function buttonHandler(evt){
                 hex_lower.style.borderTopColor = "red";
             }
             turn += 1;
+            hex_container.className = "true";
         }
         else{
             //change to blue
@@ -450,6 +453,7 @@ function buttonHandler(evt){
                 hex_lower.style.borderTopColor = "blue";
             }
             turn += 1;
+            hex_container.className = "true";
         }
         evt.stopPropagation();
     }
