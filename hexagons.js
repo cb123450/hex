@@ -150,7 +150,6 @@ function drawBoard() {
                 var upper_border = document.createElement("div");
                 upper_border.id = 'r' + row + 'c' + col + "_upper_border";
                 hex_container.appendChild(upper_border);
-                console.log(upper_border.id);
                 var style_upper_border = '#' + upper_border.id
                     + ' {\n'
                     + 'width: 0;'
@@ -170,7 +169,6 @@ function drawBoard() {
                 var lower_border = document.createElement("div");
                 lower_border.id = 'r' + row + 'c' + col + "_lower_border";
                 hex_container.appendChild(lower_border);
-                console.log(lower_border.id);
                 var style_lower_border = '#' + lower_border.id
                     + ' {\n'
                     + 'width: 0;'
@@ -190,7 +188,6 @@ function drawBoard() {
                 var left_border = document.createElement("div");
                 left_border.id = 'r' + row + 'c' + col + "_left_border";
                 hex_container.appendChild(left_border);
-                console.log(left_border.id);
                 var rotation = 6.0 / 36.0;
                 var style_left_border = '#' + left_border.id
                     + ' {\n'
@@ -212,7 +209,6 @@ function drawBoard() {
                 var right_border = document.createElement("div");
                 right_border.id = 'r' + row + 'c' + col + "_right_border";
                 hex_container.appendChild(right_border);
-                console.log(right_border.id);
                 var rotation = 6.0 / 36.0;
                 if (row == 1) {
                 }
@@ -257,20 +253,29 @@ function drawBoard() {
                     + 'background: #6C8;'
                     + '\n}';
                 sheet.insertRule(style_middle, sheet.cssRules.length);
+                middle.addEventListener("click", handler, false);
+                /*
                 //ADD BUTTON TO MIDDLE
+                //createElement accepts a tag name as a paremeter
                 var b = document.createElement("button");
-                middle.appendChild(b);
-                b.addEventListener("click", function () { return buttonPressed(row, col); });
+                b.className = "button" + hex_container.id;
+                b.addEventListener("click",
+                    () => buttonPressed(hex_container.id));
+                
                 b.id = middle.id + '_button';
+                middle.appendChild(b);
                 var button_style = '#' + b.id +
-                    ' {\n'
-                    + 'height: ' + side_length + 'px;\n'
-                    + 'width: ' + width + 'px;\n'
-                    + 'background-color: rgb(102, 204, 136);\n'
-                    + 'border: 0px;\n'
-                    + ''
-                    + '\n}';
+
+                ' {\n'
+                + 'height: ' + side_length + 'px;\n'
+                + 'width: ' + width + 'px;\n'
+                + 'background-color: rgb(102, 204, 136);\n'
+                + 'border: 0px;\n'
+                + ''
+                +'\n}';
+
                 sheet.insertRule(button_style, sheet.cssRules.length);
+                */
                 //LOWER
                 var lower = document.createElement("div");
                 lower.id = 'r' + row + 'c' + col + "_lower";
@@ -324,19 +329,18 @@ function createTiles(t) {
     }
     return g;
 }
-function buttonPressed(row, col) {
-    var element_id = 'r' + row + 'c' + col;
-    var hex_upper = document.getElementById(element_id + "_upper");
-    var hex_middle = document.getElementById(element_id + "_middle");
-    var hex_lower = document.getElementById(element_id + "_lower");
+function handler(evt) {
+    var hex_id = (evt.currentTarget.id).split('_')[0];
+    var hex_upper = document.getElementById(hex_id + "_upper");
+    var hex_middle = document.getElementById(hex_id + "_middle");
+    var hex_lower = document.getElementById(hex_id + "_lower");
+    //grid-container is not null by children are
     if (getTurn() % 2 == 0) {
         //change to red
         //upper
-        if (hex_upper == null) {
-            console.log("Test");
-        }
         if (hex_upper != null) {
-            hex_upper.style.borderBottom = border_bottom_top + 'px solid red;';
+            console.log("test");
+            hex_upper.style.borderBottomColor = "red";
         }
         //middle
         if (hex_middle != null) {
@@ -344,14 +348,14 @@ function buttonPressed(row, col) {
         }
         //bottom
         if (hex_lower != null) {
-            hex_lower.style.borderTop = border_bottom_top + 'px solid red;';
+            hex_lower.style.borderTopColor = "red";
         }
     }
     else {
         //change to blue
         //upper
         if (hex_upper != null) {
-            hex_upper.style.borderBottom = border_bottom_top + 'px solid blue;';
+            hex_upper.style.borderBottomColor = "blue";
         }
         //middle
         if (hex_middle != null) {
@@ -359,7 +363,7 @@ function buttonPressed(row, col) {
         }
         //bottom
         if (hex_lower != null) {
-            hex_lower.style.borderTop = border_bottom_top + 'px solid blue;';
+            hex_lower.style.borderTopColor = "blue";
         }
     }
 }
