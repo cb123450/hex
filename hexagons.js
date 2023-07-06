@@ -4,7 +4,8 @@ var height = 2 * side_length;
 var width = root3 * side_length;
 var border_bottom_top = side_length - (side_length / 2.0);
 var border_left_right = (root3 / 2.0) * side_length;
-var grid_container = document.getElementById("grid");
+var grid = document.getElementById("grid");
+var start_button = document.getElementById("start-button");
 var Tile = /** @class */ (function () {
     function Tile(row, col) {
         this.row = row;
@@ -117,12 +118,13 @@ function drawBoard() {
         tile_array[index] = [];
         index += 1;
     }
-    if (grid_container != null) {
-        grid_container.style.gridTemplateRows = "5% repeat(20, minmax(" + height + "px, " + height + "px))";
-        grid_container.style.gridTemplateColumns = "repeat(25, minmax(" + width + "px, " + width + "px))";
+    if (grid != null) {
+        grid.style.gridTemplateRows = "repeat(21, minmax(" + height + "px, " + height + "px))";
+        grid.style.gridTemplateColumns = "repeat(25, minmax(" + width + "px, " + width + "px))";
     }
     /* Listen to parent of the tiles to improve efficiency */
-    grid_container === null || grid_container === void 0 ? void 0 : grid_container.addEventListener("click", buttonHandler, false);
+    grid === null || grid === void 0 ? void 0 : grid.addEventListener("click", buttonHandler, false);
+    start_button === null || start_button === void 0 ? void 0 : start_button.addEventListener("click", startHandler, false);
     var row = 1;
     while (row < 14) {
         var col = 1;
@@ -131,18 +133,18 @@ function drawBoard() {
             var hex_container = document.createElement("div");
             hex_container.id = 'r_' + row + '_c_' + col;
             hex_container.className = "false";
-            grid_container === null || grid_container === void 0 ? void 0 : grid_container.appendChild(hex_container);
+            grid === null || grid === void 0 ? void 0 : grid.appendChild(hex_container);
             var sheet = window.document.styleSheets[0];
             var num = col + row;
             var right_offset = (width / 2.0) * (row - 1);
-            var top_offset = -6 * (row - 1);
+            var top_offset = -1.5 * (row - 1);
             var style = '#' + hex_container.id +
                 ' {\n'
                 + 'position: relative;'
                 //+ 'width: ' + width + ';'
                 //+ 'height: ' + height + ';'
                 + 'right: ' + right_offset + 'px;'
-                + 'top: ' + top_offset + 'px;'
+                + 'top: ' + top_offset + 'vh;'
                 //+ 'box-sizing: content-box;'
                 //+ 'padding-right: 100%;'
                 + 'grid-column: ' + num + ';\n'
@@ -318,7 +320,6 @@ function buttonHandler(evt) {
     var c_coord = parseInt(test_arr[3]);
     //RECONSTRUCT hex_id
     var hex_container_id = test_arr.slice(0, -1).join('_');
-    console.log(hex_container_id);
     var hex_container = document.querySelector("#" + hex_container_id);
     if ((hex_container === null || hex_container === void 0 ? void 0 : hex_container.className) == 'false' && r === 'r' && c === 'c' && r_coord >= 2 && r_coord <= 12 && c_coord >= 2 && c_coord <= 12) {
         var hex_upper = document.getElementById(hex_container_id + "_upper");
@@ -360,6 +361,36 @@ function buttonHandler(evt) {
             hex_container.className = "true";
         }
         evt.stopPropagation();
+    }
+}
+function startHandler(evt) {
+    turn = 0;
+    var r = 2;
+    while (r <= 12) {
+        var c = 2;
+        while (c <= 12) {
+            var hex_container_id = 'r_' + r + '_c_' + c;
+            var hex_container = document.querySelector("#" + hex_container_id);
+            if ((hex_container === null || hex_container === void 0 ? void 0 : hex_container.className) == "true") {
+                hex_container.className = "false";
+                var hex_upper = document.getElementById(hex_container_id + "_upper");
+                var hex_middle = document.getElementById(hex_container_id + "_middle");
+                var hex_lower = document.getElementById(hex_container_id + "_lower");
+                if (hex_upper != null) {
+                    hex_upper.style.borderBottomColor = "#6C8";
+                }
+                //middle
+                if (hex_middle != null) {
+                    hex_middle.style.background = "#6C8";
+                }
+                //bottom
+                if (hex_lower != null) {
+                    hex_lower.style.borderTopColor = "#6C8";
+                }
+            }
+            c += 1;
+        }
+        r += 1;
     }
 }
 /*

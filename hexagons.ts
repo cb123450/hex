@@ -5,7 +5,8 @@ var width = root3*side_length;
 var border_bottom_top = side_length - (side_length/2.0);
 var border_left_right = (root3/2.0)*side_length;
 
-var grid_container = document.getElementById("grid");
+var grid = document.getElementById("grid");
+var start_button = document.getElementById("start-button");
 
 //START----------Tile, Graph, and Queue DATA STRUCTURES---------
 
@@ -169,13 +170,14 @@ function drawBoard() : Tile[][] {
         index += 1;
     }
 
-    if (grid_container != null){
-        grid_container.style.gridTemplateRows = "5% repeat(20, minmax(" + height + "px, " + height + "px))";
-        grid_container.style.gridTemplateColumns = "repeat(25, minmax(" + width + "px, " + width + "px))";
+    if (grid != null){
+        grid.style.gridTemplateRows = "repeat(21, minmax(" + height + "px, " + height + "px))";
+        grid.style.gridTemplateColumns = "repeat(25, minmax(" + width + "px, " + width + "px))";
     }
 
     /* Listen to parent of the tiles to improve efficiency */
-    grid_container?.addEventListener("click", buttonHandler, false);
+    grid?.addEventListener("click", buttonHandler, false);
+    start_button?.addEventListener("click", startHandler, false);
 
     var row : number = 1;
     while (row < 14){
@@ -187,13 +189,13 @@ function drawBoard() : Tile[][] {
             hex_container.id = 'r_' + row + '_c_' + col;
             hex_container.className = "false";
 
-            grid_container?.appendChild(hex_container);
+            grid?.appendChild(hex_container);
 
             var sheet = window.document.styleSheets[0];
 
             var num = col + row;
             var right_offset = (width/2.0)*(row-1);
-            var top_offset = -6 * (row-1);
+            var top_offset = -1.5 * (row-1);
 
             var style = '#' + hex_container.id + 
             ' {\n' 
@@ -201,7 +203,7 @@ function drawBoard() : Tile[][] {
             //+ 'width: ' + width + ';'
             //+ 'height: ' + height + ';'
             + 'right: ' + right_offset + 'px;'
-            + 'top: ' + top_offset + 'px;'
+            + 'top: ' + top_offset + 'vh;'
             //+ 'box-sizing: content-box;'
             //+ 'padding-right: 100%;'
             + 'grid-column: ' + num + ';\n' 
@@ -411,7 +413,6 @@ function buttonHandler(evt){
 
     //RECONSTRUCT hex_id
     let hex_container_id : string = test_arr.slice(0, -1).join('_');
-    console.log(hex_container_id)
     let hex_container = document.querySelector("#" + hex_container_id);
 
 
@@ -459,6 +460,38 @@ function buttonHandler(evt){
     }
 }
 
+function startHandler(evt){
+    turn = 0;
+    let r : number = 2;
+    while (r <= 12){
+        let c : number = 2;
+        while (c <= 12){
+            let hex_container_id : string = 'r_' + r + '_c_' + c;
+            let hex_container = document.querySelector("#" + hex_container_id);
+            if (hex_container?.className == "true"){
+                hex_container.className = "false";
+
+                let hex_upper : HTMLElement | null = document.getElementById(hex_container_id + "_upper");
+                let hex_middle : HTMLElement | null = document.getElementById(hex_container_id + "_middle");
+                let hex_lower : HTMLElement | null = document.getElementById(hex_container_id + "_lower");  
+
+                if (hex_upper != null){
+                    hex_upper.style.borderBottomColor = "#6C8";
+                }
+                //middle
+                if (hex_middle != null){
+                    hex_middle.style.background = "#6C8";
+                }
+                //bottom
+                if (hex_lower != null){
+                    hex_lower.style.borderTopColor = "#6C8";
+                }
+            }
+            c += 1;
+        }
+        r += 1;
+    }
+}
 /*
 ENUM for red player and blue player
 */

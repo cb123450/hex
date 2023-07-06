@@ -4,11 +4,12 @@ body{
     width: 100vw;
     height: 100vh;
 }
-#start-button{
+.start-button{
+    z-index: 4;
     background-color: rgb(61, 200, 61);
     position: relative;
     left: 35%;
-    margin: 1% 1% 1% 1%;
+    margin: 3%;
     width: 20%;
     font-size: 1000%;
     text-align: center;
@@ -18,10 +19,9 @@ body{
     display: grid;
     column-gap: 3px;
     justify-content: center;
-    margin: 1%;
     top: -10%;
     left: 10%;
 }
-#start-button:hover{
+.start-button:hover{
     background-color:bisque;
 }
