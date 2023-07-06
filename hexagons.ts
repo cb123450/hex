@@ -1,11 +1,11 @@
-var side_length = window.innerWidth/40;
+var side_length = window.innerWidth/55;
 var root3 = 1.73205;
 var height = 2*side_length;
 var width = root3*side_length;
 var border_bottom_top = side_length - (side_length/2.0);
 var border_left_right = (root3/2.0)*side_length;
 
-var grid_container = document.getElementById("grid-container");
+var grid_container = document.getElementById("grid");
 
 //START----------Tile, Graph, and Queue DATA STRUCTURES---------
 
@@ -170,7 +170,7 @@ function drawBoard() : Tile[][] {
     }
 
     if (grid_container != null){
-        grid_container.style.gridTemplateRows = "repeat(21, minmax(" + height + "px, " + height + "px))";
+        grid_container.style.gridTemplateRows = "5% repeat(20, minmax(" + height + "px, " + height + "px))";
         grid_container.style.gridTemplateColumns = "repeat(25, minmax(" + width + "px, " + width + "px))";
     }
 
@@ -411,7 +411,7 @@ function buttonHandler(evt){
 
     //RECONSTRUCT hex_id
     let hex_container_id : string = test_arr.slice(0, -1).join('_');
-
+    console.log(hex_container_id)
     let hex_container = document.querySelector("#" + hex_container_id);
 
 
@@ -420,7 +420,7 @@ function buttonHandler(evt){
         let hex_middle : HTMLElement | null = document.getElementById(hex_container_id + "_middle");
         let hex_lower : HTMLElement | null = document.getElementById(hex_container_id + "_lower");
 
-        //grid-container is not null by children are
+        //grid is not null by children are
         if (turn % 2 == 0){
             //change to red
             //upper
@@ -480,6 +480,9 @@ function checkWin(player : Player){
 * Red goes first and moves on even turn numbers 0, 2, 4, ...
 */
 function playGame(){
+    let tile_array : Tile[][] = drawBoard();
+    let g : Graph<string, Tile> = createTiles(tile_array);  
+    
     let count : number = 0;
     let curr_player : Player = Player.Red;
 
@@ -489,10 +492,6 @@ function playGame(){
         count += 1;
     }
 }
-
-let tile_array : Tile[][] = drawBoard();
-
-let g : Graph<string, Tile> = createTiles(tile_array);
 
 playGame();
 /*

@@ -1,10 +1,10 @@
-var side_length = window.innerWidth / 40;
+var side_length = window.innerWidth / 55;
 var root3 = 1.73205;
 var height = 2 * side_length;
 var width = root3 * side_length;
 var border_bottom_top = side_length - (side_length / 2.0);
 var border_left_right = (root3 / 2.0) * side_length;
-var grid_container = document.getElementById("grid-container");
+var grid_container = document.getElementById("grid");
 var Tile = /** @class */ (function () {
     function Tile(row, col) {
         this.row = row;
@@ -118,7 +118,7 @@ function drawBoard() {
         index += 1;
     }
     if (grid_container != null) {
-        grid_container.style.gridTemplateRows = "repeat(21, minmax(" + height + "px, " + height + "px))";
+        grid_container.style.gridTemplateRows = "5% repeat(20, minmax(" + height + "px, " + height + "px))";
         grid_container.style.gridTemplateColumns = "repeat(25, minmax(" + width + "px, " + width + "px))";
     }
     /* Listen to parent of the tiles to improve efficiency */
@@ -318,12 +318,13 @@ function buttonHandler(evt) {
     var c_coord = parseInt(test_arr[3]);
     //RECONSTRUCT hex_id
     var hex_container_id = test_arr.slice(0, -1).join('_');
+    console.log(hex_container_id);
     var hex_container = document.querySelector("#" + hex_container_id);
     if ((hex_container === null || hex_container === void 0 ? void 0 : hex_container.className) == 'false' && r === 'r' && c === 'c' && r_coord >= 2 && r_coord <= 12 && c_coord >= 2 && c_coord <= 12) {
         var hex_upper = document.getElementById(hex_container_id + "_upper");
         var hex_middle = document.getElementById(hex_container_id + "_middle");
         var hex_lower = document.getElementById(hex_container_id + "_lower");
-        //grid-container is not null by children are
+        //grid is not null by children are
         if (turn % 2 == 0) {
             //change to red
             //upper
@@ -381,14 +382,14 @@ function checkWin(player) {
 * Red goes first and moves on even turn numbers 0, 2, 4, ...
 */
 function playGame() {
+    var tile_array = drawBoard();
+    var g = createTiles(tile_array);
     var count = 0;
     var curr_player = Player.Red;
     while (count < 100) {
         count += 1;
     }
 }
-var tile_array = drawBoard();
-var g = createTiles(tile_array);
 playGame();
 /*
 if (winner % 2 == 1){
