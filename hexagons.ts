@@ -1,3 +1,5 @@
+import { deflateSync } from "zlib";
+
 var side_length = window.innerWidth/55;
 var root3 = 1.73205;
 var height = 2*side_length;
@@ -21,15 +23,19 @@ interface Tile {
     row: number;
     col: number;
     visited: boolean;
+    color: string;
     hash() : string;
     get_visited() : boolean;
     visit();
     unvisit();
+    get_color() : string;
+    set_color(c : string);
 }
 class Tile {
-    constructor(row, col){
+    constructor(row, col, color){
         this.row = row;
         this.col = col;
+        this.color = color;
     }
     get_row(){
         return this.row;
@@ -49,6 +55,20 @@ class Tile {
     } 
     unvisit(){
         this.visited = false;
+    }
+    get_color(){
+        return this.color;
+    }
+    set_color(c: string){
+        if (c == "blue"){
+            this.color = c;
+        }
+        else if (c == "red"){
+            this.color = c;
+        }
+        else if (c == "blue"){
+            this.color = c;
+        }
     }
 }
 
@@ -349,7 +369,8 @@ function drawBoard() : Tile[][] {
                 sheet.insertRule(style_lower, sheet.cssRules.length);
 
                 //CREATE TILE ARRAY
-                tile_array[row-2][col-2] = new Tile(row, col);
+                //The default color of the tile is a shade of green
+                tile_array[row-2][col-2] = new Tile(row, col, "#6C8");
             }
             
             col += 1;
@@ -401,6 +422,8 @@ function createTiles(t : Tile[][]) : Graph<string, Tile>{
 }
 
 var turn: number = 0;
+let tile_array : Tile[][] = drawBoard();
+let g : Graph<string, Tile> = createTiles(tile_array);  
 
 function buttonHandler(evt){
     
@@ -438,6 +461,16 @@ function buttonHandler(evt){
             }
             turn += 1;
             hex_container.className = "true";
+
+            tile_array[r][c].set_color("red");
+
+            let red_win: boolean = checkWin("red");
+
+            //if red wins
+            if (red_win){
+                window.alert("Red has won!")
+                console.log("Red has won!")
+            }
         }
         else{
             //change to blue
@@ -455,6 +488,15 @@ function buttonHandler(evt){
             }
             turn += 1;
             hex_container.className = "true";
+            
+            tile_array[r][c].set_color("blue");
+            let blue_win: boolean = checkWin("blue");
+
+            //if blue wins
+            if (blue_win){
+                window.alert("Blue has won!")
+                console.log("Blue has won!")
+            }
         }
         evt.stopPropagation();
     }
@@ -486,6 +528,10 @@ function startHandler(evt){
                 if (hex_lower != null){
                     hex_lower.style.borderTopColor = "#6C8";
                 }
+
+                if (r <= 11 && c <= 11){
+                    tile_array[r][c].set_color("#6C8");
+                }
             }
             c += 1;
         }
@@ -500,41 +546,68 @@ enum Player {
     Blue = 1,
 }
 
-/*
-* Checks if a player has won
-* Returns true if 'player' has won and false if not
-*/
-function checkWin(player : Player){
-    return false;
-}
 
-/*
-* Run the game
-* Red goes first and moves on even turn numbers 0, 2, 4, ...
-*/
-function playGame(){
-    let tile_array : Tile[][] = drawBoard();
-    let g : Graph<string, Tile> = createTiles(tile_array);  
-    
-    let count : number = 0;
-    let curr_player : Player = Player.Red;
+function bfs(t: Tile, color : string) : boolean{
+    let q : Queue<Tile> = new Queue<Tile>();
+    q.enqueue(t);
+    let adj : Map<string, Map<string, Tile>> = g.getAdjacencyList();
 
-    while (count < 100){
-        
+    while (q.size() != 0){
+        let samp : Tile | undefined = q.dequeue();
+        if (samp != undefined){
+            let row : number = parseInt(samp.hash().split('_')[0]);
+            let col : number = parseInt(samp.hash().split('_')[1]);
+            
+            //always start bfs for red player from row 0 and start bfs for blue player from col 0
+            if (color == "red" && row == 10){
+                return true;
+            }
+            else if (color == "blue" && col == 10){
+                return true;
+            }
 
-        count += 1;
+            let neighbors : Map<string, Tile> = adj[samp.hash()];
+            const iter = neighbors.values();
+            let poss_neighbor = iter.next();
+            while (!poss_neighbor.done){
+                let r : number = parseInt(poss_neighbor.value.hash().split('_')[0]);
+                let c : number = parseInt(poss_neighbor.value.hash().split('_')[1]);
+
+                if (tile_array[r][c].get_color() == color){
+                    q.enqueue(poss_neighbor);
+                }
+                poss_neighbor = iter.next()
+            }
+        }
     }
+    return false; 
 }
 
-playGame();
+
 /*
-if (winner % 2 == 1){
-    //RED PLAYER HAS WON
-}
-else{
-    //BLUE PLAYER HAS WON
-}
+* Checks if a player of a given color 'color' has won
+* Returns true if for a win and false otherwise
 */
+function checkWin(color : string) : boolean{
+    let i : number = 0;
+    while (i < 11){
+        if (color == "red"){
+            let check_red : boolean = bfs(tile_array[0][i], "red");
+            if (check_red){
+                return true;
+            }
+        }
+        else if (color == "blue"){
+            let check_blue : boolean = bfs(tile_array[i][0], "blue");
+            if (check_blue){
+                return true;
+            }
+        }
+        i += 1;
+    }
+    return false; 
+}
+
 
 
 
