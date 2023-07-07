@@ -108,20 +108,23 @@ class Graph<Hashable, T>{
         let curr_str = curr_tile.hash();
         let adj_str = adj_tile.hash();
 
-        if (this.vertices.has(curr_str)){
-            this.adj_list[curr_str][adj_str] = adj_tile;
+        if (!this.adj_list.has(curr_str)){
+            this.adj_list.set(curr_str, undefined);
+        }
+
+        if (this.adj_list.has(curr_str) && this.adj_list[curr_str] == undefined){
+            let map : Map<Hashable, T> = new Map<Hashable, T>();
+            map.set(adj_str, adj_tile)
+            this.adj_list[curr_str] = map;
         }
         else{
-            this.vertices.set(curr_str, curr_tile);
-            this.adj_list[curr_str] = new Map<Hashable, T>;
-            this.adj_list[curr_str][adj_str] = adj_tile;
+            this.adj_list[curr_str].set(adj_str, adj_tile);
         }
     }
 
     addVertex(curr_tile){
         if (!this.vertices.has(curr_tile.hash())){
             this.vertices.set(curr_tile.hash(), curr_tile);
-            this.adj_list[curr_tile.hash()] = new Map<Hashable, T>;
         }
     }
     
@@ -416,14 +419,14 @@ function createTiles(t : Tile[][]) : Graph<string, Tile>{
         }
         row += 1;
     }
-
+    console.log(g);
     return g; 
     
 }
 
 var turn: number = 0;
 let tile_array : Tile[][] = drawBoard();
-let g : Graph<string, Tile> = createTiles(tile_array);  
+let g : Graph<string, Tile> = createTiles(tile_array); 
 
 function buttonHandler(evt){
     
@@ -462,7 +465,7 @@ function buttonHandler(evt){
             turn += 1;
             hex_container.className = "true";
 
-            tile_array[r][c].set_color("red");
+            tile_array[r_coord-2][c_coord-2].set_color("red");
 
             let red_win: boolean = checkWin("red");
 
@@ -488,8 +491,7 @@ function buttonHandler(evt){
             }
             turn += 1;
             hex_container.className = "true";
-            
-            tile_array[r][c].set_color("blue");
+            tile_array[r_coord-2][c_coord-2].set_color("blue");
             let blue_win: boolean = checkWin("blue");
 
             //if blue wins
@@ -555,9 +557,9 @@ function bfs(t: Tile, color : string) : boolean{
     while (q.size() != 0){
         let samp : Tile | undefined = q.dequeue();
         if (samp != undefined){
-            let row : number = parseInt(samp.hash().split('_')[0]);
-            let col : number = parseInt(samp.hash().split('_')[1]);
-            
+            let h : string = samp.hash();
+            let row : number = parseInt(h.split('_')[0])-2;
+            let col : number = parseInt(h.split('_')[1])-2;
             //always start bfs for red player from row 0 and start bfs for blue player from col 0
             if (color == "red" && row == 10){
                 return true;
@@ -567,13 +569,16 @@ function bfs(t: Tile, color : string) : boolean{
             }
 
             let neighbors : Map<string, Tile> = adj[samp.hash()];
+            
             const iter = neighbors.values();
             let poss_neighbor = iter.next();
             while (!poss_neighbor.done){
-                let r : number = parseInt(poss_neighbor.value.hash().split('_')[0]);
-                let c : number = parseInt(poss_neighbor.value.hash().split('_')[1]);
+                console.log(poss_neighbor)
+                let r : number = parseInt(poss_neighbor.value.hash().split('_')[0])-2;
+                let c : number = parseInt(poss_neighbor.value.hash().split('_')[1])-2;
 
-                if (tile_array[r][c].get_color() == color){
+                if (tile_array[r][c].get_color() == color){  
+                    console.log(color)
                     q.enqueue(poss_neighbor);
                 }
                 poss_neighbor = iter.next()

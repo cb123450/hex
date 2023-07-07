@@ -61,19 +61,21 @@ var Graph = /** @class */ (function () {
     Graph.prototype.addEdge = function (curr_tile, adj_tile) {
         var curr_str = curr_tile.hash();
         var adj_str = adj_tile.hash();
-        if (this.vertices.has(curr_str)) {
-            this.adj_list[curr_str][adj_str] = adj_tile;
+        if (!this.adj_list.has(curr_str)) {
+            this.adj_list.set(curr_str, undefined);
+        }
+        if (this.adj_list.has(curr_str) && this.adj_list[curr_str] == undefined) {
+            var map = new Map();
+            map.set(adj_str, adj_tile);
+            this.adj_list[curr_str] = map;
         }
         else {
-            this.vertices.set(curr_str, curr_tile);
-            this.adj_list[curr_str] = new Map;
-            this.adj_list[curr_str][adj_str] = adj_tile;
+            this.adj_list[curr_str].set(adj_str, adj_tile);
         }
     };
     Graph.prototype.addVertex = function (curr_tile) {
         if (!this.vertices.has(curr_tile.hash())) {
             this.vertices.set(curr_tile.hash(), curr_tile);
-            this.adj_list[curr_tile.hash()] = new Map;
         }
     };
     Graph.prototype.getVertices = function () {
@@ -327,6 +329,7 @@ function createTiles(t) {
         }
         row += 1;
     }
+    console.log(g);
     return g;
 }
 var turn = 0;
@@ -362,7 +365,7 @@ function buttonHandler(evt) {
             }
             turn += 1;
             hex_container.className = "true";
-            tile_array[r][c].set_color("red");
+            tile_array[r_coord - 2][c_coord - 2].set_color("red");
             var red_win = checkWin("red");
             //if red wins
             if (red_win) {
@@ -386,7 +389,7 @@ function buttonHandler(evt) {
             }
             turn += 1;
             hex_container.className = "true";
-            tile_array[r][c].set_color("blue");
+            tile_array[r_coord - 2][c_coord - 2].set_color("blue");
             var blue_win = checkWin("blue");
             //if blue wins
             if (blue_win) {
@@ -445,8 +448,9 @@ function bfs(t, color) {
     while (q.size() != 0) {
         var samp = q.dequeue();
         if (samp != undefined) {
-            var row = parseInt(samp.hash().split('_')[0]);
-            var col = parseInt(samp.hash().split('_')[1]);
+            var h = samp.hash();
+            var row = parseInt(h.split('_')[0]) - 2;
+            var col = parseInt(h.split('_')[1]) - 2;
             //always start bfs for red player from row 0 and start bfs for blue player from col 0
             if (color == "red" && row == 10) {
                 return true;
@@ -458,9 +462,11 @@ function bfs(t, color) {
             var iter = neighbors.values();
             var poss_neighbor = iter.next();
             while (!poss_neighbor.done) {
-                var r = parseInt(poss_neighbor.value.hash().split('_')[0]);
-                var c = parseInt(poss_neighbor.value.hash().split('_')[1]);
+                console.log(poss_neighbor);
+                var r = parseInt(poss_neighbor.value.hash().split('_')[0]) - 2;
+                var c = parseInt(poss_neighbor.value.hash().split('_')[1]) - 2;
                 if (tile_array[r][c].get_color() == color) {
+                    console.log(color);
                     q.enqueue(poss_neighbor);
                 }
                 poss_neighbor = iter.next();
