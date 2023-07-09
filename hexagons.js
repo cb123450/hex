@@ -329,7 +329,6 @@ function createTiles(t) {
         }
         row += 1;
     }
-    console.log(g);
     return g;
 }
 var turn = 0;
@@ -442,12 +441,15 @@ var Player;
     Player[Player["Blue"] = 1] = "Blue";
 })(Player || (Player = {}));
 function bfs(t, color) {
+    var visited = new Set();
     var q = new Queue();
     q.enqueue(t);
+    visited.add(t.hash());
     var adj = g.getAdjacencyList();
     while (q.size() != 0) {
         var samp = q.dequeue();
         if (samp != undefined) {
+            //console.log(samp)
             var h = samp.hash();
             var row = parseInt(h.split('_')[0]) - 2;
             var col = parseInt(h.split('_')[1]) - 2;
@@ -459,18 +461,14 @@ function bfs(t, color) {
                 return true;
             }
             var neighbors = adj[samp.hash()];
-            var iter = neighbors.values();
-            var poss_neighbor = iter.next();
-            while (!poss_neighbor.done) {
-                console.log(poss_neighbor);
-                var r = parseInt(poss_neighbor.value.hash().split('_')[0]) - 2;
-                var c = parseInt(poss_neighbor.value.hash().split('_')[1]) - 2;
-                if (tile_array[r][c].get_color() == color) {
-                    console.log(color);
-                    q.enqueue(poss_neighbor);
+            neighbors.forEach(function (value, key) {
+                var r = parseInt(value.hash().split('_')[0]) - 2;
+                var c = parseInt(value.hash().split('_')[1]) - 2;
+                if (tile_array[r][c].get_color() == color && !visited.has(value.hash())) {
+                    q.enqueue(value);
+                    visited.add(value.hash());
                 }
-                poss_neighbor = iter.next();
-            }
+            });
         }
     }
     return false;
@@ -484,12 +482,14 @@ function checkWin(color) {
     while (i < 11) {
         if (color == "red") {
             var check_red = bfs(tile_array[0][i], "red");
+            //console.log("red")
             if (check_red) {
                 return true;
             }
         }
         else if (color == "blue") {
             var check_blue = bfs(tile_array[i][0], "blue");
+            //console.log("blue")
             if (check_blue) {
                 return true;
             }

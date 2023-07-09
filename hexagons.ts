@@ -1,3 +1,4 @@
+import { visitEachChild } from "typescript";
 import { deflateSync } from "zlib";
 
 var side_length = window.innerWidth/55;
@@ -419,7 +420,6 @@ function createTiles(t : Tile[][]) : Graph<string, Tile>{
         }
         row += 1;
     }
-    console.log(g);
     return g; 
     
 }
@@ -550,13 +550,17 @@ enum Player {
 
 
 function bfs(t: Tile, color : string) : boolean{
+    let visited = new Set<string>();
     let q : Queue<Tile> = new Queue<Tile>();
     q.enqueue(t);
+    visited.add(t.hash());
+
     let adj : Map<string, Map<string, Tile>> = g.getAdjacencyList();
 
     while (q.size() != 0){
         let samp : Tile | undefined = q.dequeue();
         if (samp != undefined){
+            //console.log(samp)
             let h : string = samp.hash();
             let row : number = parseInt(h.split('_')[0])-2;
             let col : number = parseInt(h.split('_')[1])-2;
@@ -570,19 +574,15 @@ function bfs(t: Tile, color : string) : boolean{
 
             let neighbors : Map<string, Tile> = adj[samp.hash()];
             
-            const iter = neighbors.values();
-            let poss_neighbor = iter.next();
-            while (!poss_neighbor.done){
-                console.log(poss_neighbor)
-                let r : number = parseInt(poss_neighbor.value.hash().split('_')[0])-2;
-                let c : number = parseInt(poss_neighbor.value.hash().split('_')[1])-2;
+            neighbors.forEach((value, key) => {
+                let r : number = parseInt(value.hash().split('_')[0])-2;
+                let c : number = parseInt(value.hash().split('_')[1])-2;
 
-                if (tile_array[r][c].get_color() == color){  
-                    console.log(color)
-                    q.enqueue(poss_neighbor);
+                if (tile_array[r][c].get_color() == color && !visited.has(value.hash())){  
+                    q.enqueue(value);
+                    visited.add(value.hash())
                 }
-                poss_neighbor = iter.next()
-            }
+            });
         }
     }
     return false; 
@@ -598,12 +598,14 @@ function checkWin(color : string) : boolean{
     while (i < 11){
         if (color == "red"){
             let check_red : boolean = bfs(tile_array[0][i], "red");
+            //console.log("red")
             if (check_red){
                 return true;
             }
         }
         else if (color == "blue"){
             let check_blue : boolean = bfs(tile_array[i][0], "blue");
+            //console.log("blue")
             if (check_blue){
                 return true;
             }
