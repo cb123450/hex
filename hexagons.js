@@ -37,13 +37,13 @@ var Tile = /** @class */ (function () {
         return this.color;
     };
     Tile.prototype.set_color = function (c) {
-        if (c == "blue") {
+        if (c === "blue") {
             this.color = c;
         }
-        else if (c == "red") {
+        else if (c === "red") {
             this.color = c;
         }
-        else if (c == "blue") {
+        else if (c === "#6C8") {
             this.color = c;
         }
     };
@@ -341,62 +341,64 @@ function buttonHandler(evt) {
     var c = test_arr[2];
     var c_coord = parseInt(test_arr[3]);
     //RECONSTRUCT hex_id
-    var hex_container_id = test_arr.slice(0, -1).join('_');
-    var hex_container = document.querySelector("#" + hex_container_id);
-    if ((hex_container === null || hex_container === void 0 ? void 0 : hex_container.className) == 'false' && r === 'r' && c === 'c' && r_coord >= 2 && r_coord <= 12 && c_coord >= 2 && c_coord <= 12) {
-        var hex_upper = document.getElementById(hex_container_id + "_upper");
-        var hex_middle = document.getElementById(hex_container_id + "_middle");
-        var hex_lower = document.getElementById(hex_container_id + "_lower");
-        //grid is not null by children are
-        if (turn % 2 == 0) {
-            //change to red
-            //upper
-            if (hex_upper != null) {
-                hex_upper.style.borderBottomColor = "red";
+    if (r === 'r') {
+        var hex_container_id = test_arr.slice(0, -1).join('_');
+        var hex_container = document.querySelector("#" + hex_container_id);
+        if ((hex_container === null || hex_container === void 0 ? void 0 : hex_container.className) == 'false' && r === 'r' && c === 'c' && r_coord >= 2 && r_coord <= 12 && c_coord >= 2 && c_coord <= 12) {
+            var hex_upper = document.getElementById(hex_container_id + "_upper");
+            var hex_middle = document.getElementById(hex_container_id + "_middle");
+            var hex_lower = document.getElementById(hex_container_id + "_lower");
+            //grid is not null by children are
+            if (turn % 2 == 0) {
+                //change to red
+                //upper
+                if (hex_upper != null) {
+                    hex_upper.style.borderBottomColor = "red";
+                }
+                //middle
+                if (hex_middle != null) {
+                    hex_middle.style.background = "red";
+                }
+                //bottom
+                if (hex_lower != null) {
+                    hex_lower.style.borderTopColor = "red";
+                }
+                turn += 1;
+                hex_container.className = "true";
+                tile_array[r_coord - 2][c_coord - 2].set_color("red");
+                var red_win = checkWin("red");
+                //if red wins
+                if (red_win) {
+                    window.alert("Red has won!");
+                    console.log("Red has won! Press the restart button to play again!");
+                }
             }
-            //middle
-            if (hex_middle != null) {
-                hex_middle.style.background = "red";
+            else {
+                //change to blue
+                //upper
+                if (hex_upper != null) {
+                    hex_upper.style.borderBottomColor = "blue";
+                }
+                //middle
+                if (hex_middle != null) {
+                    hex_middle.style.background = "blue";
+                }
+                //bottom
+                if (hex_lower != null) {
+                    hex_lower.style.borderTopColor = "blue";
+                }
+                turn += 1;
+                hex_container.className = "true";
+                tile_array[r_coord - 2][c_coord - 2].set_color("blue");
+                var blue_win = checkWin("blue");
+                //if blue wins
+                if (blue_win) {
+                    window.alert("Blue has won!");
+                    console.log("Blue has won! Press the restart button to play again!");
+                }
             }
-            //bottom
-            if (hex_lower != null) {
-                hex_lower.style.borderTopColor = "red";
-            }
-            turn += 1;
-            hex_container.className = "true";
-            tile_array[r_coord - 2][c_coord - 2].set_color("red");
-            var red_win = checkWin("red");
-            //if red wins
-            if (red_win) {
-                window.alert("Red has won!");
-                console.log("Red has won!");
-            }
+            evt.stopPropagation();
         }
-        else {
-            //change to blue
-            //upper
-            if (hex_upper != null) {
-                hex_upper.style.borderBottomColor = "blue";
-            }
-            //middle
-            if (hex_middle != null) {
-                hex_middle.style.background = "blue";
-            }
-            //bottom
-            if (hex_lower != null) {
-                hex_lower.style.borderTopColor = "blue";
-            }
-            turn += 1;
-            hex_container.className = "true";
-            tile_array[r_coord - 2][c_coord - 2].set_color("blue");
-            var blue_win = checkWin("blue");
-            //if blue wins
-            if (blue_win) {
-                window.alert("Blue has won!");
-                console.log("Blue has won!");
-            }
-        }
-        evt.stopPropagation();
     }
 }
 function startHandler(evt) {
@@ -423,13 +425,19 @@ function startHandler(evt) {
                 if (hex_lower != null) {
                     hex_lower.style.borderTopColor = "#6C8";
                 }
-                if (r <= 11 && c <= 11) {
-                    tile_array[r][c].set_color("#6C8");
-                }
             }
             c += 1;
         }
         r += 1;
+    }
+    var i = 0;
+    while (i < 11) {
+        var k = 0;
+        while (k < 11) {
+            tile_array[i][k].set_color("#6C8");
+            k += 1;
+        }
+        i += 1;
     }
 }
 /*
