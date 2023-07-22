@@ -17,10 +17,6 @@ const ctx = canvas.getContext('2d');
 canvas.width = width;
 canvas.height = height;
 
-canvas.style.top = "10%";
-canvas.style.bottom = "100%";
-canvas.style.left = "0%";
-canvas.style.right = "90%";
 
 //HEXAGON CONSTANTS
 const hex_side: number = canvas.width/30.0; //11 by 11 board but divide by 14.0 for extra space
@@ -357,12 +353,14 @@ function createTiles() : Graph<string, Tile>{
             tile_array[row][col] = init_tile;
 
             var b = document.createElement("button");
-            var buttons = document.getElementById("buttons");
+            var container = document.getElementById("container");
             b.innerHTML = "Button b";
-            if (buttons != null){
-                buttons.appendChild(b);
+            if (container != null){
+                container.appendChild(b);
             }
 
+            b.style.top = "100px";
+            b.style.bottom = "200px";
             b.addEventListener("click", function(){
                 alert("did something");
             });

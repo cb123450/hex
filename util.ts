@@ -5,14 +5,14 @@ of this tile and y is the y-coord of the center
 ---vertices is an array of the vertices making up the hexagon
 of this tile
 */
-export interface Tile {
+interface Tile {
     center: Array<number>;
     vertices: Array<Array<number>>;
     get_center() : Array<number>;
     get_vertices() : Array<Array<number>>;
     hash() : string;
 }
-export class Tile {
+class Tile {
     constructor(center, vertices){
         this.center = center;
         this.vertices = vertices;
@@ -41,12 +41,12 @@ export class Tile {
 -There will be no collisions in any dictionary bc each tile has a unique center
 -This graph is undirected
 */
-export interface Graph<T> {
+interface Graph<T> {
     vertices;
     edges;
 }
 
-export class Graph<T>{
+class Graph<T>{
     constructor(){
         this.vertices = new Set<T>; 
         this.edges = new Map();
@@ -70,20 +70,29 @@ export class Graph<T>{
             d[adj_str] = adj_tile;
         }
     }
+
     addVertex(curr_tile){
         if (!this.vertices.has(curr_tile.hash())){
             this.vertices.add(curr_tile.hash());
         }
     }
+    
+    getVertices() : Set<T>{
+        return this.vertices;
+    }
+
+    getEdges(){
+        return this.edges;
+    }
 }
 
-export interface Queue<T> {
+interface Queue<T> {
     items: Array<T>;
     first_item: number;
     next_item: number;
     num_elements: number;
 }
-export class Queue<T> implements Queue<T>{
+class Queue<T> implements Queue<T>{
     constructor() {
         this.items = new Array<T>;
         this.first_item = 0;

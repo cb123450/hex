@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var side_length = window.innerWidth / 55;
+var side_length = window.innerWidth / 40;
 var root3 = 1.73205;
 var height = 2 * side_length;
 var width = root3 * side_length;
@@ -156,7 +156,7 @@ function drawBoard() {
             var sheet = window.document.styleSheets[0];
             var num = col + row;
             var right_offset = (width / 2.0) * (row - 1);
-            var top_offset = -1.5 * (row - 1);
+            var top_offset = -0.5 * (row - 1);
             var style = '#' + hex_container.id +
                 ' {\n'
                 + 'position: relative;'

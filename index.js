@@ -12,10 +12,6 @@ var canvas = document.getElementById('gameArea');
 var ctx = canvas.getContext('2d');
 canvas.width = width;
 canvas.height = height;
-canvas.style.top = "10%";
-canvas.style.bottom = "100%";
-canvas.style.left = "0%";
-canvas.style.right = "90%";
 //HEXAGON CONSTANTS
 var hex_side = canvas.width / 30.0; //11 by 11 board but divide by 14.0 for extra space
 var hex_height = 2.0 * hex_side; //from edge to opposite edge
@@ -249,11 +245,13 @@ function createTiles() {
             g.addVertex(init_tile);
             tile_array[row][col] = init_tile;
             var b = document.createElement("button");
-            var buttons = document.getElementById("buttons");
+            var container = document.getElementById("container");
             b.innerHTML = "Button b";
-            if (buttons != null) {
-                buttons.appendChild(b);
+            if (container != null) {
+                container.appendChild(b);
             }
+            b.style.top = "100px";
+            b.style.bottom = "200px";
             b.addEventListener("click", function () {
                 alert("did something");
             });
