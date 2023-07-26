@@ -9,3 +9,5 @@ Players take turns placing tiles on emtpy spots on the board, and the first one 
 -To see the website, go to http://www.hexgame0.com/
 
 -The game is hosted on an Amazon EC2 t2 micro instance.
+
+<img width="731" alt="hex_screenshot" src="https://github.com/cb123450/hex/assets/91232059/7ad72858-5357-4a68-9ff2-888bd2bc48fb">
