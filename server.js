@@ -1,57 +1,30 @@
-/*
-//USER AUTHENTICATION STUFF
 const express = require('express')
-var path = require('path')
-
 const app = express()
+var path = require('path')
+const server = require('http').createServer(app);
+const WebSocket = require('ws');
 
-const bcrypt = require('bcrypt')
+const wss = new WebSocket.Server({server:server});
 
 app.use(express.static("public"));
 app.use(express.json())
 app.set("view engine", "ejs")
 
-const users = []
+wss.on('connection', function connection(ws) {
+    console.log("New Client Connected")
+    ws.send('Welcome new client!');
 
-app.get('/users', (req, res) => {
-    res.json(users)
-})
-
-app.post('/users', async (req, res) => {
-    try {
-        const salt = await bcrypt.genSalt()
-        const hashedPassword = await bcrypt.hash(req.body.password, salt)
-        const user = { name: req.body.name, password: hashedPassword}
-        users.push(user)
-        res.status(201).send()
-    } catch {
-        res.status(500).send()
-    }
+    ws.on('error', console.error);
+  
+    ws.on('message', function message(data) {
+      console.log('received: %s', data);
+      ws.send("Received message:" + data)
+    });
+  
     
-})
+  });
 
-app.post('/users/login', async (req, res) => {
-    const user = users.find(user => user.name == req.body.name)
-    if (user == null){
-        return res.status(400).send("Cannot find user")
-    }
-    try {
-        if (await bcrypt.compare(req.body.password, user.password)){
-            res.send("success")
-        }
-        else{
-            res.send("not allowed")
-        }
-    }
-    catch {
-        res.status(500).send()
-    }
-})
-*/
-//WEBSOCKET STUFF
-const io = require('socket.io')(3000)
-io.on('connection', socket => {
-    socket.emit('chat-message', "Hello World")
-})
 
-//app.listen(3000)
+app.get('/', (req, res) => res.send("Hello World!"))
+
+server.listen(3000, () => console.log("Listening on port :3000"))

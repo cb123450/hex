@@ -25,13 +25,28 @@
             <li> On their first move the second player can swap colors with the first player.</li>
         </ul>
     </div>
-    <div id = "player-container">
-        <form id = "send-container">
-            <input type = "text" id = "message-input">
-            <button type="submit" id = "send-button">Send</button>
-        </form>
+    <div id = player-container>
+        <button onclick="sendMessage()">Send Msg</button>
     </div>
 </body>
 <script>var exports = {};</script>
 <script src = ./hexagons.js></script>
+<script>
+    // Create WebSocket connection.
+    const socket = new WebSocket("ws://localhost:3000");
+
+    // Connection opened
+    socket.addEventListener("open", (event) => {
+        console.log("connected to WS Server")
+    });
+
+    // Listen for messages
+    socket.addEventListener("message", (event) => {
+    console.log("Message from server ", event.data);
+    });
+
+    const sendMessage = () => {
+        socket.send("Hello from Client 1")
+    }
+</script>
 </html>
