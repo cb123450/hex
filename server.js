@@ -1,3 +1,5 @@
+/*
+//USER AUTHENTICATION STUFF
 const express = require('express')
 var path = require('path')
 
@@ -45,5 +47,11 @@ app.post('/users/login', async (req, res) => {
         res.status(500).send()
     }
 })
+*/
+//WEBSOCKET STUFF
+const io = require('socket.io')(3000)
+io.on('connection', socket => {
+    socket.emit('chat-message', "Hello World")
+})
 
-app.listen(3000)
+//app.listen(3000)
