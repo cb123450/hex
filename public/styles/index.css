@@ -1,0 +1,51 @@
+body {
+    background-color:rgb(132, 228, 228);
+}
+#intro-container{
+    text-align: center;
+    margin: auto;
+}
+#header{
+    display: block;
+    font-size: 5vh;
+}
+#explanation-container{
+    text-align: left;
+}
+#explanation{
+    display: block;
+    font-size: 2vh;
+    width: 35%;
+    margin-left: 35%;
+}
+
+#button-grid{
+    display: grid;
+    margin-top: 5%;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5%;
+    grid-template-rows: minmax(10vh, 10vh);
+}
+
+#button-grid > button{    
+    border-radius: 15%;  
+}
+#button-grid > button:hover{    
+    border-radius: 15%;  
+    background-color: rgb(243, 58, 106); 
+}
+
+.solo-mode{
+    grid-column: 2;
+}
+
+.two-player-mode{
+    grid-column: 4;
+}
+
+.computer-mode{
+    grid-column: 6;
+}
+.mode{
+    font-size: 3vh;
+}

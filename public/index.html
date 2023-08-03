@@ -4,49 +4,35 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hexagons</title>
-    <script defer src = "http://localhost:3000/socket.io/socket.io.js"></script>
-    <script defer src = "script.js"></script>
-    <link rel="stylesheet" href = "./hexagons.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel = "stylesheet" href = "styles/index.css">
+    <title>Hex</title>
 </head>
 <body>
-    <div class = "start-button" id="start-button">
-        <p class = "start-text">RESTART</p>
+    <div id = "intro-container">
+        <p id="header"> Welcome to Hex! </p>
+        <div id = "explanation-container"> 
+            <ul id = "explanation"> 
+                <li> Hex is a 2-player game.</li>
+                <li> Players choose a color and take turns placing hexagons on empty tiles on the board.</li>
+                <li> The first player to connect their two sides wins.</li>
+                <li> The four corners of the board belong to both adjacent sides.</li>
+                <li> On their first move the second player can swap colors with the first player.</li>
+            </ul>
+        </div>  
     </div>
-    <div class = "spacing"> </div>
-    <div class="grid" id = "grid"></div>
-    <div class = "rules">
-        <ul class = "explanation"> 
-            <li> Hex is a 2-player game.</li>
-            <li> Players choose a color and take turns placing hexagons on empty tiles on the board.</li>
-            <li> The first player to connect their two sides wins.</li>
-            <li> The four corners of the board belong to both adjacent sides.</li>
-            <li> On their first move the second player can swap colors with the first player.</li>
-        </ul>
-    </div>
-    <div id = player-container>
-        <button onclick="sendMessage()">Send Msg</button>
+
+    <div id="button-grid">
+        <button class = "solo-mode" onclick="window.location.href='./hex-solo.html';">
+            <p class = "mode"> Solo Play</p>
+        </button>
+
+        <button class = "two-player-mode" onclick="window.location.href='./hex-two-player.html';">
+            <p class="mode"> 2 Player</p>
+        </button>
+
+        <button class = "computer-mode" onclick="window.location.href='./hex-computer.html';">
+            <p class="mode"> Computer </p>
+        </button>
     </div>
 </body>
-<script>var exports = {};</script>
-<script src = ./hexagons.js></script>
-<script>
-    // Create WebSocket connection.
-    const socket = new WebSocket("ws://localhost:3000");
-
-    // Connection opened
-    socket.addEventListener("open", (event) => {
-        console.log("connected to WS Server")
-    });
-
-    // Listen for messages
-    socket.addEventListener("message", (event) => {
-    console.log("Message from server ", event.data);
-    });
-
-    const sendMessage = () => {
-        socket.send("Hello from Client 1")
-    }
-</script>
 </html>
