@@ -363,6 +363,7 @@ function buttonHandler(evt) {
                 if (hex_lower != null) {
                     hex_lower.style.borderTopColor = "red";
                 }
+                socket.emit("move", { move: { color: "red", row: r_coord, col: c_coord } });
                 turn += 1;
                 hex_container.className = "true";
                 tile_array[r_coord - 2][c_coord - 2].set_color("red");
@@ -387,6 +388,7 @@ function buttonHandler(evt) {
                 if (hex_lower != null) {
                     hex_lower.style.borderTopColor = "blue";
                 }
+                socket.emit("move", { move: { color: "blue", row: r_coord, col: c_coord } });
                 turn += 1;
                 hex_container.className = "true";
                 tile_array[r_coord - 2][c_coord - 2].set_color("blue");
@@ -401,6 +403,9 @@ function buttonHandler(evt) {
         }
     }
 }
+socket.on("move", function (e) {
+    console.log(e.move);
+});
 function startHandler(evt) {
     turn = 0;
     var r = 2;

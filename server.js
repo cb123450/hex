@@ -22,14 +22,14 @@ io.on("connection", (socket) =>{
 
       if(arr.length>=2){
         let p1obj={
-          p1name:arr[0],
-          p1color:"Red",
-          p1move:""
+          name:arr[0],
+          color:"Red",
+          move:""
         }
         let p2obj={
-          p2name:arr[0],
-          p2color:"Blue",
-          p2move:""
+          name:arr[1],
+          color:"Blue",
+          move:""
         }
 
         let obj={
@@ -40,10 +40,17 @@ io.on("connection", (socket) =>{
         gameArr.push(obj)
 
         arr.splice(0, 2)
-
+        
         io.emit("find", {game:gameArr})
 
       }
+    }
+  })
+
+
+  socket.on("move", (e) =>{
+    if(e.move!=null){
+      io.emit("move", e.move)
     }
   })
 

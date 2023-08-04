@@ -1,6 +1,7 @@
 import { visitEachChild } from "typescript";
 import { deflateSync } from "zlib";
 
+
 var side_length = window.innerWidth/55;
 var root3 = 1.73205;
 var height = 2*side_length;
@@ -428,6 +429,7 @@ var turn: number = 0;
 let tile_array : Tile[][] = drawBoard();
 let g : Graph<string, Tile> = createTiles(tile_array); 
 
+
 function buttonHandler(evt){
     
     let test_arr = (evt.target.id).split('_');
@@ -464,6 +466,9 @@ function buttonHandler(evt){
                 if (hex_lower != null){
                     hex_lower.style.borderTopColor = "red";
                 }
+
+                socket.emit("move", {move:{color:"red",row:r_coord, col:c_coord}})
+
                 turn += 1;
                 hex_container.className = "true";
 
@@ -491,6 +496,9 @@ function buttonHandler(evt){
                 if (hex_lower != null){
                     hex_lower.style.borderTopColor = "blue";
                 }
+
+                socket.emit("move", {move:{color:"blue", row:r_coord, col:c_coord}})
+
                 turn += 1;
                 hex_container.className = "true";
                 tile_array[r_coord-2][c_coord-2].set_color("blue");
@@ -506,6 +514,10 @@ function buttonHandler(evt){
         }
     }
 }
+
+socket.on("move", (e) =>{
+    console.log(e.move)
+})
 
 function startHandler(evt){
     turn = 0;

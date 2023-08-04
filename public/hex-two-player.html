@@ -5,8 +5,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>2 Player</title>
-    <script defer src = "http://localhost:3000/socket.io/socket.io.js"></script>
-    <script defer src = "scripts/script.js"></script>
     <link rel="stylesheet" href = "styles/hex-two-player.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
@@ -32,7 +30,7 @@
 
         <br>
 
-        <p id="color-asignment"> You are playing as : <span id="value"></span></p>
+        <p id="color-asignment"> You are playing as : <span id="color"></span></p>
         <br>
         <p id="turn">Red's Turn</p>
 
@@ -48,8 +46,10 @@
 </body>
 
 <script>var exports = {};</script>
-<script src = scripts/hexagons.js></script>
-<script src="/socket.io/socket.io.js">
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
 
     const socket=io();
     let name;
@@ -58,7 +58,6 @@
         name=document.getElementById("name").value;
 
         document.getElementById("user").innerText=name;
-
         if(name==null || name==''){
             alert("Enter a name")
         }
@@ -68,21 +67,23 @@
     })
 
     socket.on("find", (e)=>{
-
-        let gameArr = e.gameArr
+        let gameArr = e.game
         console.log(gameArr)
 
-        let oppName
-        let value
+        let opponent
+        let color
 
-        const myObj=gameArr.find(obj=>obj.p1.p1name=='${name}' ||  obj.p2.p2name=='${name}')
+        const thisGame=gameArr.find(obj=>obj.p1.name ==`${name}` || obj.p2.name == `${name}`)
+        
+        thisGame.p1.name == `${name}` ? opponent=thisGame.p2.name : opponent=thisGame.p1.name
+        thisGame.p1.name == `${name}` ? color=thisGame.p1.color : color=thisGame.p2.color
 
-        myObj.p1.p1name == '${name}' ? oppname=myObj.p2.p2name : oppname=myObj.p1.p1name
-        myObj.p1.p1name == '${name}' ? value=myObj.p2.p2value : value=myObj.p1.p1value
-
-        document.getElementById("oppName").innerText=oppName
-        document.getElementById("value").innerText=value
+        document.getElementById("opponent").innerText=opponent
+        document.getElementById("color").innerText=color
     })
 
 </script>
+
+<script src = scripts/hexagons.js></script>
+
 </html>
