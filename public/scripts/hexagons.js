@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const util_1 = require("./util");
 var side_length = window.innerWidth / 55;
 var root3 = 1.73205;
 var height = 2 * side_length;
@@ -8,130 +9,9 @@ var border_bottom_top = side_length - (side_length / 2.0);
 var border_left_right = (root3 / 2.0) * side_length;
 var grid = document.getElementById("grid");
 var start_button = document.getElementById("start-button");
-var Tile = /** @class */ (function () {
-    function Tile(row, col, color) {
-        this.row = row;
-        this.col = col;
-        this.color = color;
-    }
-    Tile.prototype.get_row = function () {
-        return this.row;
-    };
-    Tile.prototype.get_col = function () {
-        return this.col;
-    };
-    Tile.prototype.hash = function () {
-        var center_str = this.row + '_' + this.col;
-        return center_str;
-    };
-    Tile.prototype.get_visited_flag = function () {
-        return this.visited;
-    };
-    Tile.prototype.visit = function () {
-        this.visited = true;
-    };
-    Tile.prototype.unvisit = function () {
-        this.visited = false;
-    };
-    Tile.prototype.get_color = function () {
-        return this.color;
-    };
-    Tile.prototype.set_color = function (c) {
-        if (c === "blue") {
-            this.color = c;
-        }
-        else if (c === "red") {
-            this.color = c;
-        }
-        else if (c === "#6C8") {
-            this.color = c;
-        }
-    };
-    return Tile;
-}());
-var Graph = /** @class */ (function () {
-    function Graph() {
-        this.vertices = new Map;
-        this.adj_list = new Map();
-    }
-    /*
-    ---curr_tile is the current Tile object
-    ---adj_tile is the adjacent Tile object
-    */
-    Graph.prototype.addEdge = function (curr_tile, adj_tile) {
-        var curr_str = curr_tile.hash();
-        var adj_str = adj_tile.hash();
-        if (!this.adj_list.has(curr_str)) {
-            this.adj_list.set(curr_str, undefined);
-        }
-        if (this.adj_list.has(curr_str) && this.adj_list[curr_str] == undefined) {
-            var map = new Map();
-            map.set(adj_str, adj_tile);
-            this.adj_list[curr_str] = map;
-        }
-        else {
-            this.adj_list[curr_str].set(adj_str, adj_tile);
-        }
-    };
-    Graph.prototype.addVertex = function (curr_tile) {
-        if (!this.vertices.has(curr_tile.hash())) {
-            this.vertices.set(curr_tile.hash(), curr_tile);
-        }
-    };
-    Graph.prototype.getVertices = function () {
-        return this.vertices;
-    };
-    Graph.prototype.getAdjacencyList = function () {
-        return this.adj_list;
-    };
-    Graph.prototype.unvisitAll = function () {
-        var iter = this.vertices.values();
-        while (iter.hasNext()) {
-            var t = iter.next();
-            t.unvisit();
-        }
-    };
-    return Graph;
-}());
-var Queue = /** @class */ (function () {
-    function Queue() {
-        this.items = new Array;
-        this.first_item = 0;
-        this.next_item = 0;
-        this.num_elements = 0;
-    }
-    Queue.prototype.enqueue = function (item) {
-        this.items[this.next_item] = item;
-        this.next_item++;
-        this.num_elements += 1.;
-    };
-    Queue.prototype.dequeue = function () {
-        if (this.first_item < this.next_item) {
-            var item = this.items[this.first_item];
-            this.first_item++;
-            this.num_elements -= 1;
-            return item;
-        }
-    };
-    Queue.prototype.size = function () {
-        return this.num_elements;
-    };
-    Queue.prototype.peek = function () {
-        return this.items[this.first_item];
-    };
-    Object.defineProperty(Queue.prototype, "printQueue", {
-        get: function () {
-            return this.items;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    return Queue;
-}());
-//END----------Tile, Graph, and Queue DATA STRUCTURES---------
 function drawBoard() {
     //Create tile array to aid in creaetion of graph
-    var tile_array = [];
+    let tile_array = [];
     var index = 0;
     while (index < 11) {
         tile_array[index] = [];
@@ -212,7 +92,7 @@ function drawBoard() {
                 var left_border = document.createElement("div");
                 left_border.id = hex_container.id + "_left_border";
                 hex_container.appendChild(left_border);
-                var rotation = 6.0 / 36.0;
+                const rotation = 6.0 / 36.0;
                 var style_left_border = '#' + left_border.id
                     + ' {\n'
                     + 'width: 0;'
@@ -233,7 +113,7 @@ function drawBoard() {
                 var right_border = document.createElement("div");
                 right_border.id = hex_container.id + "_right_border";
                 hex_container.appendChild(right_border);
-                var rotation = 6.0 / 36.0;
+                const rotation = 6.0 / 36.0;
                 if (row == 1) {
                 }
                 var style_right_border = '#' + right_border.id
@@ -291,7 +171,7 @@ function drawBoard() {
                 sheet.insertRule(style_lower, sheet.cssRules.length);
                 //CREATE TILE ARRAY
                 //The default color of the tile is a shade of green
-                tile_array[row - 2][col - 2] = new Tile(row, col, "#6C8");
+                tile_array[row - 2][col - 2] = new util_1.Tile(row, col, "#6C8");
             }
             col += 1;
         }
@@ -304,7 +184,7 @@ links the edges and vertices together
 */
 function createTiles(t) {
     var tile_array = t;
-    var g = new Graph();
+    let g = new util_1.Graph();
     var row = 0;
     while (row < 11) {
         var col = 0;
@@ -332,22 +212,22 @@ function createTiles(t) {
     return g;
 }
 var turn = 0;
-var tile_array = drawBoard();
-var g = createTiles(tile_array);
+let tile_array = drawBoard();
+let g = createTiles(tile_array);
 function buttonHandler(evt) {
-    var test_arr = (evt.target.id).split('_');
-    var r = test_arr[0];
-    var r_coord = parseInt(test_arr[1]);
-    var c = test_arr[2];
-    var c_coord = parseInt(test_arr[3]);
+    let test_arr = (evt.target.id).split('_');
+    let r = test_arr[0];
+    let r_coord = parseInt(test_arr[1]);
+    let c = test_arr[2];
+    let c_coord = parseInt(test_arr[3]);
     //RECONSTRUCT hex_id
     if (r === 'r') {
-        var hex_container_id = test_arr.slice(0, -1).join('_');
-        var hex_container = document.querySelector("#" + hex_container_id);
+        let hex_container_id = test_arr.slice(0, -1).join('_');
+        let hex_container = document.querySelector("#" + hex_container_id);
         if ((hex_container === null || hex_container === void 0 ? void 0 : hex_container.className) == 'false' && r === 'r' && c === 'c' && r_coord >= 2 && r_coord <= 12 && c_coord >= 2 && c_coord <= 12) {
-            var hex_upper = document.getElementById(hex_container_id + "_upper");
-            var hex_middle = document.getElementById(hex_container_id + "_middle");
-            var hex_lower = document.getElementById(hex_container_id + "_lower");
+            let hex_upper = document.getElementById(hex_container_id + "_upper");
+            let hex_middle = document.getElementById(hex_container_id + "_middle");
+            let hex_lower = document.getElementById(hex_container_id + "_lower");
             //grid is not null by children are
             if (turn % 2 == 0) {
                 //change to red
@@ -363,11 +243,10 @@ function buttonHandler(evt) {
                 if (hex_lower != null) {
                     hex_lower.style.borderTopColor = "red";
                 }
-                socket.emit("move", { move: { color: "red", row: r_coord, col: c_coord } });
                 turn += 1;
                 hex_container.className = "true";
                 tile_array[r_coord - 2][c_coord - 2].set_color("red");
-                var red_win = checkWin("red");
+                let red_win = checkWin("red");
                 //if red wins
                 if (red_win) {
                     window.alert("Red has won!");
@@ -388,11 +267,10 @@ function buttonHandler(evt) {
                 if (hex_lower != null) {
                     hex_lower.style.borderTopColor = "blue";
                 }
-                socket.emit("move", { move: { color: "blue", row: r_coord, col: c_coord } });
                 turn += 1;
                 hex_container.className = "true";
                 tile_array[r_coord - 2][c_coord - 2].set_color("blue");
-                var blue_win = checkWin("blue");
+                let blue_win = checkWin("blue");
                 //if blue wins
                 if (blue_win) {
                     window.alert("Blue has won!");
@@ -403,22 +281,19 @@ function buttonHandler(evt) {
         }
     }
 }
-socket.on("move", function (e) {
-    console.log(e.move);
-});
 function startHandler(evt) {
     turn = 0;
-    var r = 2;
+    let r = 2;
     while (r <= 12) {
-        var c = 2;
+        let c = 2;
         while (c <= 12) {
-            var hex_container_id = 'r_' + r + '_c_' + c;
-            var hex_container = document.querySelector("#" + hex_container_id);
+            let hex_container_id = 'r_' + r + '_c_' + c;
+            let hex_container = document.querySelector("#" + hex_container_id);
             if ((hex_container === null || hex_container === void 0 ? void 0 : hex_container.className) == "true") {
                 hex_container.className = "false";
-                var hex_upper = document.getElementById(hex_container_id + "_upper");
-                var hex_middle = document.getElementById(hex_container_id + "_middle");
-                var hex_lower = document.getElementById(hex_container_id + "_lower");
+                let hex_upper = document.getElementById(hex_container_id + "_upper");
+                let hex_middle = document.getElementById(hex_container_id + "_middle");
+                let hex_lower = document.getElementById(hex_container_id + "_lower");
                 if (hex_upper != null) {
                     hex_upper.style.borderBottomColor = "#6C8";
                 }
@@ -435,9 +310,9 @@ function startHandler(evt) {
         }
         r += 1;
     }
-    var i = 0;
+    let i = 0;
     while (i < 11) {
-        var k = 0;
+        let k = 0;
         while (k < 11) {
             tile_array[i][k].set_color("#6C8");
             k += 1;
@@ -454,18 +329,18 @@ var Player;
     Player[Player["Blue"] = 1] = "Blue";
 })(Player || (Player = {}));
 function bfs(t, color) {
-    var visited = new Set();
-    var q = new Queue();
+    let visited = new Set();
+    let q = new util_1.Queue();
     q.enqueue(t);
     visited.add(t.hash());
-    var adj = g.getAdjacencyList();
+    let adj = g.getAdjacencyList();
     while (q.size() != 0) {
-        var samp = q.dequeue();
+        let samp = q.dequeue();
         if (samp != undefined) {
             //console.log(samp)
-            var h = samp.hash();
-            var row = parseInt(h.split('_')[0]) - 2;
-            var col = parseInt(h.split('_')[1]) - 2;
+            let h = samp.hash();
+            let row = parseInt(h.split('_')[0]) - 2;
+            let col = parseInt(h.split('_')[1]) - 2;
             //always start bfs for red player from row 0 and start bfs for blue player from col 0
             if (color == "red" && row == 10) {
                 return true;
@@ -473,10 +348,10 @@ function bfs(t, color) {
             else if (color == "blue" && col == 10) {
                 return true;
             }
-            var neighbors = adj[samp.hash()];
-            neighbors.forEach(function (value, key) {
-                var r = parseInt(value.hash().split('_')[0]) - 2;
-                var c = parseInt(value.hash().split('_')[1]) - 2;
+            let neighbors = adj[samp.hash()];
+            neighbors.forEach((value, key) => {
+                let r = parseInt(value.hash().split('_')[0]) - 2;
+                let c = parseInt(value.hash().split('_')[1]) - 2;
                 if (tile_array[r][c].get_color() == color && !visited.has(value.hash())) {
                     q.enqueue(value);
                     visited.add(value.hash());
@@ -491,17 +366,17 @@ function bfs(t, color) {
 * Returns true if for a win and false otherwise
 */
 function checkWin(color) {
-    var i = 0;
+    let i = 0;
     while (i < 11) {
         if (color == "red") {
-            var check_red = bfs(tile_array[0][i], "red");
+            let check_red = bfs(tile_array[0][i], "red");
             //console.log("red")
             if (check_red) {
                 return true;
             }
         }
         else if (color == "blue") {
-            var check_blue = bfs(tile_array[i][0], "blue");
+            let check_blue = bfs(tile_array[i][0], "blue");
             //console.log("blue")
             if (check_blue) {
                 return true;
