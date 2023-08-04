@@ -3,18 +3,38 @@ body{
     background-color:rgb(132, 228, 228);
     width: 100vw;
     height: 100vh;
+    left: -5%;
 }
 
-.start-text{
-    display: inline-block;
-    z-index: 4;
-    background-color: #6C8;
-    font-size: 5vh;
-    margin: 0 auto;
+.grid-header{
+    display: grid;
+    margin-top: 5%;
+    margin-bottom: 5%;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 5%;
+    grid-template-rows: minmax(10vh, 10vh);
 }
 
-.start-text:hover{
+.grid-header > button{    
+    border-radius: 15%;  
+}
+#home:hover{    
+    border-radius: 15%;  
+    background-color: rgb(243, 58, 106); 
+}
+
+#home{
+    grid-column: 2;
+}
+#start-button{
+    grid-column: 4;
+}
+#start-button:hover{
     background-color:bisque;
+}
+
+.header{
+    font-size: 3vh;
 }
 
 .spacing{
@@ -34,9 +54,8 @@ li{
     justify-content: center;
     top: -10%;
     left: 10%;
-    margin: 20px;
+    margin: 5%;
 }
-
 #player-container{
     z-index: 5;
     top: -70%;

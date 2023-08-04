@@ -1,30 +1,60 @@
 const express = require('express')
 const app = express()
 var path = require('path')
-const server = require('http').createServer(app);
-const WebSocket = require('ws');
+const http = require('http')
+const {Server}=require("socket.io")
 
-const wss = new WebSocket.Server({server:server});
+const server = http.createServer(app)
 
-app.use(express.static("public"));
-app.use(express.json())
-app.set("view engine", "ejs")
+const io = new Server(server)
+app.use(express.static("public"))
 
-wss.on('connection', function connection(ws) {
-    console.log("New Client Connected")
-    ws.send('Welcome new client!');
-
-    ws.on('error', console.error);
-  
-    ws.on('message', function message(data) {
-      console.log('received: %s', data);
-      ws.send("Received message:" + data)
-    });
-  
-    
-  });
+let arr=[]
+let gameArr=[]
 
 
-app.get('/', (req, res) => res.send("Hello World!"))
+io.on("connection", (socket) =>{
 
-server.listen(3000, () => console.log("Listening on port :3000"))
+  socket.on("find", (e)=>{
+
+    if(e.name!=null){
+      arr.push(e.name)
+
+      if(arr.length>=2){
+        let p1obj={
+          p1name:arr[0],
+          p1color:"Red",
+          p1move:""
+        }
+        let p2obj={
+          p2name:arr[0],
+          p2color:"Blue",
+          p2move:""
+        }
+
+        let obj={
+          p1:p1obj,
+          p2:p2obj
+        }
+
+        gameArr.push(obj)
+
+        arr.splice(0, 2)
+
+        io.emit("find", {game:gameArr})
+
+      }
+    }
+  })
+
+})
+
+
+app.get("/", (req,res) => {
+  return res.sendFile("index.html")
+})
+
+server.listen(3000, ()=>{
+  console.log("port connected to 3000")
+})
+
