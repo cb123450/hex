@@ -24,13 +24,15 @@ export function drawBoard() : Tile[][] {
 
     if (grid != null){
         grid.style.gridTemplateRows = "repeat(12, minmax(" + height + "px, " + height + "px))";
-        grid.style.gridTemplateColumns = "repeat(25, minmax(" + width + "px, " + width + "px))";
+        grid.style.gridTemplateColumns = "repeat(28, minmax(" + width + "px, " + width + "px))";
     }
 
     /* Listen to parent of the tiles to improve efficiency */
     grid?.addEventListener("click", buttonHandler, false);
     start_button?.addEventListener("click", startHandler, false);
 
+    var inc : number = 4;
+    
     var row : number = 1;
     while (row < 14){
         var col : number = 1;
@@ -251,6 +253,3 @@ export function createTiles(t : Tile[][]) : Graph<string, Tile>{
     return g; 
     
 }
-
-let tile_array : Tile[][] = drawBoard();
-let g : Graph<string, Tile> = createTiles(tile_array); 

@@ -31,8 +31,11 @@ export function buttonHandler(evt: Event){
                 if (getTurn() % 2 == 0){
                     //change to red
                     //upper
+                    
                     if (hex_upper != null){
+                        //console.log(hex_upper.style.borderBottomColor)
                         hex_upper.style.borderBottomColor = "red";
+                        //console.log(hex_upper.style.borderBottomColor)
                     }
                     //middle
                     if (hex_middle != null){
@@ -159,7 +162,6 @@ function bfs(t: Tile, color : string) : boolean{
     while (q.size() != 0){
         let samp : Tile | undefined = q.dequeue();
         if (samp != undefined){
-            //console.log(samp)
             let h : string = samp.id;
             let row : number = parseInt(h.split('_')[0])-2;
             let col : number = parseInt(h.split('_')[1])-2;
@@ -199,14 +201,12 @@ function checkWin(color : string) : boolean{
     while (i < 11){
         if (color == "red"){
             let check_red : boolean = bfs(tile_array[0][i], "red");
-            //console.log("red")
             if (check_red){
                 return true;
             }
         }
         else if (color == "blue"){
             let check_blue : boolean = bfs(tile_array[i][0], "blue");
-            //console.log("blue")
             if (check_blue){
                 return true;
             }
