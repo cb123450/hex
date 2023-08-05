@@ -1,6 +1,6 @@
 import { visitEachChild } from "typescript";
 import { deflateSync } from "zlib";
-import {Tile, Graph, Queue} from "./utility";
+import {Tile, Graph, Queue} from "./utility.js";
 
 var side_length = window.innerWidth/55;
 var root3 = 1.73205;
