@@ -7,6 +7,7 @@ var border_bottom_top = side_length - (side_length / 2.0);
 var border_left_right = (root3 / 2.0) * side_length;
 var grid = document.getElementById("grid");
 var start_button = document.getElementById("start-button");
+
 function drawBoard() {
     //Create tile array to aid in creaetion of graph
     let tile_array = [];
