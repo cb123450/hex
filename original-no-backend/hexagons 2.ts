@@ -1,6 +1,5 @@
 import { visitEachChild } from "typescript";
 import { deflateSync } from "zlib";
-import {Tile, Graph, Queue} from "./util";
 
 var side_length = window.innerWidth/55;
 var root3 = 1.73205;
@@ -11,6 +10,180 @@ var border_left_right = (root3/2.0)*side_length;
 
 var grid = document.getElementById("grid");
 var start_button = document.getElementById("start-button");
+
+//START----------Tile, Graph, and Queue DATA STRUCTURES---------
+
+/*
+---center is [x, y] where x is the x-coord of the center 
+of this tile and y is the y-coord of the center
+
+---vertices is an array of the vertices making up the hexagon
+of this tile
+*/
+interface Tile {
+    row: number;
+    col: number;
+    visited: boolean;
+    color: string;
+    hash() : string;
+    get_visited() : boolean;
+    visit();
+    unvisit();
+    get_color() : string;
+    set_color(c : string);
+}
+class Tile {
+    constructor(row, col, color){
+        this.row = row;
+        this.col = col;
+        this.color = color;
+    }
+    get_row(){
+        return this.row;
+    }
+    get_col(){
+        return this.col;
+    }
+    hash() : string{
+        const center_str = this.row + '_' + this.col;
+        return center_str;
+    }
+    get_visited_flag() : boolean{
+        return this.visited;
+    }
+    visit(){
+        this.visited = true;
+    } 
+    unvisit(){
+        this.visited = false;
+    }
+    get_color(){
+        return this.color;
+    }
+    set_color(c: string){
+        if (c === "blue"){
+            this.color = c;
+        }
+        else if (c === "red"){
+            this.color = c;
+        }
+        else if (c === "#6C8"){
+            this.color = c;
+        }
+    }
+}
+
+/*
+---node is a tile
+
+---vertices is the set of vertices in a graph; it contains strings
+
+--edges will be an adjacency list implemented with a hashmap. 
+    --key is the string representing the center of the tile
+    --value is a hashmap of its neighbors (Tile objects)
+
+-There will be no collisions in any dictionary bc each tile has a unique center
+-This graph is undirected
+*/
+interface Graph<Hashable, T> {
+    vertices;
+    adj_list;
+    addEdge(curr_tile, adj_tile);
+    addVertex(curr_tile);
+    getVertices();
+    getAdjacencyList();
+    unvisit_all();
+}
+
+class Graph<Hashable, T>{
+    constructor(){
+        this.vertices = new Map<Hashable, T>; 
+        this.adj_list = new Map<Hashable, Map<Hashable, T>>();
+    }
+
+    /*
+    ---curr_tile is the current Tile object
+    ---adj_tile is the adjacent Tile object
+    */
+    addEdge(curr_tile, adj_tile){
+        let curr_str = curr_tile.hash();
+        let adj_str = adj_tile.hash();
+
+        if (!this.adj_list.has(curr_str)){
+            this.adj_list.set(curr_str, undefined);
+        }
+
+        if (this.adj_list.has(curr_str) && this.adj_list[curr_str] == undefined){
+            let map : Map<Hashable, T> = new Map<Hashable, T>();
+            map.set(adj_str, adj_tile)
+            this.adj_list[curr_str] = map;
+        }
+        else{
+            this.adj_list[curr_str].set(adj_str, adj_tile);
+        }
+    }
+
+    addVertex(curr_tile){
+        if (!this.vertices.has(curr_tile.hash())){
+            this.vertices.set(curr_tile.hash(), curr_tile);
+        }
+    }
+    
+    getVertices() : Map<Hashable, T>{
+        return this.vertices;
+    }
+
+    getAdjacencyList() : Map<Hashable, Map<Hashable, T>>{
+        return this.adj_list;
+    }
+
+    unvisitAll(){
+        let iter = this.vertices.values();
+        while (iter.hasNext()){
+            let t : Tile = iter.next();
+            t.unvisit();
+        }
+        
+    }
+}
+
+interface Queue<T> {
+    items: Array<T>;
+    first_item: number;
+    next_item: number;
+    num_elements: number;
+}
+class Queue<T> implements Queue<T>{
+    constructor() {
+        this.items = new Array<T>;
+        this.first_item = 0;
+        this.next_item = 0;
+        this.num_elements = 0;
+    }
+    enqueue(item) {
+        this.items[this.next_item] = item;
+        this.next_item++;
+        this.num_elements += 1.
+    }
+    dequeue() {
+        if (this.first_item < this.next_item){
+            const item = this.items[this.first_item];
+            this.first_item++;
+            this.num_elements -= 1;
+            return item;
+        }
+    }
+    size(){
+        return this.num_elements;
+    }
+    peek() {
+        return this.items[this.first_item];
+    }
+    get printQueue() {
+        return this.items;
+    }
+}
+//END----------Tile, Graph, and Queue DATA STRUCTURES---------
 
 function drawBoard() : Tile[][] {
     //Create tile array to aid in creaetion of graph
@@ -255,96 +428,86 @@ var turn: number = 0;
 let tile_array : Tile[][] = drawBoard();
 let g : Graph<string, Tile> = createTiles(tile_array); 
 
-
-function buttonHandler(evt: Event){
+function buttonHandler(evt){
     
-    if (evt.target != null && evt.target instanceof Element){
-        let test_arr = (evt.target.id).split('_');
+    let test_arr = (evt.target.id).split('_');
 
-        let r : string = test_arr[0];
-        let r_coord : number = parseInt(test_arr[1]);
-        let c : string = test_arr[2];
-        let c_coord : number = parseInt(test_arr[3]);
+    let r : string = test_arr[0];
+    let r_coord : number = parseInt(test_arr[1]);
+    let c : string = test_arr[2];
+    let c_coord : number = parseInt(test_arr[3]);
 
-        //RECONSTRUCT hex_id
+    //RECONSTRUCT hex_id
 
-        if (r === 'r'){
-            let hex_container_id : string = test_arr.slice(0, -1).join('_');
-            let hex_container = document.querySelector("#" + hex_container_id);
+    if (r === 'r'){
+        let hex_container_id : string = test_arr.slice(0, -1).join('_');
+        let hex_container = document.querySelector("#" + hex_container_id);
 
 
-            if (hex_container?.className == 'false' && r === 'r' && c === 'c' && r_coord >= 2 && r_coord <= 12 && c_coord >= 2 && c_coord <= 12){
-                let hex_upper : HTMLElement | null = document.getElementById(hex_container_id + "_upper");
-                let hex_middle : HTMLElement | null = document.getElementById(hex_container_id + "_middle");
-                let hex_lower : HTMLElement | null = document.getElementById(hex_container_id + "_lower");
+        if (hex_container?.className == 'false' && r === 'r' && c === 'c' && r_coord >= 2 && r_coord <= 12 && c_coord >= 2 && c_coord <= 12){
+            let hex_upper : HTMLElement | null = document.getElementById(hex_container_id + "_upper");
+            let hex_middle : HTMLElement | null = document.getElementById(hex_container_id + "_middle");
+            let hex_lower : HTMLElement | null = document.getElementById(hex_container_id + "_lower");
 
-                //grid is not null by children are
-                if (turn % 2 == 0){
-                    //change to red
-                    //upper
-                    if (hex_upper != null){
-                        hex_upper.style.borderBottomColor = "red";
-                    }
-                    //middle
-                    if (hex_middle != null){
-                        hex_middle.style.background = "red";
-                    }
-                    //bottom
-                    if (hex_lower != null){
-                        hex_lower.style.borderTopColor = "red";
-                    }
-
-                    
-
-                    turn += 1;
-                    hex_container.className = "true";
-
-                    tile_array[r_coord-2][c_coord-2].set_color("red");
-
-                    let red_win: boolean = checkWin("red");
-
-                    //if red wins
-                    if (red_win){
-                        window.alert("Red has won!")
-                        console.log("Red has won! Press the restart button to play again!")
-                    }
+            //grid is not null by children are
+            if (turn % 2 == 0){
+                //change to red
+                //upper
+                if (hex_upper != null){
+                    hex_upper.style.borderBottomColor = "red";
                 }
-                else{
-                    //change to blue
-                    //upper
-                    if (hex_upper != null){
-                        hex_upper.style.borderBottomColor = "blue";
-                    }
-                    //middle
-                    if (hex_middle != null){
-                        hex_middle.style.background = "blue";
-                    }
-                    //bottom
-                    if (hex_lower != null){
-                        hex_lower.style.borderTopColor = "blue";
-                    }
-
-                    
-
-                    turn += 1;
-                    hex_container.className = "true";
-                    tile_array[r_coord-2][c_coord-2].set_color("blue");
-                    let blue_win: boolean = checkWin("blue");
-
-                    //if blue wins
-                    if (blue_win){
-                        window.alert("Blue has won!")
-                        console.log("Blue has won! Press the restart button to play again!")
-                    }
+                //middle
+                if (hex_middle != null){
+                    hex_middle.style.background = "red";
                 }
-                evt.stopPropagation();
+                //bottom
+                if (hex_lower != null){
+                    hex_lower.style.borderTopColor = "red";
+                }
+                turn += 1;
+                hex_container.className = "true";
+
+                tile_array[r_coord-2][c_coord-2].set_color("red");
+
+                let red_win: boolean = checkWin("red");
+
+                //if red wins
+                if (red_win){
+                    window.alert("Red has won!")
+                    console.log("Red has won! Press the restart button to play again!")
+                }
             }
+            else{
+                //change to blue
+                //upper
+                if (hex_upper != null){
+                    hex_upper.style.borderBottomColor = "blue";
+                }
+                //middle
+                if (hex_middle != null){
+                    hex_middle.style.background = "blue";
+                }
+                //bottom
+                if (hex_lower != null){
+                    hex_lower.style.borderTopColor = "blue";
+                }
+                turn += 1;
+                hex_container.className = "true";
+                tile_array[r_coord-2][c_coord-2].set_color("blue");
+                let blue_win: boolean = checkWin("blue");
+
+                //if blue wins
+                if (blue_win){
+                    window.alert("Blue has won!")
+                    console.log("Blue has won! Press the restart button to play again!")
+                }
+            }
+            evt.stopPropagation();
         }
     }
 }
 
-
-function startHandler(evt : Event){
+function startHandler(evt){
     turn = 0;
     let r : number = 2;
     while (r <= 12){
@@ -398,7 +561,7 @@ function bfs(t: Tile, color : string) : boolean{
     let visited = new Set<string>();
     let q : Queue<Tile> = new Queue<Tile>();
     q.enqueue(t);
-    visited.add(t.id);
+    visited.add(t.hash());
 
     let adj : Map<string, Map<string, Tile>> = g.getAdjacencyList();
 
@@ -406,7 +569,7 @@ function bfs(t: Tile, color : string) : boolean{
         let samp : Tile | undefined = q.dequeue();
         if (samp != undefined){
             //console.log(samp)
-            let h : string = samp.id;
+            let h : string = samp.hash();
             let row : number = parseInt(h.split('_')[0])-2;
             let col : number = parseInt(h.split('_')[1])-2;
             //always start bfs for red player from row 0 and start bfs for blue player from col 0
@@ -417,15 +580,15 @@ function bfs(t: Tile, color : string) : boolean{
                 return true;
             }
 
-            let neighbors : Map<string, Tile> | undefined= adj.get(samp.id);
+            let neighbors : Map<string, Tile> = adj[samp.hash()];
             
-            neighbors?.forEach((value, key) => {
-                let r : number = parseInt(value.id.split('_')[0])-2;
-                let c : number = parseInt(value.id.split('_')[1])-2;
+            neighbors.forEach((value, key) => {
+                let r : number = parseInt(value.hash().split('_')[0])-2;
+                let c : number = parseInt(value.hash().split('_')[1])-2;
 
-                if (tile_array[r][c].get_color() == color && !visited.has(value.id)){  
+                if (tile_array[r][c].get_color() == color && !visited.has(value.hash())){  
                     q.enqueue(value);
-                    visited.add(value.id)
+                    visited.add(value.hash())
                 }
             });
         }

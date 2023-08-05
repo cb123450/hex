@@ -7,23 +7,25 @@ of this tile and wy is the y-coord of the center
 ---vertices is an array of the vertices making up the hexagon
 of this tile
 */
+
 export interface Tile {
     row: number;
     col: number;
     visited: boolean;
     color: string;
-    hash() : string;
+    id: string;
     get_visited() : boolean;
-    visit();
-    unvisit();
+    visit() : void;
+    unvisit() : void;
     get_color() : string;
-    set_color(c : string);
+    set_color(c : string) : void;
 }
 export class Tile {
     constructor(row:number, col:number, color:string){
         this.row = row;
         this.col = col;
         this.color = color;
+        this.id = row + '_' + col;
     }
     get_row(){
         return this.row;
@@ -31,23 +33,19 @@ export class Tile {
     get_col(){
         return this.col;
     }
-    hash() : string{
-        const center_str = this.row + '_' + this.col;
-        return center_str;
-    }
     get_visited_flag() : boolean{
         return this.visited;
     }
-    visit(){
+    visit() : void{
         this.visited = true;
     } 
-    unvisit(){
+    unvisit() : void{
         this.visited = false;
     }
-    get_color(){
+    get_color() : string{
         return this.color;
     }
-    set_color(c: string){
+    set_color(c: string) : void{
         if (c === "blue"){
             this.color = c;
         }
@@ -74,65 +72,63 @@ export class Tile {
 -There will be no collisions in any dictionary bc each tile has a unique center
 -This graph is undirected
 */
-export interface Graph<Hashable, T> {
-    vertices;
-    adj_list;
-    addEdge(curr_tile, adj_tile);
-    addVertex(curr_tile);
-    getVertices();
-    getAdjacencyList();
-    unvisit_all();
+export interface Graph<H extends string, T extends Tile> {
+    vertices : Map<H, T>;
+    adj_list : Map<H, Map<H, T>>;
+    addEdge(curr_tile : T, adj_tile : T): void;
+    addVertex(curr_tile : T) : void;
+    getVertices() : Map<H, T>;
+    getAdjacencyList() : Map<H, Map<H, T>>;
+    unvisit_all() : void;
 }
 
 
 
-export class Graph<Hashable, T>{
+export class Graph<H extends string, T extends Tile>{
     constructor(){
-        this.vertices = new Map<Hashable, T>; 
-        this.adj_list = new Map<Hashable, Map<Hashable, T>>();
+        this.vertices = new Map<H, T>; 
+        this.adj_list = new Map<H, Map<H, T>>();
     }
 
     /*
     ---curr_tile is the current Tile object
     ---adj_tile is the adjacent Tile object
     */
-    addEdge(curr_tile, adj_tile){
-        let curr_str = curr_tile.hash();
-        let adj_str = adj_tile.hash();
+    addEdge(curr_tile : T, adj_tile : T): void{
+        let curr_str : string = curr_tile.id;
+        let adj_str : string = adj_tile.id;
 
-        if (!this.adj_list.has(curr_str)){
-            this.adj_list.set(curr_str, undefined);
-        }
-
-        if (this.adj_list.has(curr_str) && this.adj_list[curr_str] == undefined){
-            let map : Map<Hashable, T> = new Map<Hashable, T>();
-            map.set(adj_str, adj_tile)
-            this.adj_list[curr_str] = map;
+        if (!this.adj_list.has(curr_str as H)){
+            let map : Map<H, T> = new Map<H, T>();
+            this.adj_list.set(curr_str as H, map);
         }
         else{
-            this.adj_list[curr_str].set(adj_str, adj_tile);
+            if (this.adj_list.get(curr_str as H) != null){
+                this.adj_list.get(curr_str as H)?.set(adj_str as H, adj_tile);
+            }
+
         }
     }
 
-    addVertex(curr_tile){
-        if (!this.vertices.has(curr_tile.hash())){
-            this.vertices.set(curr_tile.hash(), curr_tile);
+    addVertex(curr_tile : T) : void{
+        if (!this.vertices.has(curr_tile.id as H)){
+            this.vertices.set(curr_tile.id as H, curr_tile);
         }
     }
     
-    getVertices() : Map<Hashable, T>{
+    getVertices() : Map<H, Tile>{
         return this.vertices;
     }
 
-    getAdjacencyList() : Map<Hashable, Map<Hashable, T>>{
+    getAdjacencyList() : Map<H, Map<H, Tile>>{
         return this.adj_list;
     }
 
-    unvisitAll(){
+    unvisit_all() : void{
         let iter = this.vertices.values();
-        while (iter.hasNext()){
-            let t : Tile = iter.next();
-            t.unvisit();
+
+        for (const val of iter){
+            val.unvisit();
         }
         
     }
@@ -151,7 +147,7 @@ export class Queue<T> implements Queue<T>{
         this.next_item = 0;
         this.num_elements = 0;
     }
-    enqueue(item) {
+    enqueue(item : T) {
         this.items[this.next_item] = item;
         this.next_item++;
         this.num_elements += 1.

@@ -1,22 +1,16 @@
-"use strict";
 /*----------Tile, Graph, and Queue DATA STRUCTURES---------*/
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Queue = exports.Graph = exports.Tile = void 0;
-class Tile {
+export class Tile {
     constructor(row, col, color) {
         this.row = row;
         this.col = col;
         this.color = color;
+        this.id = row + '_' + col;
     }
     get_row() {
         return this.row;
     }
     get_col() {
         return this.col;
-    }
-    hash() {
-        const center_str = this.row + '_' + this.col;
-        return center_str;
     }
     get_visited_flag() {
         return this.visited;
@@ -42,8 +36,7 @@ class Tile {
         }
     }
 }
-exports.Tile = Tile;
-class Graph {
+export class Graph {
     constructor() {
         this.vertices = new Map;
         this.adj_list = new Map();
@@ -53,23 +46,22 @@ class Graph {
     ---adj_tile is the adjacent Tile object
     */
     addEdge(curr_tile, adj_tile) {
-        let curr_str = curr_tile.hash();
-        let adj_str = adj_tile.hash();
+        var _a;
+        let curr_str = curr_tile.id;
+        let adj_str = adj_tile.id;
         if (!this.adj_list.has(curr_str)) {
-            this.adj_list.set(curr_str, undefined);
-        }
-        if (this.adj_list.has(curr_str) && this.adj_list[curr_str] == undefined) {
             let map = new Map();
-            map.set(adj_str, adj_tile);
-            this.adj_list[curr_str] = map;
+            this.adj_list.set(curr_str, map);
         }
         else {
-            this.adj_list[curr_str].set(adj_str, adj_tile);
+            if (this.adj_list.get(curr_str) != null) {
+                (_a = this.adj_list.get(curr_str)) === null || _a === void 0 ? void 0 : _a.set(adj_str, adj_tile);
+            }
         }
     }
     addVertex(curr_tile) {
-        if (!this.vertices.has(curr_tile.hash())) {
-            this.vertices.set(curr_tile.hash(), curr_tile);
+        if (!this.vertices.has(curr_tile.id)) {
+            this.vertices.set(curr_tile.id, curr_tile);
         }
     }
     getVertices() {
@@ -78,16 +70,14 @@ class Graph {
     getAdjacencyList() {
         return this.adj_list;
     }
-    unvisitAll() {
+    unvisit_all() {
         let iter = this.vertices.values();
-        while (iter.hasNext()) {
-            let t = iter.next();
-            t.unvisit();
+        for (const val of iter) {
+            val.unvisit();
         }
     }
 }
-exports.Graph = Graph;
-class Queue {
+export class Queue {
     constructor() {
         this.items = new Array;
         this.first_item = 0;
@@ -117,4 +107,3 @@ class Queue {
         return this.items;
     }
 }
-exports.Queue = Queue;
