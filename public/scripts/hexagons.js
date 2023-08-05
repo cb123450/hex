@@ -1,4 +1,4 @@
-import { Tile, Graph, Queue } from "./util";
+import { Tile, Graph, Queue } from "./utility.js";
 var side_length = window.innerWidth / 55;
 var root3 = 1.73205;
 var height = 2 * side_length;

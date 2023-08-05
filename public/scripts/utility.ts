@@ -7,7 +7,6 @@ of this tile and wy is the y-coord of the center
 ---vertices is an array of the vertices making up the hexagon
 of this tile
 */
-
 export interface Tile {
     row: number;
     col: number;
