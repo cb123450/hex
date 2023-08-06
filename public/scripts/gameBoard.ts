@@ -252,3 +252,5 @@ export function createTiles(t : Tile[][]) : Graph<string, Tile>{
     return g; 
     
 }
+
+export default {drawBoard, createTiles}

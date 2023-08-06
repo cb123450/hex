@@ -103,3 +103,5 @@ export function changeColor(row : number, col : number, color:string, tile_array
         }
     }
 }
+
+export default {bfs, checkWin, changeColor}

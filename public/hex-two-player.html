@@ -37,21 +37,21 @@
 <script type="module" src = scripts/utility.js></script>
 
 <script src="/socket.io/socket.io.js"></script>
-<script>
-    import Game from "Game.js";
-    import changeColor from "Handler.js"
+<script type="module">
 
-    
+    import Game from "./scripts/Game.js";
+    import changeColor from "./scripts/helper.js"
+
     const socket = io();
     game : Game = new Game(socket)
-    new Handler(game);
+
 
     socket.on("colorChange", (e) => {
         let row = e.r_coord;
         let col = e.c_coord;
         let newColor = e.color;
     
-        changeColor(row, col, newColor)
+        changeColor(row, col, newColor, game.getTileArray())
     })
 
 

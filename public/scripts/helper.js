@@ -83,3 +83,4 @@ export function changeColor(row, col, color, tile_array) {
         }
     }
 }
+export default { bfs, checkWin, changeColor };

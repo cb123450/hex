@@ -210,3 +210,4 @@ export function createTiles(t) {
     }
     return g;
 }
+export default { drawBoard, createTiles };
