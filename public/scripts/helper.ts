@@ -69,15 +69,15 @@ export function checkWin(color : string, tile_array : Tile[][], g : Graph<string
 
 export function changeColor(row : number, col : number, color:string, tile_array : Tile [][]) : void{
     if (row >= 2 && row <= 12 && col >= 2 && col <= 12){
-        let hex_container_id : string = row + '_' + col;
+        let hex_container_id : string = 'r_' + row + '_c_' + col;
         let hex_container : Element | null= document.querySelector("#" + hex_container_id);
 
         if (hex_container != null && hex_container.className == 'false'){
 
             let arr : string[] = hex_container_id.split('_')
 
-            let row = parseInt(arr[0]);
-            let col = parseInt(arr[1]);
+            let row = parseInt(arr[1]);
+            let col = parseInt(arr[3]);
 
             hex_container.className = 'true';
 
@@ -98,7 +98,6 @@ export function changeColor(row : number, col : number, color:string, tile_array
             if (hex_lower != null){
                 hex_lower.style.borderTopColor = color;
             }
-
             tile_array[row-2][col-2].set_color(color);
         }
     }

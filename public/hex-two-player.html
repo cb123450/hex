@@ -43,7 +43,7 @@
     import changeColor from "./scripts/helper.js"
 
     const socket = io();
-    game : Game = new Game(socket)
+    var game = new Game(socket)
 
 
     socket.on("colorChange", (e) => {

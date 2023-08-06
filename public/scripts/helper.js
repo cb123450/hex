@@ -56,12 +56,12 @@ export function checkWin(color, tile_array, g) {
 }
 export function changeColor(row, col, color, tile_array) {
     if (row >= 2 && row <= 12 && col >= 2 && col <= 12) {
-        let hex_container_id = row + '_' + col;
+        let hex_container_id = 'r_' + row + '_c_' + col;
         let hex_container = document.querySelector("#" + hex_container_id);
         if (hex_container != null && hex_container.className == 'false') {
             let arr = hex_container_id.split('_');
-            let row = parseInt(arr[0]);
-            let col = parseInt(arr[1]);
+            let row = parseInt(arr[1]);
+            let col = parseInt(arr[3]);
             hex_container.className = 'true';
             let hex_upper = document.getElementById(hex_container_id + "_upper");
             let hex_middle = document.getElementById(hex_container_id + "_middle");

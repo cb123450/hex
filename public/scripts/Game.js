@@ -7,22 +7,22 @@ export class Game {
         this.g = createTiles(this.tile_array);
         this.socket = socket;
     }
-    getSocket() {
+    get getSocket() {
         return this.socket;
     }
-    getTileArray() {
+    get getTileArray() {
         return this.tile_array;
     }
-    getTileGraph() {
+    get getTileGraph() {
         return this.g;
     }
-    getTurn() {
+    get getTurn() {
         return this.turn;
     }
-    incrementTurn() {
+    set incrementTurn(val) {
         this.turn += 1;
     }
-    buttonHandler(evt) {
+    set buttonHandler(evt) {
         if (evt.target != null && evt.target instanceof Element) {
             let test_arr = (evt.target.id).split('_');
             let r = test_arr[0];
@@ -31,10 +31,13 @@ export class Game {
             let c_coord = parseInt(test_arr[3]);
             //RECONSTRUCT hex_id
             if (r === 'r' && c === 'c') {
-                let color = this.getTurn() % 2 == 0 ? "red" : "blue";
-                changeColor(r_coord, c_coord, color, this.getTileArray());
-                this.getSocket().emit("colorChange", { row: r_coord, col: c_coord, color: color });
-                let win = checkWin(color, this.getTileArray(), this.getTileGraph());
+                const num = this.getTurn;
+                let color = (num % 2) == 0 ? "red" : "blue";
+                console.log(this.tile_array);
+                changeColor(r_coord, c_coord, color, this.tile_array);
+                console.log(this.tile_array);
+                this.getSocket.emit("colorChange", { row: r_coord, col: c_coord, color: color });
+                let win = checkWin(color, this.tile_array, this.g);
                 if (win) {
                     if (color == "red") {
                         window.alert("Red has won!");
@@ -45,13 +48,12 @@ export class Game {
                         console.log("Blue has won! Press the restart button to play again!");
                     }
                 }
-                this.incrementTurn();
+                this.incrementTurn;
             }
             evt.stopPropagation();
         }
     }
-    startHandler(evt) {
-        var tile_array = this.getTileArray();
+    set startHandler(evt) {
         let r = 2;
         while (r <= 12) {
             let c = 2;
@@ -83,7 +85,7 @@ export class Game {
         while (i < 11) {
             let k = 0;
             while (k < 11) {
-                tile_array[i][k].set_color("#6C8");
+                this.tile_array[i][k].set_color("#6C8");
                 k += 1;
             }
             i += 1;
