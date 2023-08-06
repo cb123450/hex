@@ -1,7 +1,6 @@
 import { Queue } from "./utility.js";
-import { getTileArray, getTileGraph, getTurn, incrementTurn } from "./playGame.js";
-import { io } from 'socket.io-client';
-const socket = io();
+import { getTileArray, getTileGraph, getTurn, incrementTurn, getSocket } from "./playGame.js";
+const socket = getSocket();
 export function buttonHandler(evt) {
     if (evt.target != null && evt.target instanceof Element) {
         let test_arr = (evt.target.id).split('_');

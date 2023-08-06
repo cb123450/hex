@@ -1,10 +1,13 @@
 import { changeColor } from "./interactive.js";
 import { drawBoard, createTiles } from "./gameBoard.js";
-import { io } from "../../node_modules/socket.io-client";
+import { io } from "socket.io-client";
+const socket = io("http://localhost:3000/");
 var turn = 0;
 let tile_array = drawBoard();
 let g = createTiles(tile_array);
-const socket = io('http://localhost:3001');
+export function getSocket() {
+    return socket;
+}
 export function getTileArray() {
     return tile_array;
 }

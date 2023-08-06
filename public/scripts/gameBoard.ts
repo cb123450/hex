@@ -1,7 +1,6 @@
 import { visitEachChild } from "typescript";
 import { deflateSync } from "zlib";
 import {Tile, Graph, Queue} from "./utility.js";
-import {buttonHandler, startHandler} from "./interactive.js"
 
 var side_length = window.innerWidth/55;
 var root3 = 1.73205;
@@ -13,7 +12,7 @@ var border_left_right = (root3/2.0)*side_length;
 var grid = document.getElementById("grid");
 var start_button = document.getElementById("start-button");
 
-export function drawBoard() : Tile[][] {
+export function drawBoard( buttonHandler : any, startHandler : any ) : Tile[][] {
     //Create tile array to aid in creaetion of graph
     let tile_array : Tile[][] = [];
     var index : number = 0;

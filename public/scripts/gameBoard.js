@@ -1,5 +1,4 @@
 import { Tile, Graph } from "./utility.js";
-import { buttonHandler, startHandler } from "./interactive.js";
 var side_length = window.innerWidth / 55;
 var root3 = 1.73205;
 var height = 2 * side_length;
@@ -8,7 +7,7 @@ var border_bottom_top = side_length - (side_length / 2.0);
 var border_left_right = (root3 / 2.0) * side_length;
 var grid = document.getElementById("grid");
 var start_button = document.getElementById("start-button");
-export function drawBoard() {
+export function drawBoard(buttonHandler, startHandler) {
     //Create tile array to aid in creaetion of graph
     let tile_array = [];
     var index = 0;
