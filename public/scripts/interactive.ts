@@ -2,11 +2,12 @@ import { visitEachChild } from "typescript";
 import { deflateSync } from "zlib";
 import {Tile, Graph, Queue} from "./utility.js";
 import { getTileArray, getTileGraph, getTurn, incrementTurn} from "./playGame.js";
+import {io} from 'socket.io-client';
+
+const socket = io();
 
 export function buttonHandler(evt: Event){
 
-    var tile_array = getTileArray();
-    
     if (evt.target != null && evt.target instanceof Element){
         let test_arr = (evt.target.id).split('_');
 
@@ -17,80 +18,30 @@ export function buttonHandler(evt: Event){
 
         //RECONSTRUCT hex_id
 
-        if (r === 'r'){
-            let hex_container_id : string = test_arr.slice(0, -1).join('_');
-            let hex_container = document.querySelector("#" + hex_container_id);
+        if (r === 'r' && c === 'c'){
+            let color : string = getTurn() % 2 == 0 ? "red" : "blue";
+            
+            changeColor(r_coord, c_coord, color);
 
+            socket.emit("colorChange", {row: r_coord, col: c_coord, color:color})
 
-            if (hex_container?.className == 'false' && r === 'r' && c === 'c' && r_coord >= 2 && r_coord <= 12 && c_coord >= 2 && c_coord <= 12){
-                let hex_upper : HTMLElement | null = document.getElementById(hex_container_id + "_upper");
-                let hex_middle : HTMLElement | null = document.getElementById(hex_container_id + "_middle");
-                let hex_lower : HTMLElement | null = document.getElementById(hex_container_id + "_lower");
+            let win = checkWin(color);
 
-                //grid is not null by children are
-                if (getTurn() % 2 == 0){
-                    //change to red
-                    //upper
-                    
-                    if (hex_upper != null){
-                        //console.log(hex_upper.style.borderBottomColor)
-                        hex_upper.style.borderBottomColor = "red";
-                        //console.log(hex_upper.style.borderBottomColor)
-                    }
-                    //middle
-                    if (hex_middle != null){
-                        hex_middle.style.background = "red";
-                    }
-                    //bottom
-                    if (hex_lower != null){
-                        hex_lower.style.borderTopColor = "red";
-                    }
-
-                    incrementTurn();
-
-                    hex_container.className = "true";
-
-                    tile_array[r_coord-2][c_coord-2].set_color("red");
-
-                    let red_win: boolean = checkWin("red");
-
-                    //if red wins
-                    if (red_win){
-                        window.alert("Red has won!")
-                        console.log("Red has won! Press the restart button to play again!")
-                    }
+            if (win){
+                if (color == "red"){
+                    window.alert("Red has won!")
+                    console.log("Red has won! Press the restart button to play again!")
                 }
                 else{
-                    //change to blue
-                    //upper
-                    if (hex_upper != null){
-                        hex_upper.style.borderBottomColor = "blue";
-                    }
-                    //middle
-                    if (hex_middle != null){
-                        hex_middle.style.background = "blue";
-                    }
-                    //bottom
-                    if (hex_lower != null){
-                        hex_lower.style.borderTopColor = "blue";
-                    }
-
-                    
-                    incrementTurn();
-
-                    hex_container.className = "true";
-                    tile_array[r_coord-2][c_coord-2].set_color("blue");
-                    let blue_win: boolean = checkWin("blue");
-
-                    //if blue wins
-                    if (blue_win){
-                        window.alert("Blue has won!")
-                        console.log("Blue has won! Press the restart button to play again!")
-                    }
+                    window.alert("Blue has won!")
+                    console.log("Blue has won! Press the restart button to play again!")
                 }
-                evt.stopPropagation();
-            }
+                
+            }            
+
+            incrementTurn();
         }
+        evt.stopPropagation();
     }
 }
 
@@ -214,4 +165,43 @@ function checkWin(color : string) : boolean{
         i += 1;
     }
     return false; 
+}
+
+export function changeColor(row : number, col : number, color:string) : void{
+    if (row >= 2 && row <= 12 && col >= 2 && col <= 12){
+        let hex_container_id : string = row + '_' + col;
+        let hex_container : Element | null= document.querySelector("#" + hex_container_id);
+
+        if (hex_container != null && hex_container.className == 'false'){
+
+            let arr : string[] = hex_container_id.split('_')
+
+            let row = parseInt(arr[0]);
+            let col = parseInt(arr[1]);
+
+            var tile_array = getTileArray();
+
+            hex_container.className = 'true';
+
+            let hex_upper : HTMLElement | null = document.getElementById(hex_container_id + "_upper");
+            let hex_middle : HTMLElement | null = document.getElementById(hex_container_id + "_middle");
+            let hex_lower : HTMLElement | null = document.getElementById(hex_container_id + "_lower");
+
+            if (hex_upper != null){
+                //console.log(hex_upper.style.borderBottomColor)
+                hex_upper.style.borderBottomColor = color;
+                //console.log(hex_upper.style.borderBottomColor)
+            }
+            //middle
+            if (hex_middle != null){
+                hex_middle.style.background = color;
+            }
+            //bottom
+            if (hex_lower != null){
+                hex_lower.style.borderTopColor = color;
+            }
+
+            tile_array[row-2][col-2].set_color(color);
+        }
+    }
 }

@@ -1,12 +1,10 @@
 const express = require('express')
 const app = express()
-var path = require('path')
 const http = require('http')
-const {Server}=require("socket.io")
-
 const server = http.createServer(app)
-
+const {Server} = require("socket.io")
 const io = new Server(server)
+var path = require('path')
 app.use(express.static("public"))
 
 let arr=[]
@@ -48,18 +46,20 @@ io.on("connection", (socket) =>{
   })
 
 
-  socket.on("move", (e) =>{
-    if(e.move!=null){
-      io.emit("move", e.move)
+  socket.on("colorChange", (e) =>{
+    if(e.move != null){
+      io.emit("colorChange", e.move)
     }
   })
 
 })
 
 
+/*
 app.get("/", (req,res) => {
   return res.sendFile("index.html")
 })
+*/
 
 server.listen(3000, ()=>{
   console.log("port connected to 3000")
