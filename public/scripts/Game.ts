@@ -1,46 +1,31 @@
-import { visitEachChild } from "typescript";
-import { deflateSync } from "zlib";
-import {Tile, Graph, Queue} from "./utility.js";
-import {drawBoard, createTiles} from "./gameBoard.js"
-import { Socket } from "socket.io-client";
-import {changeColor, checkWin} from "./helper.js"
+import Board from "./Board"
 
 export class Game{
-    turn: number;
-    tile_array : Tile[][];
-    g : Graph<string, Tile>;
-    socket : Socket;
+    board : Board;
+    turn : number;
+    curr_player : string;
 
-    constructor(socket : Socket){
+    constructor(board : Board){
+        this.board = board;
         this.turn = 0;
-        this.tile_array = drawBoard();
-        this.g = createTiles(this.tile_array);
-        this.socket = socket;
+        this.curr_player = "red";
     }
 
-    get getSocket() : Socket{
-        return this.socket;
+    set setTurn(num : number){
+        this.turn += 1;
     }
 
-    get getTileArray() : Tile[][]{
-        return this.tile_array;
-    }
-
-    get getTileGraph() : Graph<string, Tile>{
-        return this.g;
-    }
-
-    get getTurn() : number {
+    get getTurn(){
         return this.turn;
     }
 
-    set incrementTurn(val: number) {
-        this.turn += 1 
+    get getCurrPlayer(){
+        return this.curr_player;
     }
-} 
+
+    set setCurrPlayer(color : string){
+        this.curr_player = color;
+    }
+}
 
 export default Game
-
-
-
-
