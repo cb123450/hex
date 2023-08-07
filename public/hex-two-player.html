@@ -62,21 +62,14 @@
             let c_coord  = parseInt(test_arr[3]);
 
             //RECONSTRUCT hex_id
+            let newColor = (game.curr_player == "red") ? "red" : "blue";
 
-            if (r === 'r' && c === 'c'){
-                const num = game.turn;
-                let color = (num % 2) == 0 ? "red" : "blue";
-                
+            if (r === 'r' && c === 'c' && (newColor == curr_player)){
                 changeColor(r_coord, c_coord, color, board.tile_array);
 
                 socket.emit("colorChange", {row: r_coord, col: c_coord, color:color})
                 
-                if (num % 2 == 0){
-                    document.getElementById("curr").innerText="Blue";
-                }
-                else{
-                    document.getElementById("curr").innerText="Red";
-                }
+                document.getElementById("curr").innerText= (game.curr_plauer == "red") ? "Blue" : "Red";
 
                 let win = checkWin(color, board.tile_array, board.g);
 
@@ -89,8 +82,9 @@
                         window.alert("Blue has won!")
                         console.log("Blue has won! Press the restart button to play again!")
                     }
-                }            
+                }  
 
+                game.curr_player = (game.curr_player == "red") ? "blue" : "red";
                 game.turn += 1;
             }
             evt.stopPropagation();
@@ -176,6 +170,12 @@
         let col = e.col;
         let newColor = e.color;
         
+        if (newColor == "red"){
+            document.getElementById("curr").innerText="Red";
+        }
+        else{
+            document.getElementById("curr").innerText="Blue";
+        }
         
         changeColor(row, col, newColor, board.tile_array)
     })
