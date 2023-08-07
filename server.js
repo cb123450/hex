@@ -9,32 +9,29 @@ app.use(express.static("public"))
 
 let arr=[]
 let gameArr=[]
-let info = {curr:"red", turn:0}
+let turn;
 
 io.on("connection", (socket) =>{
 
   socket.on("find", (e)=>{
-
     if(e.name!=null){
       arr.push(e.name)
 
       if(arr.length>=2){
         let p1obj={
           name:arr[0],
-          color:"Red",
-          move:""
+          color:"red",
         }
         let p2obj={
           name:arr[1],
-          color:"Blue",
-          move:""
+          color:"blue",
         }
 
         let obj={
           p1:p1obj,
           p2:p2obj
         }
-
+        turn = "red"
         gameArr.push(obj)
 
         arr.splice(0, 2)
@@ -58,8 +55,13 @@ io.on("connection", (socket) =>{
 
 
 
-app.get("/info", (req,res) => {
-  res.status(200).send(info);
+app.get("/turn", (req,res) => {
+  res.send(turn);
+})
+
+app.post('/turn', (req, res) => {
+  turn = req.turn;
+  res.send(req.body)
 })
 
 

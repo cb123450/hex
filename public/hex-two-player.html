@@ -37,6 +37,7 @@
 <script type="module" src = scripts/utility.js></script>
 
 <script src="/socket.io/socket.io.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script type="module">
 
     import Board from "./scripts/Board.js";
@@ -46,7 +47,8 @@
     const socket = io();
     var board = new Board(socket);
     var game = new Game(board);
-
+    var gameArr;
+    var myColor;
 
     var start_button = document.getElementById("start-button");
     grid?.addEventListener("click", buttonHandler, false);
@@ -61,34 +63,25 @@
             let c = test_arr[2];
             let c_coord  = parseInt(test_arr[3]);
 
-            const Http = new XMLHttpRequest();
-            const url= 'http://localhost:3000/info';
-            Http.open("GET", url);
-            Http.send();
-            let res = {}
-            Http.onreadystatechange=(e)=>{
-                res = Http.responseText
-                console.log(res)
-            }
+            let turn;
+            axios.get('http://localhost:3000/turn', {
+            })
+            .then(function (response) {
+                turn = response.data;
+                console.log("get:", turn)
+            })
             
+        
+            if (r === 'r' && c === 'c' && (turn === myColor)){
 
+                changeColor(r_coord, c_coord, myColor, board.tile_array);
 
-            //RECONSTRUCT hex_id
-            console.log(game.curr_player, game.turn)
-            let newColor = (game.curr_player == "red") ? "red" : "blue";
-            let toMove = game.turn % 2 == 0 ? "red" : "blue";
+                socket.emit("colorChange", {row: r_coord, col: c_coord, myColor})
 
-            if (r === 'r' && c === 'c' && (newColor === toMove)){
-                changeColor(r_coord, c_coord, newColor, board.tile_array);
-
-                socket.emit("colorChange", {row: r_coord, col: c_coord, color:newColor})
-                
-                document.getElementById("curr").innerText= (game.curr_player == "red") ? "Blue" : "Red";
-
-                let win = checkWin(color, board.tile_array, board.g);
+                let win = checkWin(myColor, board.tile_array, board.g);
 
                 if (win){
-                    if (color == "red"){
+                    if (myColor=== "red"){
                         window.alert("Red has won!")
                         console.log("Red has won! Press the restart button to play again!")
                     }
@@ -97,9 +90,20 @@
                         console.log("Blue has won! Press the restart button to play again!")
                     }
                 }  
+                document.getElementById("curr").innerText= (turn === "red") ? "Blue" : "Red";
 
-                game.curr_player = (game.curr_player === "red") ? "blue" : "red";
-                game.turn += 1;
+                //make post request to change current turn
+                let newTurn = (turn === "red" ? "blue" : "red")
+
+                axios.post('http://localhost:3000/turn', {
+                    turn: newTurn
+                })
+                .then((resp) => {
+                    console.log(resp);
+                }, (error) => {
+                    console.log(error);
+                });
+
             }
             evt.stopPropagation();
         }
@@ -164,8 +168,9 @@
         }
     })
 
+    
     socket.on("find", (e)=>{
-        let gameArr = e.game
+        gameArr = e.game
 
         let opponent
         let color
@@ -174,6 +179,7 @@
         
         thisGame.p1.name == `${name}` ? opponent=thisGame.p2.name : opponent=thisGame.p1.name
         thisGame.p1.name == `${name}` ? color=thisGame.p1.color : color=thisGame.p2.color
+        myColor = color;
 
         document.getElementById("opponent").innerText=opponent
         document.getElementById("color").innerText=color
