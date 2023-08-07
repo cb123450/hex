@@ -41,15 +41,16 @@
 
     import Board from "./scripts/Board.js";
     import Game from "./scripts/Game.js"
-    import changeColor from "./scripts/helper.js"
+    import {changeColor, checkWin} from "./scripts/helper.js"
 
     const socket = io();
     var board = new Board(socket);
     var game = new Game(board);
 
+
+    var start_button = document.getElementById("start-button");
     grid?.addEventListener("click", buttonHandler, false);
     start_button?.addEventListener("click", startHandler, false);
-
 
     function buttonHandler(evt){
         if (evt.target != null && evt.target instanceof Element){
@@ -63,7 +64,7 @@
             //RECONSTRUCT hex_id
 
             if (r === 'r' && c === 'c'){
-                const num = game.getTurn;
+                const num = game.turn;
                 let color = (num % 2) == 0 ? "red" : "blue";
                 
                 changeColor(r_coord, c_coord, color, board.getTileArray);
@@ -81,10 +82,9 @@
                         window.alert("Blue has won!")
                         console.log("Blue has won! Press the restart button to play again!")
                     }
-                    
                 }            
 
-                game.incTurn;
+                game.turn += 1;
             }
             evt.stopPropagation();
         }
@@ -139,45 +139,4 @@
     
         changeColor(row, col, newColor, board.getTileArray())
     })
-
-
 </script>
-<!-- 
-<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
-<script>
-
-    const socket=io();
-    let name;
-
-    document.getElementById("searchPlayer").addEventListener("click", function(){
-        name=document.getElementById("name").value;
-
-        document.getElementById("user").innerText=name;
-        if(name==null || name==''){
-            alert("Enter a name")
-        }
-        else{ 
-            socket.emit("find", {name:name})
-        }
-    })
-
-    socket.on("find", (e)=>{
-        let gameArr = e.game
-        console.log(gameArr)
-
-        let opponent
-        let color
-
-        const thisGame=gameArr.find(obj=>obj.p1.name ==`${name}` || obj.p2.name == `${name}`)
-        
-        thisGame.p1.name == `${name}` ? opponent=thisGame.p2.name : opponent=thisGame.p1.name
-        thisGame.p1.name == `${name}` ? color=thisGame.p1.color : color=thisGame.p2.color
-
-        document.getElementById("opponent").innerText=opponent
-        document.getElementById("color").innerText=color
-    })
-
-</script>
--->
-
-</html>
