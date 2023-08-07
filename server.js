@@ -9,7 +9,7 @@ app.use(express.static("public"))
 
 let arr=[]
 let gameArr=[]
-
+let info = {curr:"red", turn:0}
 
 io.on("connection", (socket) =>{
 
@@ -48,18 +48,20 @@ io.on("connection", (socket) =>{
   socket.on("colorChange", (e) =>{
     //e.move is null
     if(e.row != null && e.col != null && e.color != null){
-      io.emit("colorChange", e)
+      if (e.color === info.color){
+        io.emit("colorChange", e)
+      }
     }
   })
 
 })
 
 
-/*
-app.get("/", (req,res) => {
-  return res.sendFile("index.html")
+
+app.get("/info", (req,res) => {
+  res.status(200).send(info);
 })
-*/
+
 
 server.listen(3000, ()=>{
   console.log("port connected to 3000")
