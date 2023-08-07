@@ -67,9 +67,16 @@
                 const num = game.turn;
                 let color = (num % 2) == 0 ? "red" : "blue";
                 
-                changeColor(r_coord, c_coord, color, board.getTileArray);
+                changeColor(r_coord, c_coord, color, board.tile_array);
 
-                board.getSocket.emit("colorChange", {row: r_coord, col: c_coord, color:color})
+                socket.emit("colorChange", {row: r_coord, col: c_coord, color:color})
+                
+                if (num % 2 == 0){
+                    document.getElementById("curr").innerText="Blue";
+                }
+                else{
+                    document.getElementById("curr").innerText="Red";
+                }
 
                 let win = checkWin(color, board.tile_array, board.g);
 
@@ -91,7 +98,8 @@
     }
 
     function startHandler(evt){
-        
+        document.getElementById("curr").innerText="Red";
+
         let r = 2;
         while (r <= 12){
             let c = 2;
@@ -132,11 +140,45 @@
         }
     }
 
-    socket.on("colorChange", (e) => {
-        let row = e.r_coord;
-        let col = e.c_coord;
-        let newColor = e.color;
-    
-        changeColor(row, col, newColor, board.getTileArray())
+    /* SIDEBAR SETUP*/
+
+    let name;
+    document.getElementById("curr").innerText="Red";
+    document.getElementById("searchPlayer").addEventListener("click", function(){
+        name=document.getElementById("name").value;
+
+        document.getElementById("user").innerText=name;
+        if(name==null || name==''){
+            alert("Enter a name")
+        }
+        else{ 
+            socket.emit("find", {name:name})
+        }
     })
+
+    socket.on("find", (e)=>{
+        let gameArr = e.game
+
+        let opponent
+        let color
+
+        const thisGame=gameArr.find(obj=>obj.p1.name ==`${name}` || obj.p2.name == `${name}`)
+        
+        thisGame.p1.name == `${name}` ? opponent=thisGame.p2.name : opponent=thisGame.p1.name
+        thisGame.p1.name == `${name}` ? color=thisGame.p1.color : color=thisGame.p2.color
+
+        document.getElementById("opponent").innerText=opponent
+        document.getElementById("color").innerText=color
+    })
+
+    socket.on("colorChange", (e) => {
+        let row = e.row
+        let col = e.col;
+        let newColor = e.color;
+        
+        
+        changeColor(row, col, newColor, board.tile_array)
+    })
+
+
 </script>

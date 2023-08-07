@@ -45,10 +45,10 @@ io.on("connection", (socket) =>{
     }
   })
 
-
   socket.on("colorChange", (e) =>{
-    if(e.move != null){
-      io.emit("colorChange", e.move)
+    //e.move is null
+    if(e.row != null && e.col != null && e.color != null){
+      io.emit("colorChange", e)
     }
   })
 

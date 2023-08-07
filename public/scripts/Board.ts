@@ -14,18 +14,6 @@ export class Board{
         this.tile_array = drawBoard();
         this.g = createTiles(this.tile_array);
     }
-
-    get getSocket() : Socket{
-        return this.socket;
-    }
-
-    get getTileArray() : Tile[][]{
-        return this.tile_array;
-    }
-
-    get getTileGraph() : Graph<string, Tile>{
-        return this.g;
-    }
 } 
 
 
