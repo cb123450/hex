@@ -56,11 +56,12 @@ io.on("connection", (socket) =>{
 
 app.use(express.json())
 
-app.get("/turn", (req,res) => {
+app.get("/turn", (req, res) => {
   res.send(turn);
 })
 
 app.post('/turn', (req, res) => {
+  turn = req.body.turn;
   res.send(req.body)
 })
 

@@ -68,8 +68,9 @@
             })
             .then(function (response) {
                 turn = response.data;
-            })         
-        
+            })      
+            console.log(turn)          
+       
             if (r === 'r' && c === 'c' && (turn === myColor)){
 
                 changeColor(r_coord, c_coord, myColor, board.tile_array);
@@ -97,7 +98,7 @@
                     method:'post',
                     url:'http://localhost:3000/turn',
                     data: {
-                        turn: turn
+                        turn: newTurn
                     }
                 });
 
