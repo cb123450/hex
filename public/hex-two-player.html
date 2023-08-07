@@ -45,10 +45,11 @@
     import {changeColor, checkWin} from "./scripts/helper.js"
 
     const socket = io();
-    var board = new Board(socket);
-    var game = new Game(board);
-    var gameArr;
-    var myColor;
+    let board = new Board(socket);
+    let game = new Game(board);
+    let gameArr;
+    let myColor;
+    let turn;
 
     var start_button = document.getElementById("start-button");
     grid?.addEventListener("click", buttonHandler, false);
@@ -63,14 +64,11 @@
             let c = test_arr[2];
             let c_coord  = parseInt(test_arr[3]);
 
-            let turn;
             axios.get('http://localhost:3000/turn', {
             })
             .then(function (response) {
                 turn = response.data;
-                console.log("get:", turn)
-            })
-            
+            })         
         
             if (r === 'r' && c === 'c' && (turn === myColor)){
 
@@ -95,13 +93,12 @@
                 //make post request to change current turn
                 let newTurn = (turn === "red" ? "blue" : "red")
 
-                axios.post('http://localhost:3000/turn', {
-                    turn: newTurn
-                })
-                .then((resp) => {
-                    console.log(resp);
-                }, (error) => {
-                    console.log(error);
+                axios({
+                    method:'post',
+                    url:'http://localhost:3000/turn',
+                    data: {
+                        turn: turn
+                    }
                 });
 
             }
