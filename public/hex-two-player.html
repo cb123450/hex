@@ -43,18 +43,18 @@
     import Board from "./scripts/Board.js";
     import Game from "./scripts/Game.js"
     import {changeColor, checkWin} from "./scripts/helper.js"
+    import Handler from "./scripts/Handler.js"
 
     const socket = io();
     let board = new Board(socket);
     let game = new Game(board);
+    let handler;
     let gameArr;
-    let myColor;
 
     var start_button = document.getElementById("start-button");
-    grid?.addEventListener("click", buttonHandler, false);
-    start_button?.addEventListener("click", startHandler, false);
+    
 
-    async function getTurn() {
+    /*     async function getTurn() {
         try {
             let res = await axios({
                 url: 'http://localhost:3000/turn',
@@ -188,7 +188,7 @@
             }
             i += 1;
         }
-    }
+    } */
 
     /* SIDEBAR SETUP*/
     let name;
@@ -216,7 +216,10 @@
         
         thisGame.p1.name == `${name}` ? opponent=thisGame.p2.name : opponent=thisGame.p1.name
         thisGame.p1.name == `${name}` ? color=thisGame.p1.color : color=thisGame.p2.color
-        myColor = color;
+        handler = new Handler(board, color)
+
+        grid?.addEventListener("click", handler.getButtonHandler(), false);
+        start_button?.addEventListener("click", handler.getStartHandler(), false);
 
         document.getElementById("opponent").innerText=opponent
         document.getElementById("color").innerText=color
