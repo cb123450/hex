@@ -49,7 +49,6 @@
     let game = new Game(board);
     let gameArr;
     let myColor;
-    let turn;
 
     var start_button = document.getElementById("start-button");
     grid?.addEventListener("click", buttonHandler, false);
@@ -109,39 +108,36 @@
 
             if (r === 'r'){
                 getTurn().then(res => {
-                    turn = res
-                });
-                console.log(turn);
-        
-                if (r === 'r' && c === 'c' && (turn === myColor)){
+                    console.log("inner: " + res)
+                    return res
+                }).then( (turn) => {
+                    console.log("outer: " + turn);
+                    if (r === 'r' && c === 'c' && (turn === myColor)){
 
-                    changeColor(r_coord, c_coord, myColor, board.tile_array);
+                        changeColor(r_coord, c_coord, myColor, board.tile_array);
 
-                    socket.emit("colorChange", {row: r_coord, col: c_coord, myColor})
+                        socket.emit("colorChange", {row: r_coord, col: c_coord, myColor})
 
-                    let win = checkWin(myColor, board.tile_array, board.g);
+                        let win = checkWin(myColor, board.tile_array, board.g);
 
-                    if (win){
-                        if (myColor=== "red"){
-                            window.alert("Red has won!")
-                            console.log("Red has won! Press the restart button to play again!")
-                        }
-                        else{
-                            window.alert("Blue has won!")
-                            console.log("Blue has won! Press the restart button to play again!")
-                        }
-                    }  
-                    document.getElementById("curr").innerText= (turn === "red") ? "Blue" : "Red";
+                        if (win){
+                            if (myColor=== "red"){
+                                window.alert("Red has won!")
+                                console.log("Red has won! Press the restart button to play again!")
+                            }
+                            else{
+                                window.alert("Blue has won!")
+                                console.log("Blue has won! Press the restart button to play again!")
+                            }
+                        }  
+                        document.getElementById("curr").innerText= (turn === "red") ? "Blue" : "Red";
 
-                    //make post request to change current turn
-                    let newTurn = (turn === "red" ? "blue" : "red")
+                        //make post request to change current turn
+                        let newTurn = (turn === "red" ? "blue" : "red")
 
-                    setTurn(newTurn).then(res => {
-                        turn = res
-                    });
-                    console.log(turn);
-
-                }
+                        setTurn(newTurn)
+                    }
+                })
             }
         }
         evt.stopPropagation();
@@ -191,7 +187,6 @@
     }
 
     /* SIDEBAR SETUP*/
-
     let name;
     document.getElementById("curr").innerText="Red";
     document.getElementById("searchPlayer").addEventListener("click", function(){
