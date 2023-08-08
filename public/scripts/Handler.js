@@ -1,6 +1,6 @@
 import Board from "./Board.js"
 
-const test = true;
+const test = false;
 const domain = test ? 'http://localhost:3000/':'http://44.217.57.246/';
 
 export class Handler{
@@ -107,7 +107,7 @@ export class Handler{
         return () => {
             document.getElementById("curr").innerText="Red";
             this.game.curr_player = "red";
-            
+
             let r = 2;
             while (r <= 12){
                 let c = 2;
