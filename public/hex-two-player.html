@@ -42,7 +42,6 @@
 
     import Board from "./scripts/Board.js";
     import Game from "./scripts/Game.js"
-    import {changeColor, checkWin} from "./scripts/helper.js"
     import Handler from "./scripts/Handler.js"
 
     const socket = io();
@@ -104,7 +103,7 @@
             document.getElementById("curr").innerText="Red";
         }   
         game.turn += 1
-        changeColor(row, col, newColor, board.tile_array)
+        board.changeColor(row, col, newColor)
     })
 
 

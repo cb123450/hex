@@ -1,4 +1,3 @@
-import {changeColor, checkWin} from "./helper.js"
 import Board from "./Board.js"
 
 const test = true;
@@ -77,11 +76,11 @@ export class Handler{
                         let newTurn = (turn === "red" ? "blue" : "red")
 
                         this.setTurn(newTurn).then( () => {
-                            changeColor(r_coord, c_coord, this.game.curr_player, this.board.tile_array);
+                            this.board.changeColor(r_coord, c_coord, this.game.curr_player);
 
                             this.board.socket.emit("colorChange", {row: r_coord, col: c_coord, myColor: this.game.curr_player})
     
-                            let win = checkWin(this.game.curr_player, this.board.tile_array, this.board.g);
+                            let win = this.board.checkWin(this.game.curr_player);
     
                             if (win){
                                 if (this.game.curr_player === "red"){
@@ -107,7 +106,8 @@ export class Handler{
     getStartHandler(){
         return () => {
             document.getElementById("curr").innerText="Red";
-
+            this.game.curr_player = "red";
+            
             let r = 2;
             while (r <= 12){
                 let c = 2;
@@ -162,8 +162,8 @@ export class Handler{
                 const div_id = 'r_' + r_coord + '_c_' + c_coord;
                 
                 if (r === 'r' && document.getElementById(div_id).className === "free"){
-                    changeColor(r_coord, c_coord, this.game.curr_player, this.board.tile_array);
-                    let win = checkWin(this.game.curr_player, this.board.tile_array, this.board.g);
+                    this.board.changeColor(r_coord, c_coord, this.game.curr_player);
+                    let win = this.board.checkWin(this.game.curr_player);
 
                     if (win){
                         if (this.game.curr_player === "red"){
@@ -177,8 +177,11 @@ export class Handler{
                     }  
                     document.getElementById(div_id).className = "taken"
 
-                    const newColor = (this.game.curr_player === "red") ? "blue" : "red";
+                    const newColor = (this.game.curr_player === "red") ? "blue" : "red";                
+                    const newTurn = (this.game.curr_player === "red") ? "Blue" : "Red";
+
                     this.game.curr_player = newColor;
+                    document.getElementById("curr").innerText=newTurn;
                 }
             }
             evt.stopPropagation();
