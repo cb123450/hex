@@ -79,9 +79,10 @@
         
         thisGame.p1.name == `${name}` ? opponent=thisGame.p2.name : opponent=thisGame.p1.name
         thisGame.p1.name == `${name}` ? color=thisGame.p1.color : color=thisGame.p2.color
-        handler = new Handler(board, color)
+        game.curr_player = color
+        handler = new Handler(board, game)
 
-        grid?.addEventListener("click", handler.getButtonHandler(), false);
+        grid?.addEventListener("click", handler.getAsyncButtonHandler(), false);
         start_button?.addEventListener("click", handler.getStartHandler(), false);
 
         let restart = handler.getStartHandler()
@@ -92,12 +93,10 @@
     })
 
     socket.on("colorChange", (e) => {
-        
         let row = e.row
         let col = e.col;
         let newColor = e.myColor;
         
-        console.log("test")
         if (newColor === "red"){
             document.getElementById("curr").innerText="Blue";
         }

@@ -7,9 +7,10 @@ const domain = test ? 'http://localhost:3000/':'http://44.217.57.246/';
 export class Handler{
     myColor;
     board; 
-    constructor(board, color){
-        this.myColor = color
-        this.board = board
+    game;
+    constructor(board, game){
+        this.board = board;
+        this.game = game;
     }
 
     async getTurn() {
@@ -55,7 +56,7 @@ export class Handler{
         }
     }
 
-    getButtonHandler() {
+    getAsyncButtonHandler() {
         return evt => {
             if (evt.target != null && evt.target instanceof Element){
                 let test_arr = (evt.target.id).split('_');
@@ -65,24 +66,25 @@ export class Handler{
                 let c = test_arr[2];
                 let c_coord  = parseInt(test_arr[3]);
                 
-                const div_id = 'r_' + r_coord + '_c_' + c_coord;
+                const div_id = 'r_' + r_coord + '_c_' + c_coord;        
                 
-                if (r === 'r' && document.getElementById(div_id).className === "free"){
-                    
-                    this.getTurn().then(res => {
-                        return res
-                    }).then( (turn) => {
-                        if (turn === this.myColor){
+                this.getTurn().then(res => {
+                    return res
+                }).then( (turn) => {
+                    if (r === 'r' && turn === this.game.curr_player && document.getElementById(div_id).className === "free"){
 
-                            changeColor(r_coord, c_coord, this.myColor, this.board.tile_array);
-                            
+                        //make post request to change current turn
+                        let newTurn = (turn === "red" ? "blue" : "red")
 
-                            this.board.socket.emit("colorChange", {row: r_coord, col: c_coord, myColor: this.myColor})
+                        this.setTurn(newTurn).then( () => {
+                            changeColor(r_coord, c_coord, this.game.curr_player, this.board.tile_array);
 
-                            let win = checkWin(this.myColor, this.board.tile_array, this.board.g);
-
+                            this.board.socket.emit("colorChange", {row: r_coord, col: c_coord, myColor: this.game.curr_player})
+    
+                            let win = checkWin(this.game.curr_player, this.board.tile_array, this.board.g);
+    
                             if (win){
-                                if (this.myColor === "red"){
+                                if (this.game.curr_player === "red"){
                                     window.alert("Red has won!")
                                     console.log("Red has won! Press the restart button to play again!")
                                 }
@@ -92,15 +94,11 @@ export class Handler{
                                 }
                             }  
                             document.getElementById("curr").innerText = (turn === "red") ? "Blue" : "Red";
-
-                            //make post request to change current turn
-                            let newTurn = (turn === "red" ? "blue" : "red")
-
-                            this.setTurn(newTurn)
-                        }
-                        document.getElementById(div_id).className = "taken"
-                    })
-                }
+                        
+                            document.getElementById(div_id).className = "taken"
+                        })
+                    }
+                })
             }
             evt.stopPropagation();
         }
@@ -150,6 +148,43 @@ export class Handler{
             }
         }
     }
+
+    getButtonHandler() {
+        return evt => {
+            if (evt.target != null && evt.target instanceof Element){
+                let test_arr = (evt.target.id).split('_');
+
+                let r  = test_arr[0];
+                let r_coord  = parseInt(test_arr[1]);
+                let c = test_arr[2];
+                let c_coord  = parseInt(test_arr[3]);
+                
+                const div_id = 'r_' + r_coord + '_c_' + c_coord;
+                
+                if (r === 'r' && document.getElementById(div_id).className === "free"){
+                    changeColor(r_coord, c_coord, this.game.curr_player, this.board.tile_array);
+                    let win = checkWin(this.game.curr_player, this.board.tile_array, this.board.g);
+
+                    if (win){
+                        if (this.game.curr_player === "red"){
+                            window.alert("Red has won!")
+                            console.log("Red has won! Press the restart button to play again!")
+                        }
+                        else{
+                            window.alert("Blue has won!")
+                            console.log("Blue has won! Press the restart button to play again!")
+                        }
+                    }  
+                    document.getElementById(div_id).className = "taken"
+
+                    const newColor = (this.game.curr_player === "red") ? "blue" : "red";
+                    this.game.curr_player = newColor;
+                }
+            }
+            evt.stopPropagation();
+        }
+    }
+
 }
 
 export default Handler
