@@ -105,14 +105,17 @@
             let r_coord  = parseInt(test_arr[1]);
             let c = test_arr[2];
             let c_coord  = parseInt(test_arr[3]);
+            
+            const div_id = 'r_' + r_coord + '_c_' + c_coord;
+            
+            console.log(document.getElementById(div_id))
+            if (r === 'r' && document.getElementById(div_id).className === "free"){
+                
 
-            if (r === 'r'){
                 getTurn().then(res => {
-                    console.log("inner: " + res)
                     return res
                 }).then( (turn) => {
-                    console.log("outer: " + turn);
-                    if (r === 'r' && c === 'c' && (turn === myColor)){
+                    if (turn === myColor){
 
                         changeColor(r_coord, c_coord, myColor, board.tile_array);
 
@@ -121,7 +124,7 @@
                         let win = checkWin(myColor, board.tile_array, board.g);
 
                         if (win){
-                            if (myColor=== "red"){
+                            if (myColor === "red"){
                                 window.alert("Red has won!")
                                 console.log("Red has won! Press the restart button to play again!")
                             }
@@ -137,6 +140,7 @@
 
                         setTurn(newTurn)
                     }
+                    document.getElementById(div_id).className = "taken"
                 })
             }
         }
@@ -152,8 +156,8 @@
             while (c <= 12){
                 let hex_container_id = 'r_' + r + '_c_' + c;
                 let hex_container = document.querySelector("#" + hex_container_id);
-                if (hex_container?.className == "true"){
-                    hex_container.className = "false";
+                if (hex_container?.className == "taken"){
+                    hex_container.className = "free";
 
                     let hex_upper = document.getElementById(hex_container_id + "_upper");
                     let hex_middle = document.getElementById(hex_container_id + "_middle");
@@ -222,8 +226,9 @@
         
         let row = e.row
         let col = e.col;
-        let newColor = e.color;
-
+        let newColor = e.myColor;
+        
+        console.log("test")
         if (newColor === "red"){
             document.getElementById("curr").innerText="Blue";
         }

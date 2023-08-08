@@ -50,13 +50,13 @@ export function checkWin(color : string, tile_array : Tile[][], g : Graph<string
 
     let i : number = 0;
     while (i < 11){
-        if (color == "red"){
+        if (color === "red" && tile_array[0][i].get_color() === "red"){
             let check_red : boolean = bfs(tile_array[0][i], "red", tile_array, g);
             if (check_red){
                 return true;
             }
         }
-        else if (color == "blue"){
+        else if (color == "blue" && tile_array[i][0].get_color() === "blue"){
             let check_blue : boolean = bfs(tile_array[i][0], "blue", tile_array, g);
             if (check_blue){
                 return true;
@@ -72,14 +72,14 @@ export function changeColor(row : number, col : number, color:string, tile_array
         let hex_container_id : string = 'r_' + row + '_c_' + col;
         let hex_container : Element | null= document.querySelector("#" + hex_container_id);
 
-        if (hex_container != null && hex_container.className == 'false'){
+        if (hex_container != null && hex_container.className == 'free'){
 
             let arr : string[] = hex_container_id.split('_')
 
             let row = parseInt(arr[1]);
             let col = parseInt(arr[3]);
 
-            hex_container.className = 'true';
+            hex_container.className = "taken";
 
             let hex_upper : HTMLElement | null = document.getElementById(hex_container_id + "_upper");
             let hex_middle : HTMLElement | null = document.getElementById(hex_container_id + "_middle");

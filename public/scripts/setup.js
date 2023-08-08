@@ -26,7 +26,7 @@ export function drawBoard() {
             //Create new html element
             var hex_container = document.createElement("div");
             hex_container.id = 'r_' + row + '_c_' + col;
-            hex_container.className = "false";
+            hex_container.className = "free";
             grid === null || grid === void 0 ? void 0 : grid.appendChild(hex_container);
             var sheet = window.document.styleSheets[0];
             var num = col + row;
