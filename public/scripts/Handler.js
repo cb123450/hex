@@ -12,7 +12,7 @@ export class Handler{
     async getTurn() {
         try {
             let res = await axios({
-                url: 'http://localhost:3000/turn',
+                url: 'http://44.217.57.246/turn',
                 method: 'get',
                 timeout: 8000,
                 headers: {
@@ -32,7 +32,7 @@ export class Handler{
     async setTurn(newTurn){
         try{
             let res = await axios({
-                url: 'http://localhost:3000/turn',
+                url: 'http://44.217.57.246/turn',
                 method: 'post',
                 timeout: 8000,
                 headers: {
