@@ -55,6 +55,49 @@
     grid?.addEventListener("click", buttonHandler, false);
     start_button?.addEventListener("click", startHandler, false);
 
+    async function getTurn() {
+        try {
+            let res = await axios({
+                url: 'http://localhost:3000/turn',
+                method: 'get',
+                timeout: 8000,
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            if (res.status == 200){
+                console.log(res.status)
+            }
+            return res.data
+        }
+        catch (e){
+            console.error(e);
+        }
+    }
+
+    async function setTurn(newTurn){
+        try{
+            let res = await axios({
+                url: 'http://localhost:3000/turn',
+                method: 'post',
+                timeout: 8000,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                data: {
+                            turn: newTurn
+                        }
+            })
+            if (res.status == 200){
+                console.log(res.status)
+            }
+            return res.data 
+        }
+        catch (e){
+            console.error(e);
+        }
+    }
+
     function buttonHandler(evt){
         if (evt.target != null && evt.target instanceof Element){
             let test_arr = (evt.target.id).split('_');
@@ -64,47 +107,44 @@
             let c = test_arr[2];
             let c_coord  = parseInt(test_arr[3]);
 
-            axios.get('http://localhost:3000/turn', {
-            })
-            .then(function (response) {
-                turn = response.data;
-            })      
-            console.log(turn)          
-       
-            if (r === 'r' && c === 'c' && (turn === myColor)){
-
-                changeColor(r_coord, c_coord, myColor, board.tile_array);
-
-                socket.emit("colorChange", {row: r_coord, col: c_coord, myColor})
-
-                let win = checkWin(myColor, board.tile_array, board.g);
-
-                if (win){
-                    if (myColor=== "red"){
-                        window.alert("Red has won!")
-                        console.log("Red has won! Press the restart button to play again!")
-                    }
-                    else{
-                        window.alert("Blue has won!")
-                        console.log("Blue has won! Press the restart button to play again!")
-                    }
-                }  
-                document.getElementById("curr").innerText= (turn === "red") ? "Blue" : "Red";
-
-                //make post request to change current turn
-                let newTurn = (turn === "red" ? "blue" : "red")
-
-                axios({
-                    method:'post',
-                    url:'http://localhost:3000/turn',
-                    data: {
-                        turn: newTurn
-                    }
+            if (r === 'r'){
+                getTurn().then(res => {
+                    turn = res
                 });
+                console.log(turn);
+        
+                if (r === 'r' && c === 'c' && (turn === myColor)){
 
+                    changeColor(r_coord, c_coord, myColor, board.tile_array);
+
+                    socket.emit("colorChange", {row: r_coord, col: c_coord, myColor})
+
+                    let win = checkWin(myColor, board.tile_array, board.g);
+
+                    if (win){
+                        if (myColor=== "red"){
+                            window.alert("Red has won!")
+                            console.log("Red has won! Press the restart button to play again!")
+                        }
+                        else{
+                            window.alert("Blue has won!")
+                            console.log("Blue has won! Press the restart button to play again!")
+                        }
+                    }  
+                    document.getElementById("curr").innerText= (turn === "red") ? "Blue" : "Red";
+
+                    //make post request to change current turn
+                    let newTurn = (turn === "red" ? "blue" : "red")
+
+                    setTurn(newTurn).then(res => {
+                        turn = res
+                    });
+                    console.log(turn);
+
+                }
             }
-            evt.stopPropagation();
         }
+        evt.stopPropagation();
     }
 
     function startHandler(evt){
@@ -189,13 +229,11 @@
         let col = e.col;
         let newColor = e.color;
 
-        if (newColor == "red"){
+        if (newColor === "red"){
             document.getElementById("curr").innerText="Blue";
-            game.curr_player = "blue"
         }
         else{
             document.getElementById("curr").innerText="Red";
-            game.curr_player = "red"
         }   
         game.turn += 1
         changeColor(row, col, newColor, board.tile_array)

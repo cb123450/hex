@@ -40,28 +40,28 @@ io.on("connection", (socket) =>{
 
       }
     }
+
   })
 
   socket.on("colorChange", (e) =>{
     //e.move is null
     if(e.row != null && e.col != null && e.color != null){
-      if (e.color === info.color){
         io.emit("colorChange", e)
-      }
     }
   })
-
 })
 
 
 app.use(express.json())
 
 app.get("/turn", (req, res) => {
+  console.log("get: " + turn)
   res.send(turn);
 })
 
 app.post('/turn', (req, res) => {
   turn = req.body.turn;
+  console.log("post: " + turn)
   res.send(req.body)
 })
 
