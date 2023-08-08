@@ -1,2 +1,3 @@
 node_modules/
 *.rest
+hex-EC2-key-pair.pem
