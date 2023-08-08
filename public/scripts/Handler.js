@@ -55,7 +55,7 @@ export class Handler{
         }
     }
 
-    getAsyncButtonHandler() {
+    getAsyncButtonHandler(color) {
         return evt => {
             if (evt.target != null && evt.target instanceof Element){
                 let test_arr = (evt.target.id).split('_');
@@ -70,20 +70,20 @@ export class Handler{
                 this.getTurn().then(res => {
                     return res
                 }).then( (turn) => {
-                    if (r === 'r' && turn === this.game.curr_player && document.getElementById(div_id).className === "free"){
+                    if (r === 'r' && turn === color && document.getElementById(div_id).className === "free"){
 
                         //make post request to change current turn
                         let newTurn = (turn === "red" ? "blue" : "red")
 
                         this.setTurn(newTurn).then( () => {
-                            this.board.changeColor(r_coord, c_coord, this.game.curr_player);
+                            this.board.changeColor(r_coord, c_coord, color);
 
-                            this.board.socket.emit("colorChange", {row: r_coord, col: c_coord, myColor: this.game.curr_player})
+                            this.board.socket.emit("colorChange", {row: r_coord, col: c_coord, myColor: color})
     
-                            let win = this.board.checkWin(this.game.curr_player);
+                            let win = this.board.checkWin(color);
     
                             if (win){
-                                if (this.game.curr_player === "red"){
+                                if (color === "red"){
                                     window.alert("Red has won!")
                                     console.log("Red has won! Press the restart button to play again!")
                                 }
@@ -95,6 +95,7 @@ export class Handler{
                             document.getElementById("curr").innerText = (turn === "red") ? "Blue" : "Red";
                         
                             document.getElementById(div_id).className = "taken"
+                            
                         })
                     }
                 })
@@ -103,10 +104,16 @@ export class Handler{
         }
     }
 
-    getStartHandler(){
+    getStartHandler(async_flag){
         return () => {
             document.getElementById("curr").innerText="Red";
-            this.game.curr_player = "red";
+
+            if (async_flag){
+                this.setTurn("red")
+            } 
+            else{
+                this.game.curr_player = "red"
+            }
 
             let r = 2;
             while (r <= 12){
@@ -178,9 +185,9 @@ export class Handler{
                     document.getElementById(div_id).className = "taken"
 
                     const newColor = (this.game.curr_player === "red") ? "blue" : "red";                
-                    const newTurn = (this.game.curr_player === "red") ? "Blue" : "Red";
-
                     this.game.curr_player = newColor;
+
+                    const newTurn = (this.game.curr_player === "red") ? "Blue" : "Red";
                     document.getElementById("curr").innerText=newTurn;
                 }
             }

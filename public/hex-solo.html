@@ -42,7 +42,7 @@
     let handler = new Handler(board, game)
 
     grid?.addEventListener("click", handler.getButtonHandler(game), false);
-    let restart = handler.getStartHandler()
+    let restart = handler.getStartHandler(false)
 
     start_button?.addEventListener("click", restart, false);
 </script>

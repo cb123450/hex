@@ -78,11 +78,11 @@
         
         thisGame.p1.name == `${name}` ? opponent=thisGame.p2.name : opponent=thisGame.p1.name
         thisGame.p1.name == `${name}` ? color=thisGame.p1.color : color=thisGame.p2.color
-        game.curr_player = color
+
         handler = new Handler(board, game)
 
-        grid?.addEventListener("click", handler.getAsyncButtonHandler(), false);
-        start_button?.addEventListener("click", handler.getStartHandler(), false);
+        grid?.addEventListener("click", handler.getAsyncButtonHandler(color), false);
+        start_button?.addEventListener("click", handler.getStartHandler(true), false);
 
         let restart = handler.getStartHandler()
         restart()
@@ -103,6 +103,7 @@
             document.getElementById("curr").innerText="Red";
         }   
         game.turn += 1
+
         board.changeColor(row, col, newColor)
     })
 
