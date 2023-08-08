@@ -67,9 +67,9 @@
             socket.emit("find", {name:name})
         }
     })
-
     
-    socket.on("find", (e)=>{
+    socket.on("find", (e)=>{ 
+
         gameArr = e.game
 
         let opponent
@@ -83,6 +83,9 @@
 
         grid?.addEventListener("click", handler.getButtonHandler(), false);
         start_button?.addEventListener("click", handler.getStartHandler(), false);
+
+        let restart = handler.getStartHandler()
+        restart()
 
         document.getElementById("opponent").innerText=opponent
         document.getElementById("color").innerText=color

@@ -1,6 +1,9 @@
 import {changeColor, checkWin} from "./helper.js"
 import Board from "./Board.js"
 
+const test = true;
+const domain = test ? 'http://localhost:3000/':'http://44.217.57.246/';
+
 export class Handler{
     myColor;
     board; 
@@ -12,7 +15,7 @@ export class Handler{
     async getTurn() {
         try {
             let res = await axios({
-                url: 'http://44.217.57.246/turn',
+                url: domain + 'turn',
                 method: 'get',
                 timeout: 8000,
                 headers: {
@@ -32,7 +35,7 @@ export class Handler{
     async setTurn(newTurn){
         try{
             let res = await axios({
-                url: 'http://44.217.57.246/turn',
+                url: domain + 'turn',
                 method: 'post',
                 timeout: 8000,
                 headers: {
@@ -104,7 +107,7 @@ export class Handler{
     }
 
     getStartHandler(){
-        return (evt) => {
+        return () => {
             document.getElementById("curr").innerText="Red";
 
             let r = 2;
