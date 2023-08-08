@@ -11,6 +11,8 @@ let arr=[]
 let gameArr=[]
 let turn;
 
+const PORT = 3000;
+
 io.on("connection", (socket) =>{
 
   socket.on("find", (e)=>{
@@ -65,7 +67,7 @@ app.post('/turn', (req, res) => {
   res.send(req.body)
 })
 
-server.listen(3000, ()=>{
-  console.log("port connected to 3000")
+server.listen(PORT, ()=>{
+  console.log("Server running on PORT " + PORT)
 })
 
