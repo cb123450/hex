@@ -1,7 +1,7 @@
 import Board from "./Board.js"
 
 const test = false;
-const domain = test ? 'http://localhost:3000/':'http://34.238.157.137/';
+const domain = test ? 'http://localhost:3000/':'http://44.217.57.246/';
 
 export class Handler{
     myColor;
