@@ -13,6 +13,5 @@ Players take turns placing tiles on emtpy spots on the board, and the first one 
 -The 'original-no-backend' folder contains the code for a static website that allows you to play hex against your self. 
 
 -Useful links for deploying to EC2 instance: 
-  -https://betterprogramming.pub/deploying-a-basic-express-api-on-amazon-ec2-eea0b54a825
-  
-  -https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/setting-up-node-on-ec2-instance.html 
+  * https://betterprogramming.pub/deploying-a-basic-express-api-on-amazon-ec2-eea0b54a825
+  * https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/setting-up-node-on-ec2-instance.html 
