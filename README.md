@@ -14,4 +14,5 @@ Players take turns placing tiles on emtpy spots on the board, and the first one 
 
 -Useful links for deploying to EC2 instance: 
   -https://betterprogramming.pub/deploying-a-basic-express-api-on-amazon-ec2-eea0b54a825
+  
   -https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/setting-up-node-on-ec2-instance.html 
