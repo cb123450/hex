@@ -1,6 +1,6 @@
 import Board from "./Board.js"
 
-const test = false;
+const test = true;
 const domain = test ? 'http://localhost:3000/':'http://44.217.57.246/';
 
 export class Handler{
@@ -184,11 +184,11 @@ export class Handler{
                     }  
                     document.getElementById(div_id).className = "taken"
 
-                    const newColor = (this.game.curr_player === "red") ? "blue" : "red";                
-                    this.game.curr_player = newColor;
-
                     const newTurn = (this.game.curr_player === "red") ? "Blue" : "Red";
                     document.getElementById("curr").innerText=newTurn;
+
+                    const newColor = (this.game.curr_player === "red") ? "blue" : "red";                
+                    this.game.curr_player = newColor;
                 }
             }
             evt.stopPropagation();

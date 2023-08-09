@@ -6,8 +6,9 @@ Players take turns placing tiles on emtpy spots on the board, and the first one 
 
 -To see the website, go to http://www.hexgame0.com/
 
+-Currently you can either play in solo mode, where you play against yourself, or Two Player mode where you can play against a friend over the Internet.
+
 -The game is hosted on an Amazon EC2 t2 micro instance.
 
 -The 'original-no-backend' folder contains the code for a static website that allows you to play hex against your self. 
 
-<img width="731" alt="hex_screenshot" src="https://github.com/cb123450/hex/assets/91232059/7ad72858-5357-4a68-9ff2-888bd2bc48fb">
