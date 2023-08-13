@@ -58,6 +58,7 @@ export class Handler{
     getAsyncButtonHandler(color) {
         return evt => {
             if (evt.target != null && evt.target instanceof Element){
+
                 let test_arr = (evt.target.id).split('_');
 
                 let r  = test_arr[0];
@@ -71,9 +72,9 @@ export class Handler{
                     return res
                 }).then( (turn) => {
                     if (r === 'r' && turn === color && document.getElementById(div_id).className === "free"){
-
+                        
                         //make put request to change current turn
-                        let newTurn = (turn === "red" ? "blue" : "red")
+                        let newTurn = (turn === "red" ? "blue" : "red")  
 
                         this.putTurn(newTurn).then( () => {
                             this.board.changeColor(r_coord, c_coord, color);

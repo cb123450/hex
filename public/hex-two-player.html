@@ -57,7 +57,6 @@
     document.getElementById("curr").innerText="Red";
     document.getElementById("searchPlayer").addEventListener("click", function(){
         name=document.getElementById("name").value;
-
         document.getElementById("user").innerText=name;
         if(name==null || name==''){
             alert("Enter a name")
@@ -68,19 +67,17 @@
     })
     
     socket.on("find", (e)=>{ 
-
         gameArr = e.game
 
         let opponent
         let color
 
-        const thisGame=gameArr.find(obj=>obj.p1.name ==`${name}` || obj.p2.name == `${name}`)
+        const thisGame = gameArr.find(obj=>obj.p1.name ==`${name}` || obj.p2.name == `${name}`)
         
         thisGame.p1.name == `${name}` ? opponent=thisGame.p2.name : opponent=thisGame.p1.name
         thisGame.p1.name == `${name}` ? color=thisGame.p1.color : color=thisGame.p2.color
 
         handler = new Handler(board, game)
-
         grid?.addEventListener("click", handler.getAsyncButtonHandler(color), false);
         start_button?.addEventListener("click", handler.getStartHandler(true), false);
 

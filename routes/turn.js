@@ -1,16 +1,16 @@
 const express = require("express");
 const router = express.Router()
 
-let turn;
+let turn = "red";
 
 router.get("/", (req, res) => {
-    //console.log("get: " + turn)
+    console.log("get: " + turn)
     res.send(turn);
   })
   
 router.put('/', (req, res) => {
     turn = req.body.turn;
-    //console.log("post: " + turn)
+    console.log("put: " + turn)
     res.send(req.body)
 })
 
