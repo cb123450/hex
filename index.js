@@ -1,57 +1,57 @@
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config()
+}
+
 const express = require('express')
 const app = express()
-const http = require('http')
-const server = http.createServer(app)
-const {Server} = require("socket.io")
-const io = new Server(server)
-var path = require('path')
-app.use(express.static("public"))
-
-let arr=[]
-let gameArr=[]
-let turn;
-
 const PORT = 3000;
 
-io.on("connection", (socket) =>{
+const http = require('http')
+const server = http.createServer(app)
+const socketio = require("./socketio.js");
+const io = socketio.getio(server)
 
-  socket.on("find", (e)=>{
-    if(e.name!=null){
-      arr.push(e.name)
+const turnRoute = require('./routes/turn')
 
-      if(arr.length>=2){
-        let p1obj={
-          name:arr[0],
-          color:"red",
-        }
-        let p2obj={
-          name:arr[1],
-          color:"blue",
-        }
+app.use(express.json())
+app.use('/turn', turnRoute)
 
-        let obj={
-          p1:p1obj,
-          p2:p2obj
-        }
-        turn = "red"
-        gameArr.push(obj)
 
-        arr.splice(0, 2)
-        
-        io.emit("find", {game:gameArr})
+const bcrypt = require('bcrypt')
+const passport = require('passport')
+const flash = require('express-flash')
+const session = require('express-session')
 
-      }
-    }
+const initializePassport = require('./passport-config')
 
-  })
+initializePassport(
+  passport, 
+  email => users.find(user => user.email === email),
+  id => users.find(user => user.id === id)
+)
 
-  socket.on("colorChange", (e) =>{
-    //e.move is null
-    if(e.row != null && e.col != null && e.myColor != null){
-      io.emit("colorChange", e)
-    }
-  })
-})
+var path = require('path')
+//app.use(express.static("public"))
+
+app.set('view-engine', 'ejs')
+
+app.use(express.urlencoded({extended: false}))
+
+app.use(flash())
+
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false
+}))
+
+app.use(passport.initialize())
+app.use(passport.session())
+
+const users = []
+let arr=[]
+let gameArr=[]
+
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -59,20 +59,42 @@ app.use(function(req, res, next) {
   next();
 });
 
-app.use(express.json())
-
-app.get("/turn", (req, res) => {
-  //console.log("get: " + turn)
-  res.send(turn);
+app.get('/', (req, res) => {
+  res.send('pubic')
+  //res.render('index.ejs', {name: "Chris"})
 })
 
-app.post('/turn', (req, res) => {
-  turn = req.body.turn;
-  //console.log("post: " + turn)
-  res.send(req.body)
+app.get('/login', (req, res) => {
+  res.render('login.ejs')
+})
+
+app.post('/login', passport.authenticate('local', {
+  successRedirect: '/',
+  failureRedirect: '/login',
+  failureFlash: true
+}))
+
+app.get('/register', (req, res) => {
+  res.render('register.ejs')
+})
+
+app.post('/register', async (req, res) => {
+  try {
+    const hashedPassword = await bcrypt.hash(req.body.password, 10)
+    users.push({
+      id: Date.now().toString(),
+      name: req.body.name,
+      email: req.body.email,
+      password: hashedPassword
+    }) 
+    res.redirect('/login')
+  } catch {
+    res.redirect('/register')
+  }
+  console.log(users)
 })
 
 server.listen(PORT, ()=>{
   console.log("Server running on PORT " + PORT)
-})
+}) 
 

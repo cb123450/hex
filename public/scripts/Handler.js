@@ -1,7 +1,7 @@
 import Board from "./Board.js"
 
-const test = false;
-const domain = test ? 'http://localhost:3000/':'http://44.217.57.246/';
+const test = true;
+const domain = test ? 'http://localhost:3000':'http://44.217.57.246/';
 
 export class Handler{
     myColor;
@@ -15,7 +15,7 @@ export class Handler{
     async getTurn() {
         try {
             let res = await axios({
-                url: domain + 'turn',
+                url: domain + '/turn',
                 method: 'get',
                 timeout: 8000,
                 headers: {
@@ -32,11 +32,11 @@ export class Handler{
         }
     }
 
-    async setTurn(newTurn){
+    async putTurn(newTurn){
         try{
             let res = await axios({
-                url: domain + 'turn',
-                method: 'post',
+                url: domain + '/turn',
+                method: 'put',
                 timeout: 8000,
                 headers: {
                     'Content-Type': 'application/json',
@@ -72,10 +72,10 @@ export class Handler{
                 }).then( (turn) => {
                     if (r === 'r' && turn === color && document.getElementById(div_id).className === "free"){
 
-                        //make post request to change current turn
+                        //make put request to change current turn
                         let newTurn = (turn === "red" ? "blue" : "red")
 
-                        this.setTurn(newTurn).then( () => {
+                        this.putTurn(newTurn).then( () => {
                             this.board.changeColor(r_coord, c_coord, color);
 
                             this.board.socket.emit("colorChange", {row: r_coord, col: c_coord, myColor: color})
@@ -109,7 +109,7 @@ export class Handler{
             document.getElementById("curr").innerText="Red";
 
             if (async_flag){
-                this.setTurn("red")
+                this.putTurn("red")
             } 
             else{
                 this.game.curr_player = "red"
