@@ -1,4 +1,5 @@
 const {Server} = require("socket.io")
+const { Socket } = require("socket.io-client")
 
 module.exports = {
     getio: (server) => {
@@ -49,6 +50,10 @@ module.exports = {
                 if(e.row != null && e.col != null && e.myColor != null){
                     io.emit("colorChange", e)
                 }
+            })
+
+            server.on("join", () => {
+                server.join("roomA")
             })
         })
 

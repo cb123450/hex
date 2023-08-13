@@ -26,9 +26,15 @@
             <p id="color-assignment"> You are: <span id="color"></span></p>
             <p id="turn"><span id="curr"></span>'s Move</p>
 
-            <p id="entername">Enter your Name: </p>
             <input type="text" placeholder="Name" id="name" autocomplete="off">
-            <button id="searchPlayer">Search for another player</button>
+            <button id="enterName">Enter your Name</button>
+            <button id="room1">Join Room 1</button>
+            <button id="room2">Join Room 2</button>
+            <button id="room3">Join Room 3</button>
+            <button id="room4">Join Room 4</button>
+            <button id="room5">Join Room 5</button>
+            <button id="room6">Join Room 6</button>
+            <button id="randomRoom">Join Random Room</button>
     </div>
 
 </body>
@@ -55,16 +61,15 @@
     /* SIDEBAR SETUP*/
     let name;
     document.getElementById("curr").innerText="Red";
-    document.getElementById("searchPlayer").addEventListener("click", function(){
+    document.getElementById("enterName").addEventListener("click", function(){
         name=document.getElementById("name").value;
         document.getElementById("user").innerText=name;
         if(name==null || name==''){
-            alert("Enter a name")
-        }
-        else{ 
-            socket.emit("find", {name:name})
+            alert("Enter a name in order to join a room")
         }
     })
+
+
     
     socket.on("find", (e)=>{ 
         gameArr = e.game
@@ -102,6 +107,10 @@
         game.turn += 1
 
         board.changeColor(row, col, newColor)
+    })
+
+    socket.on("Joined room A", () => {
+        console.log("client 1 joined room A")
     })
 
 
