@@ -10,7 +10,6 @@ router.get("/", (req, res) => {
 router.put('/', (req, res) => {
     newUser = {
         name: req.body.name,
-        room: req.body.room
     };
     if (!(users.some(obj => obj.name === req.body.name))){
         users.push(newUser)

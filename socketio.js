@@ -3,9 +3,8 @@ const { Socket } = require("socket.io-client")
 
 module.exports = {
     getio: (server) => {
-        const users = []
-        let arr=[]
-        let gameArr=[]
+
+        const rooms = [0, 0, 0, 0, 0, 0, 0];
 
         const io = new Server(server);
 
@@ -15,45 +14,35 @@ module.exports = {
             server.on("disconnect", () => {
                 console.log("Client has disconnected");
             });
-
-            server.on("find", (e) => {
-                console.log("server recieved find")
-                if(e.name!=null){
-                    arr.push(e.name)
             
-                    if (arr.length >= 2){
-                        let p1obj={
-                            name:arr[0],
-                            color:"red",
-                        }
-                        let p2obj={
-                            name:arr[1],
-                            color:"blue",
-                        }
+            server.on("join", function(room_num){
+                //room_num is a string 
+                let room = parseInt(room_num)
                 
-                        let obj={
-                            p1:p1obj,
-                            p2:p2obj
-                        }
-                        turn = "red"
-                        gameArr.push(obj)
-                
-                        arr.splice(0, 2)
-                        
-                        io.emit("find", {game:gameArr})
+                if (room < 7 && rooms[room-1] < 2){
+
+                    server.join(room_num)
+                    server.broadcast.emit("roomJoined", room_num)
+
+                    rooms[room-1] += 1;
+
+                    if (rooms[room-1] == 2){
+                        server.to(room).emit("gameStarted")
                     }
                 }
+                
             });
-        
+
+            server.on("leave", function(room_num){
+                server.leave(room_num)
+                server.broadcast.emit("roomLeft", room_num)
+            })
+
             server.on("colorChange", (e) =>{
                 //e.move is null
                 if(e.row != null && e.col != null && e.myColor != null){
                     io.emit("colorChange", e)
                 }
-            });
-
-            server.on("join", function(room_num){
-                server.join(room_num)
             });
         });
 

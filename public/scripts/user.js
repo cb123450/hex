@@ -1,7 +1,7 @@
 const test = true;
 const domain = test ? 'http://localhost:3000':'http://44.217.57.246/';
 
-export async function putUser(newUser){
+export async function putUser(user){
     try{
         let res = await axios({
             url: domain + '/user',
@@ -11,8 +11,7 @@ export async function putUser(newUser){
                 'Content-Type': 'application/json',
             },
             data: {
-                    name: newUser.name,
-                    room: newUser.room}
+                    name: user.name}
         })
         if (res.status == 200){
             console.log(res.status)

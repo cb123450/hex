@@ -96,14 +96,17 @@
             alert("Enter a name in order to join a room")
         }
         else{
-            let room_num = parseInt(evt.target.className.split('_')[1]);
+            let room_num = evt.target.className.split('_')[1];
             let numerator = parseInt(document.getElementById("r" + room_num)?.innerText?.split("/")[0]);
 
             if (hasClicked && curr_room == clicked_room){
                 numerator -= 1;
                 alert("You have left room " + room_num)
-                document.getElementById("r" + room_num).innerText = "0/2"; 
+                document.getElementById("r" + room_num).innerText = numerator + "/2"; 
                 joined_room = 0
+                curr_room = -1;
+
+                socket.emit("leave", room_num)
             }
             else if (hasClicked === 1){
 
@@ -116,18 +119,20 @@
                     
                     numerator += 1;
                     if (numerator === 2){
-                        document.getElementById("r" + room_num).innerText = "1/2";
+                        document.getElementById("r" + room_num).innerText = numerator.toString() + "/2";
+                        const user = {name: name}
+
                         socket.emit('join', room_num);
-                        const newUser = {name: name, 
-                                        room: room_num}
-                        putUser(newUser)
+
+                        putUser(user)
                     }
                     if (numerator === 1){
-                        document.getElementById("r" + room_num).innerText = "1/2";
+                        document.getElementById("r" + room_num).innerText = numerator.toString() + "/2";
+                        
+                        const user = {name: name}
+                        putUser(user)
+
                         socket.emit('join', room_num);
-                        const newUser = {name: name, 
-                                        room: room_num}
-                        putUser(newUser)
                     }
                 }
             }
@@ -137,27 +142,31 @@
 
     /* END SIDEBAR SETUP*/
     
-    socket.on("find", (e)=>{ 
-        gameArr = e.game
+    socket.on("roomJoined", (room_num) => {
 
-        let opponent
-        let color
-
-        const thisGame = gameArr.find(obj=>obj.p1.name ==`${name}` || obj.p2.name == `${name}`)
+        let numerator = parseInt(document.getElementById("r" + room_num)?.innerText?.split("/")[0]);
         
-        thisGame.p1.name == `${name}` ? opponent=thisGame.p2.name : opponent=thisGame.p1.name
-        thisGame.p1.name == `${name}` ? color=thisGame.p1.color : color=thisGame.p2.color
+        // numerator should always be 0 or 1 but it's still good to check
+        if (numerator === 0 || numerator === 1){
+            numerator += 1;
+            document.getElementById("r" + room_num.toString()).innerText = numerator.toString() + "/2";
+        }
+    });
 
-        handler = new Handler(board, game)
-        grid?.addEventListener("click", handler.getAsyncButtonHandler(color), false);
-        start_button?.addEventListener("click", handler.getStartHandler(true), false);
+    socket.on("roomLeft", (room_num) => {
+        let numerator = parseInt(document.getElementById("r" + room_num)?.innerText?.split("/")[0]);
+        
+        // numerator should always be 1 or 2 but it's still good to check
+        if (numerator === 1 || numerator === 2){
+            numerator -= 1;
+            document.getElementById("r" + room_num.toString()).innerText = numerator.toString() + "/2";
+        }
+    });
 
-        let restart = handler.getStartHandler()
-        restart()
 
-        document.getElementById("opponent").innerText=opponent
-        document.getElementById("color").innerText=color
-    })
+    socket.on("gameStarted", () => { 
+       console.log("game started")
+    });
 
     socket.on("colorChange", (e) => {
         let row = e.row
