@@ -14,7 +14,7 @@
             <p> HOME </p>
         </button>
 
-        <button class = "header" id="start-button">
+        <button class = "header" id="restart">
             <p> RESTART </p>
         </button>
     </div> 
@@ -29,13 +29,13 @@
             <input type="text" placeholder="Name" id="name" autocomplete="off">
             <button id="enterName">Enter your Name</button>
             <button class = "b_1" id="room1"><b class = "b_1">Join Room 1: </b><span class="b_1" id="r1">0/2</span></button>
-            <button class = "b_2" id="room2"><b class = "b_2">Join Room 1: </b><span class="b_2" id="r2">0/2</span></button>
-            <button class = "b_3" id="room3"><b class = "b_3">Join Room 1: </b><span class="b_3" id="r3">0/2</span></button>
-            <button class = "b_4" id="room4"><b class = "b_4">Join Room 1: </b><span class="b_4" id="r4">0/2</span></button>
-            <button class = "b_5" id="room5"><b class = "b_5">Join Room 1: </b><span class="b_5" id="r5">0/2</span></button>
-            <button class = "b_6" id="room6"><b class = "b_6">Join Room 1: </b><span class="b_6" id="r6">0/2</span></button>
+            <button class = "b_2" id="room2"><b class = "b_2">Join Room 2: </b><span class="b_2" id="r2">0/2</span></button>
+            <button class = "b_3" id="room3"><b class = "b_3">Join Room 3: </b><span class="b_3" id="r3">0/2</span></button>
+            <button class = "b_4" id="room4"><b class = "b_4">Join Room 4: </b><span class="b_4" id="r4">0/2</span></button>
+            <button class = "b_5" id="room5"><b class = "b_5">Join Room 5: </b><span class="b_5" id="r5">0/2</span></button>
+            <button class = "b_6" id="room6"><b class = "b_6">Join Room 6: </b><span class="b_6" id="r6">0/2</span></button>
 
-            <button class = "bR" id="randomRoom"><b class = "bR">Join Waiting Room</b></button>
+            <button class = "b_7" id="room7"><b class = "b_7">Join Waiting Room</b></button>
     </div>
 
 </body>
@@ -63,12 +63,15 @@
     /* START SIDEBAR SETUP*/
     let name;
     let joined_room = 0;
-    let clickedRoom = 0;
+    let curr_room = -1;
 
     document.getElementById("curr").innerText="Red";
 
     document.addEventListener("click", function(evt){
-        console.log(evt.target)
+
+        let hasClicked = 0;
+        let clicked_room = -1;
+
         if (evt.target.id === "enterName"){
             name = document.getElementById("name").value;
             document.getElementById("user").innerText=name;
@@ -80,48 +83,52 @@
 
         let i = 0;
 
-        while (i < 6){
+        /* ROOMS ARE 1-INDEXEX AND WAITING ROOM IS ROOM 7 */
+        while (i < 8){
             if (evt.target.matches(".b_" + i.toString())){
-                clickedRoom += 1;
+                hasClicked = 1;
+                clicked_room = i
             }
             i += 1;
         }
-        
-        if (evt.target.matches(".bR")){
-            clickedRoom += 1;
-        }
 
-        if (clickedRoom > 0 && (name == null || name == '')){
+        if (hasClicked === 1 && (name == null || name == '')){
             alert("Enter a name in order to join a room")
         }
         else{
-            if (joined_room > 0){
-                alert("You can only join 1 room")
+            let room_num = parseInt(evt.target.className.split('_')[1]);
+            let numerator = parseInt(document.getElementById("r" + room_num)?.innerText?.split("/")[0]);
+
+            if (hasClicked && curr_room == clicked_room){
+                numerator -= 1;
+                alert("You have left room " + room_num)
+                document.getElementById("r" + room_num).innerText = "0/2"; 
+                joined_room = 0
             }
-            else if (clickedRoom > 0){
-                let room_num = parseInt(evt.target.className.split('_')[1]);
-                let numerator = parseInt(document.getElementById("r" + room_num)?.innerText?.split("/")[0]);
-                numerator += 1;
-                if (numerator === 2){
-                    if (joined_room == 1){
-                        alert("You cannot join a room twice")
-                    }
-                    else{
+            else if (hasClicked === 1){
+
+                if (joined_room === 1){
+                    alert("You can only join 1 room at a time. Click on your current room to leave it.")
+                }
+                else{
+                    joined_room = 1;
+                    curr_room = clicked_room;
+                    
+                    numerator += 1;
+                    if (numerator === 2){
                         document.getElementById("r" + room_num).innerText = "1/2";
                         socket.emit('join', room_num);
                         const newUser = {name: name, 
                                         room: room_num}
                         putUser(newUser)
-                        joined_room += 1;
-                    }  
-                }
-                if (numerator === 1){
-                    document.getElementById("r" + room_num).innerText = "1/2";
-                    socket.emit('join', room_num);
-                    const newUser = {name: name, 
-                                    room: room_num}
-                    putUser(newUser)
-                    joined_room += 1;
+                    }
+                    if (numerator === 1){
+                        document.getElementById("r" + room_num).innerText = "1/2";
+                        socket.emit('join', room_num);
+                        const newUser = {name: name, 
+                                        room: room_num}
+                        putUser(newUser)
+                    }
                 }
             }
         }
