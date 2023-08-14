@@ -10,11 +10,14 @@ app.use(function(req, res, next) {
 
 const http = require('http')
 const server = http.createServer(app)
-
+app.use(express.json())
 
 const turnRoute = require('./routes/turn')
-app.use(express.json())
 app.use('/turn', turnRoute)
+
+const userRoute = require('./routes/user')
+app.use('/user', userRoute)
+
 
 var path = require('path')
 app.use(express.static("public"))

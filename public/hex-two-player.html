@@ -28,12 +28,12 @@
 
             <input type="text" placeholder="Name" id="name" autocomplete="off">
             <button id="enterName">Enter your Name</button>
-            <button class = "b1" id="room1"><b class = "b1">Join Room 1: </b><span class="b1" id="r1">0/2</span></button>
-            <button class = "b2" id="room2"><b class = "b2">Join Room 1: </b><span class="b2" id="r2">0/2</span></button>
-            <button class = "b3" id="room3"><b class = "b3">Join Room 1: </b><span class="b3" id="r3">0/2</span></button>
-            <button class = "b4" id="room4"><b class = "b4">Join Room 1: </b><span class="b4" id="r4">0/2</span></button>
-            <button class = "b5" id="room5"><b class = "b5">Join Room 1: </b><span class="b5" id="r5">0/2</span></button>
-            <button class = "b6" id="room6"><b class = "b6">Join Room 1: </b><span class="b6" id="r6">0/2</span></button>
+            <button class = "b_1" id="room1"><b class = "b_1">Join Room 1: </b><span class="b_1" id="r1">0/2</span></button>
+            <button class = "b_2" id="room2"><b class = "b_2">Join Room 1: </b><span class="b_2" id="r2">0/2</span></button>
+            <button class = "b_3" id="room3"><b class = "b_3">Join Room 1: </b><span class="b_3" id="r3">0/2</span></button>
+            <button class = "b_4" id="room4"><b class = "b_4">Join Room 1: </b><span class="b_4" id="r4">0/2</span></button>
+            <button class = "b_5" id="room5"><b class = "b_5">Join Room 1: </b><span class="b_5" id="r5">0/2</span></button>
+            <button class = "b_6" id="room6"><b class = "b_6">Join Room 1: </b><span class="b_6" id="r6">0/2</span></button>
 
             <button class = "bR" id="randomRoom"><b class = "bR">Join Waiting Room</b></button>
     </div>
@@ -50,6 +50,7 @@
     import Board from "./scripts/Board.js";
     import Game from "./scripts/Game.js"
     import Handler from "./scripts/Handler.js"
+    import {putUser, getUsers} from "./scripts/user.js"
 
     const socket = io();
     let board = new Board(socket);
@@ -61,11 +62,14 @@
 
     /* START SIDEBAR SETUP*/
     let name;
+    let joined_room = 0;
+    let clickedRoom = 0;
+
     document.getElementById("curr").innerText="Red";
 
     document.addEventListener("click", function(evt){
         console.log(evt.target)
-        if (evt.target.id === "entername"){
+        if (evt.target.id === "enterName"){
             name = document.getElementById("name").value;
             document.getElementById("user").innerText=name;
 
@@ -75,10 +79,9 @@
         }
 
         let i = 0;
-        let clickedRoom = 0;
 
         while (i < 6){
-            if (evt.target.matches(".b" + i.toString())){
+            if (evt.target.matches(".b_" + i.toString())){
                 clickedRoom += 1;
             }
             i += 1;
@@ -92,9 +95,36 @@
             alert("Enter a name in order to join a room")
         }
         else{
-            //
+            if (joined_room > 0){
+                alert("You can only join 1 room")
+            }
+            else if (clickedRoom > 0){
+                let room_num = parseInt(evt.target.className.split('_')[1]);
+                let numerator = parseInt(document.getElementById("r" + room_num)?.innerText?.split("/")[0]);
+                numerator += 1;
+                if (numerator === 2){
+                    if (joined_room == 1){
+                        alert("You cannot join a room twice")
+                    }
+                    else{
+                        document.getElementById("r" + room_num).innerText = "1/2";
+                        socket.emit('join', room_num);
+                        const newUser = {name: name, 
+                                        room: room_num}
+                        putUser(newUser)
+                        joined_room += 1;
+                    }  
+                }
+                if (numerator === 1){
+                    document.getElementById("r" + room_num).innerText = "1/2";
+                    socket.emit('join', room_num);
+                    const newUser = {name: name, 
+                                    room: room_num}
+                    putUser(newUser)
+                    joined_room += 1;
+                }
+            }
         }
-        clickedRoom = 0
         evt.stopPropagation;
     })
 

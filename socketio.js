@@ -14,7 +14,7 @@ module.exports = {
 
             server.on("disconnect", () => {
                 console.log("Client has disconnected");
-            })
+            });
 
             server.on("find", (e) => {
                 console.log("server recieved find")
@@ -43,19 +43,19 @@ module.exports = {
                         io.emit("find", {game:gameArr})
                     }
                 }
-            })
+            });
         
             server.on("colorChange", (e) =>{
                 //e.move is null
                 if(e.row != null && e.col != null && e.myColor != null){
                     io.emit("colorChange", e)
                 }
-            })
+            });
 
-            server.on("join", () => {
-                server.join("roomA")
-            })
-        })
+            server.on("join", function(room_num){
+                server.join(room_num)
+            });
+        });
 
         return io;
     }
