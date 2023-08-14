@@ -91,63 +91,63 @@ li{
 }
 #name{
     grid-row: 3;
-    grid-column: 19 / 28;
+    grid-column: 19 / 29;
     font-size: 1.5vw;
     margin: .75vw;
     height: 2vw;
 }
 #enterName{
     grid-row: 4;
-    grid-column: 19 / 28;
+    grid-column: 19 / 29;
     font-size: 1.5vw;
     margin: .75vw;
     height: 3vw;
 }
 #room1{
     grid-row: 5;
-    grid-column: 19 / 23;
+    grid-column: 19 / 24;
     font-size: 1.5vw;
     margin: .75vw;
     height: 3vw;
 }
 #room2{
     grid-row: 5;
-    grid-column: 24 / 28;
+    grid-column: 24 / 29;
     font-size: 1.5vw;
     margin: .75vw;
     height: 3vw;
 }
 #room3{
     grid-row: 6;
-    grid-column: 19 / 23;
+    grid-column: 19 / 24;
     font-size: 1.5vw;
     margin: .75vw;
     height: 3vw;
 }
 #room4{
     grid-row: 6;
-    grid-column: 24 / 28;
+    grid-column: 24 / 29;
     font-size: 1.5vw;
     margin: .75vw;
     height: 3vw;
 }
 #room5{
     grid-row: 7;
-    grid-column: 19 / 23;
+    grid-column: 19 / 24;
     font-size: 1.5vw;
     margin: .75vw;
     height: 3vw;
 }
 #room6{
     grid-row: 7;
-    grid-column: 24 / 28;
+    grid-column: 24 / 29;
     font-size: 1.5vw;
     margin: .75vw;
     height: 3vw;
 }
 #randomRoom{
     grid-row: 8;
-    grid-column: 21 / 26;
+    grid-column: 21 / 27;
     font-size: 1.5vw;
     margin: .75vw;
     height: 3vw;
