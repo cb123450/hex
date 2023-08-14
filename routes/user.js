@@ -8,17 +8,20 @@ router.get("/", (req, res) => {
   })
   
 router.put('/', (req, res) => {
-    newUser = {
+    
+    let user = {
         name: req.body.name,
     };
+
     if (!(users.some(obj => obj.name === req.body.name))){
-        users.push(newUser)
+        users.push(user)
         res.status(200)
     }
     else{
         res.status(409)
         //Send a status 409 if user is already logged in
     }
+    res.send(req.body)
     
 })
 

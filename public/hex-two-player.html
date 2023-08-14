@@ -120,19 +120,15 @@
                     numerator += 1;
                     if (numerator === 2){
                         document.getElementById("r" + room_num).innerText = numerator.toString() + "/2";
+                        
                         const user = {name: name}
-
-                        socket.emit('join', room_num);
-
-                        putUser(user)
+                        putUser(user).then(() => {socket.emit('join', room_num)} );
                     }
                     if (numerator === 1){
                         document.getElementById("r" + room_num).innerText = numerator.toString() + "/2";
                         
                         const user = {name: name}
-                        putUser(user)
-
-                        socket.emit('join', room_num);
+                        putUser(user).then(() => {socket.emit('join', room_num)} );
                     }
                 }
             }
@@ -142,6 +138,7 @@
 
     /* END SIDEBAR SETUP*/
     
+    // room_num is a string
     socket.on("roomJoined", (room_num) => {
 
         let numerator = parseInt(document.getElementById("r" + room_num)?.innerText?.split("/")[0]);

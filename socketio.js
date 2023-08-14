@@ -16,7 +16,10 @@ module.exports = {
             });
             
             server.on("join", function(room_num){
-                //room_num is a string 
+                /*
+                room_num is a string and is used to denote the room two players are in
+                use parseInt(room_num) to index into the array of rooms!
+                */
                 let room = parseInt(room_num)
                 
                 if (room < 7 && rooms[room-1] < 2){
@@ -27,7 +30,7 @@ module.exports = {
                     rooms[room-1] += 1;
 
                     if (rooms[room-1] == 2){
-                        server.to(room).emit("gameStarted")
+                        server.to(room_num).emit("gameStarted")
                     }
                 }
                 

@@ -11,10 +11,10 @@ export async function putUser(user){
                 'Content-Type': 'application/json',
             },
             data: {
-                    name: user.name}
+                name: user.name, }
         })
         if (res.status == 200){
-            console.log(res.status)
+            //console.log(res.status)
         }
         return res.data 
     }
@@ -34,7 +34,7 @@ export async function getUsers() {
             }
         })
         if (res.status == 200){
-            console.log(res.status)
+            //console.log(res.status)
         }
         return res.data
     }
