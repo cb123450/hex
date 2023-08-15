@@ -80,8 +80,7 @@ export class Handler{
 
                         this.putTurn(newTurn).then( () => {
                             this.board.changeColor(r_coord, c_coord, color);
-
-                            this.board.socket.to(this.room).emit("colorChange", {row: r_coord, col: c_coord, myColor: color})
+                            this.board.socket.on(this.room).emit("colorChange", {row: r_coord, col: c_coord, myColor: color})
     
                             let win = this.board.checkWin(color);
     
@@ -115,7 +114,7 @@ export class Handler{
                 this.putTurn("red")
             } 
             else{
-                this.game.curr_player = "red"
+                this.game.color = "red"
             }
 
             let r = 2;
@@ -172,11 +171,11 @@ export class Handler{
                 const div_id = 'r_' + r_coord + '_c_' + c_coord;
                 
                 if (r === 'r' && document.getElementById(div_id).className === "free"){
-                    this.board.changeColor(r_coord, c_coord, this.game.curr_player);
-                    let win = this.board.checkWin(this.game.curr_player);
+                    this.board.changeColor(r_coord, c_coord, this.game.color);
+                    let win = this.board.checkWin(this.game.color);
 
                     if (win){
-                        if (this.game.curr_player === "red"){
+                        if (this.game.color === "red"){
                             window.alert("Red has won!")
                             console.log("Red has won! Press the restart button to play again!")
                         }
@@ -187,11 +186,11 @@ export class Handler{
                     }  
                     document.getElementById(div_id).className = "taken"
 
-                    const newTurn = (this.game.curr_player === "red") ? "Blue" : "Red";
+                    const newTurn = (this.game.color === "red") ? "Blue" : "Red";
                     document.getElementById("curr").innerText=newTurn;
 
-                    const newColor = (this.game.curr_player === "red") ? "blue" : "red";                
-                    this.game.curr_player = newColor;
+                    const newColor = (this.game.color === "red") ? "blue" : "red";                
+                    this.game.color = newColor;
                 }
             }
             evt.stopPropagation();
