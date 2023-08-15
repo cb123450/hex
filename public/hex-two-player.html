@@ -118,18 +118,26 @@
                     curr_room = clicked_room;
                     
                     numerator += 1;
-                    if (numerator === 2){
-                        document.getElementById("r" + room_num).innerText = numerator.toString() + "/2";
-                        
-                        const user = {name: name}
-                        putUser(user).then(() => {socket.emit('join', room_num)} );
-                    }
+                    /* FIRST PERSON TO JOIN IS RED */
                     if (numerator === 1){
+                        game.curr_player = "red";
                         document.getElementById("r" + room_num).innerText = numerator.toString() + "/2";
                         
                         const user = {name: name}
-                        putUser(user).then(() => {socket.emit('join', room_num)} );
+                        //putUser(user).then(() => {socket.emit('join', room_num, name)} );
+                        socket.emit('join', room_num, name)
                     }
+
+                    /* SECOND PERSON TO JOIN IS BLUE */
+                    if (numerator === 2){
+                        game.curr_player = "blue";
+                        document.getElementById("r" + room_num).innerText = numerator.toString() + "/2";
+                        
+                        const user = {name: name}
+                        //putUser(user).then(() => {socket.emit('join', room_num, name)} );
+                        socket.emit('join', room_num, name)
+                    }
+                   
                 }
             }
         }
@@ -161,8 +169,22 @@
     });
 
 
-    socket.on("gameStarted", () => { 
-       console.log("game started")
+    socket.on("gameStarted", (players, color) => { 
+        console.log("test")
+        const my_index = players.indexOf(name);
+        const opponent = players[1-my_index];
+        console.log(opponent, my_index)
+
+        handler = new Handler(board, game, curr_room);
+
+        grid?.addEventListener("click", handler.getAsyncButtonHandler(), false);
+        start_button?.addEventListener("click", handler.getStartHandler(), false);
+
+        let restart = handler.getStartHandler();
+        restart();
+
+        document.getElementById("opponent").innerText=opponent;
+        document.getElementById("color").innerText=game.curr_player;
     });
 
     socket.on("colorChange", (e) => {
@@ -180,10 +202,5 @@
 
         board.changeColor(row, col, newColor)
     })
-
-    socket.on("Joined room A", () => {
-        console.log("client 1 joined room A")
-    })
-
 
 </script>

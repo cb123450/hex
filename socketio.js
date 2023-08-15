@@ -5,6 +5,7 @@ module.exports = {
     getio: (server) => {
 
         const rooms = [0, 0, 0, 0, 0, 0, 0];
+        const names = [[], [], [], [], [], [], []];
 
         const io = new Server(server);
 
@@ -15,7 +16,7 @@ module.exports = {
                 console.log("Client has disconnected");
             });
             
-            server.on("join", function(room_num){
+            server.on("join", function(room_num, user_name){
                 /*
                 room_num is a string and is used to denote the room two players are in
                 use parseInt(room_num) to index into the array of rooms!
@@ -26,11 +27,14 @@ module.exports = {
 
                     server.join(room_num)
                     server.broadcast.emit("roomJoined", room_num)
+                    
+                    names[room_num].push(user_name);
 
                     rooms[room-1] += 1;
 
                     if (rooms[room-1] == 2){
-                        server.to(room_num).emit("gameStarted")
+                        console.log(user_name, names);
+                        io.sockets.in(room_num).emit("gameStarted", names[room_num])
                     }
                 }
                 
