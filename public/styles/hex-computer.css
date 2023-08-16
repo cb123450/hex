@@ -62,3 +62,7 @@ li{
     left: 10%;
     position: relative;
 }
+#not-implemented{
+    font-size: 5vh;
+    text-align: center;
+}

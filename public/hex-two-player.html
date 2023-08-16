@@ -117,7 +117,10 @@
             }
             else if (hasClicked === 1){
 
-                if (joined_room === 1){
+                if (joined_room === 1 && gameStarted){
+                    alert("Leave the game to join another room.")
+                }
+                else if (joined_room === 1){
                     alert("You can only join 1 room at a time. Click on your current room to leave it.")
                 }
                 else{
