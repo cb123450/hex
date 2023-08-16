@@ -27,10 +27,12 @@ body{
 #home{
     grid-column: 2;
 }
-#restart{
+#playAgain{
+    visibility: hidden;
     grid-column: 3;
 }
-#restart:hover{
+#playAgain:hover{
+    visibility: hidden;
     background-color:bisque;
 }
 
@@ -151,6 +153,14 @@ li{
     font-size: 1.5vw;
     margin: .75vw;
     height: 3vw;
+}
+#leaveGame{
+    grid-row: 9;
+    grid-column: 21 / 27;
+    font-size: 1.5vw;
+    margin: .75vw;
+    height: 3vw;
+    visibility: hidden;
 }
 
 

@@ -11,11 +11,11 @@
 <body>
     <div class = grid-header> 
         <button class = "header" id = "home" onclick="window.location.href='./index.html';">
-            <p> HOME </p>
+            <span> HOME </span>
         </button>
 
-        <button class = "header" id="restart">
-            <p> RESTART </p>
+        <button class = "header" id="playAgain">
+            <span> PLAY AGAIN </span>
         </button>
     </div> 
     
@@ -36,6 +36,7 @@
             <button class = "b_6" id="room6"><b class = "b_6">Join Room 6: </b><span class="b_6" id="r6">0/2</span></button>
 
             <button class = "b_7" id="room7"><b class = "b_7">Join Waiting Room</b></button>
+            <button class = "b_8" id="leaveGame"><b class = "util">Leave Game</b></button>
     </div>
 
 </body>
@@ -64,6 +65,12 @@
     let name;
     let joined_room = 0;
     let curr_room = -1;
+    let color = null;
+    let gameStarted = 0;
+
+    let asyncButtonHandler;
+    let startHandler;
+    let opponent;
 
     document.getElementById("curr").innerText="Red";
 
@@ -99,14 +106,15 @@
             let room_num = evt.target.className.split('_')[1];
             let numerator = parseInt(document.getElementById("r" + room_num)?.innerText?.split("/")[0]);
 
-            if (hasClicked && curr_room == clicked_room){
+            //Can only leave a room if the game hasn't started
+            if (hasClicked && curr_room == clicked_room && gameStarted == 0){
                 numerator -= 1;
                 alert("You have left room " + room_num)
-                document.getElementById("r" + room_num).innerText = numerator + "/2"; 
+                document.getElementById("r" + room_num).innerText = numerator.toString() + "/2"; 
                 joined_room = 0
                 curr_room = -1;
 
-                socket.emit("leave", room_num)
+                socket.emit("playerLeftRoom", room_num, name)
             }
             else if (hasClicked === 1){
 
@@ -118,29 +126,26 @@
                     curr_room = clicked_room;
                     
                     numerator += 1;
-                    /* FIRST PERSON TO JOIN IS RED */
-                    if (numerator === 1){
-                        game.curr_player = "red";
-                        document.getElementById("r" + room_num).innerText = numerator.toString() + "/2";
-                        
-                        const user = {name: name}
-                        //putUser(user).then(() => {socket.emit('join', room_num, name)} );
-                        socket.emit('join', room_num, name)
-                    }
-
-                    /* SECOND PERSON TO JOIN IS BLUE */
-                    if (numerator === 2){
-                        game.curr_player = "blue";
-                        document.getElementById("r" + room_num).innerText = numerator.toString() + "/2";
-                        
-                        const user = {name: name}
-                        //putUser(user).then(() => {socket.emit('join', room_num, name)} );
-                        socket.emit('join', room_num, name)
-                    }
+ 
+                    /* Rely on server to make changes to room numbers */
+                    socket.emit('join', room_num, name)
                    
                 }
             }
         }
+
+        console.log(evt.target.id)
+
+        if (evt.target.id === "leaveGame"){
+            console.log("client sent leaveGame")
+            socket.emit("leaveGame", curr_room.toString(), name);
+        }
+
+        //event delegation instead of a separate handler for the grid
+        if (gameStarted){
+            asyncButtonHandler(evt);
+        }
+
         evt.stopPropagation;
     })
 
@@ -169,22 +174,33 @@
     });
 
 
-    socket.on("gameStarted", (players, color) => { 
-        console.log("test")
-        const my_index = players.indexOf(name);
-        const opponent = players[1-my_index];
-        console.log(opponent, my_index)
+    socket.on("gameStarted", (players) => { 
+        //alert("The game has started!")
+        
+        gameStarted = 1;
+        console.log("gameStarted", players);
+        const my_index = players.map(e => e.user_name).indexOf(name);
 
-        handler = new Handler(board, game, curr_room);
+        opponent = players[1 - my_index].user_name;
+        color = players[my_index].color;
 
-        grid?.addEventListener("click", handler.getAsyncButtonHandler(), false);
-        start_button?.addEventListener("click", handler.getStartHandler(), false);
+        game.color = color;
 
-        let restart = handler.getStartHandler();
-        restart();
+        handler = new Handler(board, game, curr_room.toString());
+
+        asyncButtonHandler = handler.getAsyncButtonHandler(game.color);
+        startHandler = handler.getStartHandler(true);
+
+        startHandler();
 
         document.getElementById("opponent").innerText=opponent;
-        document.getElementById("color").innerText=game.curr_player;
+        document.getElementById("color").innerText = game.color;
+        document.getElementById("leaveGame").style.visibility = 'visible';
+
+        document.getElementById("playAgain").style.visibility = "hidden";
+
+        window.getComputedStyle(document.querySelector('#playAgain'), ':before'
+).setProperty('hidden') = visible; 
     });
 
     socket.on("colorChange", (e) => {
@@ -202,5 +218,19 @@
 
         board.changeColor(row, col, newColor)
     })
+
+    socket.on("playerLeft", (player) => {
+        alert("Game is over. \"" + player + "\" has left.")
+
+        gameStarted = 0;
+        document.getElementById("playAgain").style.visibility = "visible";
+
+        window.getComputedStyle(document.querySelector('#playAgain'), ':before'
+).setProperty('visibility') = visible; 
+
+        document.getElementById("leaveGame").style.visibility = 'hidden';
+    })
+
+
 
 </script>
