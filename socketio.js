@@ -71,7 +71,7 @@ module.exports = {
                 rooms[index] = 0;
                 curr_players[index] = [];
 
-                io.sockets.in(room_num).emit("playerLeft", user_name);
+                io.sockets.in(room_num).emit("playerLeft", room_num, user_name);
             });
 
         });

@@ -27,14 +27,6 @@ body{
 #home{
     grid-column: 2;
 }
-#playAgain{
-    visibility: hidden;
-    grid-column: 3;
-}
-#playAgain:hover{
-    visibility: hidden;
-    background-color:bisque;
-}
 
 .header{
     font-size: 3vh;

@@ -14,9 +14,6 @@
             <span> HOME </span>
         </button>
 
-        <button class = "header" id="playAgain">
-            <span> PLAY AGAIN </span>
-        </button>
     </div> 
     
     <div class = "spacing"> </div>
@@ -65,8 +62,10 @@
     let name;
     let joined_room = 0;
     let curr_room = -1;
-    let color = null;
     let gameStarted = 0;
+
+    let color = null;
+    
 
     let asyncButtonHandler;
     let startHandler;
@@ -197,11 +196,7 @@
         document.getElementById("color").innerText = game.color;
         document.getElementById("leaveGame").style.visibility = 'visible';
 
-        document.getElementById("playAgain").style.visibility = "hidden";
-
-        window.getComputedStyle(document.querySelector('#playAgain'), ':before'
-).setProperty('hidden') = visible; 
-    });
+    })
 
     socket.on("colorChange", (e) => {
         let row = e.row
@@ -219,18 +214,22 @@
         board.changeColor(row, col, newColor)
     })
 
-    socket.on("playerLeft", (player) => {
+    socket.on("playerLeft", (room_num, player) => {
         alert("Game is over. \"" + player + "\" has left.")
 
+        //RESET PARAMS; will create function for initialization later
         gameStarted = 0;
-        document.getElementById("playAgain").style.visibility = "visible";
+        curr_room = -1;
+        joined_room = 0;
+        color = null;
+        
+        document.getElementById("color").innerText = "";
+        document.getElementById("opponent").innerText = "";
 
-        window.getComputedStyle(document.querySelector('#playAgain'), ':before'
-).setProperty('visibility') = visible; 
+        document.getElementById("leaveGame").style.visibility = "hidden";
+        document.getElementById("r" + room_num).innerText = "0/2";
 
-        document.getElementById("leaveGame").style.visibility = 'hidden';
+        startHandler();
     })
-
-
 
 </script>
