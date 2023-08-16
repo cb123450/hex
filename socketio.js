@@ -12,7 +12,7 @@ module.exports = {
         io.on("connection", (server) => {
             console.log("Client has connected");
 
-            server.on("disconnect", () => {
+            server.on("disconnect", () => {                
                 console.log("Client has disconnected");
             });
             
@@ -72,6 +72,7 @@ module.exports = {
                 curr_players[index] = [];
 
                 io.sockets.in(room_num).emit("playerLeft", room_num, user_name);
+                console.log("server received leaveGame")
             });
 
         });

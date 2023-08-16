@@ -139,7 +139,6 @@
         console.log(evt.target.id)
 
         if (evt.target.id === "leaveGame"){
-            console.log("client sent leaveGame")
             socket.emit("leaveGame", curr_room.toString(), name);
         }
 
@@ -233,6 +232,14 @@
         document.getElementById("r" + room_num).innerText = "0/2";
 
         startHandler();
-    })
+        console.log("received playerLeft")
+    });
+
+    socket.on("disconnect", () => {
+        console.log("disconnect")
+        if (gameStarted){
+            socket.emit("leaveGame", curr_room.toString(), name);
+        }
+    });
 
 </script>
