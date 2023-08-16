@@ -242,4 +242,14 @@
         }
     });
 
+    /* Get the data about rooms */
+    window.onload = () => {
+        socket.emit("getTurn", socket);
+    }
+
+    socket.on("getTurn", (rooms) => {
+        console.log("client received getTurn")
+        console.log(rooms)
+    });
+
 </script>

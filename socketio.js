@@ -75,6 +75,11 @@ module.exports = {
                 console.log("server received leaveGame")
             });
 
+            server.on("getTurn", (socket) => {
+                console.log("getTurn")
+                socket.emit("hello")
+            })
+
         });
 
         return io;
