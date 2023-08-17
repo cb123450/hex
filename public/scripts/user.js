@@ -1,4 +1,4 @@
-const test = true;
+const test = false;
 const domain = test ? 'http://localhost:3000':'http://44.217.57.246/';
 
 export async function putUser(user){
