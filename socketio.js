@@ -58,10 +58,10 @@ module.exports = {
                 curr_players[room].splice(index, 1);
             });
 
-            server.on("colorChange", (e) =>{
-                //e.move is null
+            server.on("colorChange", (e, room_num) =>{
                 if(e.row != null && e.col != null && e.myColor != null){
-                    io.emit("colorChange", e)
+                    //io.emit("colorChange", e)
+                    io.sockets.in(e.room_str).emit("colorChange", e)
                 }
             });
 
@@ -75,9 +75,8 @@ module.exports = {
                 console.log("server received leaveGame")
             });
 
-            server.on("getTurn", (socket) => {
-                console.log("getTurn")
-                socket.emit("hello")
+            server.on("getTurn", () => { 
+                io.emit("rooms", rooms);
             })
 
         });

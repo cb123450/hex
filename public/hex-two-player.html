@@ -232,6 +232,9 @@
         document.getElementById("r" + room_num).innerText = "0/2";
 
         startHandler();
+
+        socket.emit("getTurn");
+
         console.log("received playerLeft")
     });
 
@@ -242,14 +245,22 @@
         }
     });
 
-    /* Get the data about rooms */
-    window.onload = () => {
-        socket.emit("getTurn", socket);
-    }
+    /* 
+    Get the data about rooms whenever a new user connects
+    */
 
-    socket.on("getTurn", (rooms) => {
-        console.log("client received getTurn")
-        console.log(rooms)
+    socket.on("connect", () => {
+        socket.emit("getTurn");
+        console.log("sent getTurn")
+    })
+
+    socket.on("rooms", (rooms) => {
+        console.log("test")
+        let i = 1;
+        while (i < 7){
+            document.getElementById("r" + i.toString()).innerText = rooms[i-1].toString() + "/2";
+            i += 1;
+        }
     });
 
 </script>

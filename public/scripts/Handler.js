@@ -7,11 +7,12 @@ export class Handler{
     myColor;
     board; 
     game;
-    room;
-    constructor(board, game, curr_room){
+    room_str; //a String
+
+    constructor(board, game, room_str){
         this.board = board;
         this.game = game;
-        this.room = curr_room;
+        this.room_str = room_str;
     }
 
     async getTurn() {
@@ -80,7 +81,7 @@ export class Handler{
 
                         this.putTurn(newTurn).then( () => {
                             this.board.changeColor(r_coord, c_coord, color);
-                            this.board.socket.on(this.room).emit("colorChange", {row: r_coord, col: c_coord, myColor: color})
+                            this.board.socket.on(this.room_str).emit("colorChange", {row: r_coord, col: c_coord, myColor: color, room_str: this.room_str})
     
                             let win = this.board.checkWin(color);
     
