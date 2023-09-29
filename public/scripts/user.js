@@ -1,5 +1,5 @@
 const test = true;
-const domain = test ? 'http://localhost:3000':'http://44.217.57.246';
+const domain = process.env.MODE ? 'http://localhost:3000':'http://44.217.57.246';
 
 export async function putUser(user){
     try{

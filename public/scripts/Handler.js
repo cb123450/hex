@@ -1,7 +1,8 @@
 import Board from "./Board.js"
 
 const test = true;
-const domain = test ? 'http://localhost:3000':'http://44.217.57.246';
+//if MODE == 0 --> test else production
+const domain = process.env.MODE ? 'http://localhost:3000':'http://44.217.57.246';
 
 export class Handler{
     myColor;

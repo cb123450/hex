@@ -1,7 +1,7 @@
 import express from 'express';
 const socketio = require("./socketio.js");
 import http from "http";
-import mongoose from "mongoose";
+var mysql = require('mysql');
 import router from "router";
 
 import compression from 'compression';
@@ -12,7 +12,7 @@ import cookieParser from "cookie-parser";
 
 const express = require('express')
 const app = express()
-const PORT = 3000;
+const PORT = process.env.PORT;
 
 
 app.use(cors({
@@ -26,19 +26,26 @@ app.use(bodyParser.json());
 const server = http.createServer(app)
 const io = socketio.getio(server)
 
-
-
 server.listen(PORT, ()=>{
     console.log("Server running on PORT " + PORT)
 }) 
 
+const MYSQL_HOST = process.env.HOST;
+const MYSQL_USER = process.env.USER;
+const MYSQL_PASS = process.env.PASS;
+
+var con = mysql.createConnection({
+    host: MYSQL_HOST,
+    user: MYSQL_USER,
+    password: MYSQL_PASS
+});
+
+con.connect(function(err) {
+    if (err) throw err;
+    console.log("Connected!");
+});
+
 app.use('/', router())
 
-
-const turnRoute = require('./routes/turn')
-app.use('/turn', turnRoute)
-
-const userRoute = require('./routes/user')
-app.use('/user', userRoute)
 
 
