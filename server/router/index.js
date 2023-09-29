@@ -7,7 +7,6 @@ const router = express.Router()
 export default () => {
 
     users(router);
-    turn(router);
-    
+    turn(router);    
     return router; 
 }
