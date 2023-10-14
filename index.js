@@ -1,3 +1,4 @@
+//CORRECT SERVER (index.js file)
 const express = require('express')
 const app = express()
 const PORT = 3000;
@@ -22,7 +23,14 @@ app.use('/user', userRoute)
 
 
 var path = require('path')
-app.use(express.static("public"))
+//app.use(express.static("public"))
+
+app.set('views', path.join(__dirname, 'views'))
+app.set('view engine', 'ejs')
+
+app.get("/", (req, res) => {
+    res.render('index')
+})
 
 const socketio = require("./socketio.js");
 const io = socketio.getio(server)
