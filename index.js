@@ -3,6 +3,9 @@ const express = require('express')
 const app = express()
 const PORT = 3000;
 
+var path = require('path')
+
+
 app.use(function(req, res, next) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
@@ -22,11 +25,12 @@ const userRoute = require('./routes/user')
 app.use('/user', userRoute)
 
 
-var path = require('path')
-//app.use(express.static("public"))
+
 
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'ejs')
+
+//app.use(express.static(path.join(__dirname, "public"))); 
 
 app.get("/", (req, res) => {
     res.render('index')
