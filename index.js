@@ -25,16 +25,10 @@ const userRoute = require('./routes/user')
 app.use('/user', userRoute)
 
 
-
-
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'ejs')
 
-//app.use(express.static(path.join(__dirname, "public"))); 
-
-app.get("/", (req, res) => {
-    res.render('index')
-})
+app.use(express.static(path.join(__dirname, "/public"))); 
 
 const socketio = require("./socketio.js");
 const io = socketio.getio(server)
