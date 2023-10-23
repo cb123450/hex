@@ -1,6 +1,6 @@
 import { convertTypeAcquisitionFromJson, visitEachChild } from "typescript";
 import { deflateSync } from "zlib";
-import {Tile, Graph, Queue} from "./utility.js";
+import {Tile, Graph, Queue} from "../js/utility.js";
 
 export function bfs(t: Tile, color : string, tile_array : Tile[][], g : Graph<string, Tile>) : boolean{
 
