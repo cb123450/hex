@@ -28,7 +28,24 @@ app.use('/user', userRoute)
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'ejs')
 
-app.use(express.static(path.join(__dirname, "/public"))); 
+// index 
+app.get('/', function(req, res) {
+  res.render('index');
+});
+
+app.get('/solo', function(req, res) {
+  res.render('solo');
+});
+
+app.get('/two-player', function(req, res) {
+  res.render('two-player');
+});
+
+app.get('/computer', function(req, res) {
+  res.render('computer');
+});
+
+//app.use(express.static(path.join(__dirname, "/public"))); 
 
 const socketio = require("./socketio.js");
 const io = socketio.getio(server)
