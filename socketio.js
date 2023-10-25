@@ -14,6 +14,7 @@ module.exports = {
 
             server.on("disconnect", () => {                
                 console.log("Client has disconnected");
+                //checkt this to see if can use to kick people from rooms
             });
             
             server.on("join", function(room_num, user_name){

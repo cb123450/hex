@@ -19,7 +19,7 @@ export interface Tile {
     get_color() : string;
     set_color(c : string) : void;
 }
-export class Tile {
+export class Tile implements Tile{
     constructor(row:number, col:number, color:string){
         this.row = row;
         this.col = col;
@@ -71,7 +71,7 @@ export class Tile {
 -There will be no collisions in any dictionary bc each tile has a unique center
 -This graph is undirected
 */
-export interface Graph<H extends string, T extends Tile> {
+export interface Graph<H, T extends Tile> {
     vertices : Map<H, T>;
     adj_list : Map<H, Map<H, T>>;
     addEdge(curr_tile : T, adj_tile : T): void;
@@ -83,7 +83,7 @@ export interface Graph<H extends string, T extends Tile> {
 
 
 
-export class Graph<H extends string, T extends Tile>{
+export class Graph<H, T> implements Graph<H, T>{
     constructor(){
         this.vertices = new Map<H, T>; 
         this.adj_list = new Map<H, Map<H, T>>();
@@ -139,6 +139,7 @@ export interface Queue<T> {
     next_item: number;
     num_elements: number;
 }
+
 export class Queue<T> implements Queue<T>{
     constructor() {
         this.items = new Array<T>;

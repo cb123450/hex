@@ -11,9 +11,13 @@
     /* Type Checking */
     "strict": true,                                      /* Enable all strict type-checking options. */
     "skipLibCheck": true,                                 /* Skip type checking all .d.ts files. */
-    "outDir": "."
+    "outDir": "./js"
   },
-  "include":[
-    "."
+  "files":[
+    "./public/scripts/src/Board.ts",
+    "./public/scripts/src/Game.ts",
+    "./public/scripts/src/helper.ts",
+    "./public/scripts/src/setup.ts",
+    "./public/scripts/src/utility.ts"
   ]
 }
