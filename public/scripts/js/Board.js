@@ -1,5 +1,5 @@
-import { Queue } from "./utility";
-import { drawBoard, createTiles } from "./setup";
+import { Queue } from "./utility.js";
+import { drawBoard, createTiles } from "./setup.js";
 export class Board {
     constructor(socket) {
         this.socket = socket;

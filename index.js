@@ -1,7 +1,12 @@
+
 //CORRECT SERVER (index.js file)
 const express = require('express')
 const app = express()
-const PORT = 3000;
+
+//require('dotenv').config();
+
+const PORT = process.env.PORT;
+console.log(process.env.PORT);
 
 var path = require('path')
 
@@ -23,7 +28,6 @@ app.use('/turn', turnRoute)
 
 const userRoute = require('./routes/user')
 app.use('/user', userRoute)
-
 
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'ejs')

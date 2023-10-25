@@ -1,5 +1,6 @@
-import Board from "./Board.js"
+import Board from "./js/Board.js"
 
+// require('dotenv').config();
 const test = true;
 //if MODE == 0 --> test else production
 const domain = process.env.MODE ? 'http://localhost:3000':'http://44.217.57.246';
