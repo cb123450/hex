@@ -28,6 +28,8 @@ app.use('/user', userRoute)
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'ejs')
 
+app.use(express.static(__dirname + '/public'));
+
 // index 
 app.get('/', function(req, res) {
   res.render('index');

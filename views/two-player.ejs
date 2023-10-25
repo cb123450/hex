@@ -45,10 +45,10 @@
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script type="module">
 
-    import Board from "./scripts/js/Board.js";
-    import Game from "./scripts/js/Game.js"
-    import Handler from "./scripts/Handler.js"
-    import {putUser, getUsers} from "./scripts/user.js"
+    import Board from "../public/scripts/js/Board.js";
+    import Game from "../public/scripts/js/Game.js"
+    import Handler from "../public/scripts/Handler.js"
+    import {putUser, getUsers} from "../public/scripts/user.js"
 
     const socket = io();
     let board = new Board(socket);
