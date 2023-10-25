@@ -1,7 +1,7 @@
 import { Socket } from "socket.io-client";
 import { visitEachChild } from "typescript";
 import { deflateSync } from "zlib";
-import {Tile, Graph, Queue} from "../js/utility.js";
+import {Tile, Graph, Queue} from "./utility";
 
 var side_length = window.innerWidth/55;
 var root3 = 1.73205;

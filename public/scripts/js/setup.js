@@ -1,4 +1,4 @@
-import { Tile, Graph } from "./utility.js";
+import { Tile, Graph } from "./utility";
 var side_length = window.innerWidth / 55;
 var root3 = 1.73205;
 var height = 2 * side_length;

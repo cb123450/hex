@@ -1,7 +1,7 @@
 import { getJSDocReturnTag, isConstructorDeclaration, visitEachChild } from "typescript";
 import { deflateSync } from "zlib";
-import {Tile, Graph, Queue} from "../js/utility.js";
-import {drawBoard, createTiles} from "../js/setup.js"
+import {Tile, Graph, Queue} from "./utility";
+import {drawBoard, createTiles} from "./setup"
 import { Socket } from "socket.io-client";
 
 export class Board{

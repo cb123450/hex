@@ -1,4 +1,4 @@
-import { Queue } from "./utility.js";
+import { Queue } from "./utility";
 export function bfs(t, color, tile_array, g) {
     let visited = new Set();
     let q = new Queue();

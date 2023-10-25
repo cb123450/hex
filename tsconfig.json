@@ -11,7 +11,10 @@
     /* Type Checking */
     "strict": true,                                      /* Enable all strict type-checking options. */
     "skipLibCheck": true,                                 /* Skip type checking all .d.ts files. */
-    "outDir": "./js"
+    "outDir": "./public/scripts/js/",
+    "paths": {
+      "*": ["./public/scripts/types/*"]
+    }
   },
   "files":[
     "./public/scripts/src/Board.ts",

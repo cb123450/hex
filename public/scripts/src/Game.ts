@@ -1,4 +1,4 @@
-import Board from "../js/Board.js"
+import Board from "./Board"
 
 export class Game{
     public board : Board;
