@@ -3,10 +3,9 @@
 const express = require('express')
 const app = express()
 
-//require('dotenv').config();
+require('dotenv').config();
 
 const PORT = process.env.PORT;
-console.log(process.env.PORT);
 
 var path = require('path')
 
@@ -40,15 +39,15 @@ app.get('/', function(req, res) {
 });
 
 app.get('/solo', function(req, res) {
-  res.render('solo');
+  res.render('solo', {mode : process.env.MODE});
 });
 
 app.get('/two-player', function(req, res) {
-  res.render('two-player');
+  res.render('two-player', {mode : process.env.MODE});
 });
 
 app.get('/computer', function(req, res) {
-  res.render('computer');
+  res.render('computer', {mode : process.env.MODE});
 });
 
 //app.use(express.static(path.join(__dirname, "/public"))); 
