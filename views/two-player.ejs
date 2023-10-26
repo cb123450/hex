@@ -103,21 +103,20 @@
         }
 
         if (hasClicked === 1 && (name == null || name == '')){
-            alert("Enter a name in order to join a room")
+            alert("Enter a name and press enter in order to join a room")
         }
         else{
-            let room_num = evt.target.className.split('_')[1];
-            let numerator = parseInt(document.getElementById("r" + room_num)?.innerText?.split("/")[0]);
+            let room_str = evt.target.className.split('_')[1];
+            let numerator = parseInt(document.getElementById("r" + room_str)?.innerText?.split("/")[0]);
 
-            //Can only leave a room if the game hasn't started
             if (hasClicked && curr_room == clicked_room && gameStarted == 0){
                 numerator -= 1;
-                alert("You have left room " + room_num)
-                document.getElementById("r" + room_num).innerText = numerator.toString() + "/2"; 
+                alert("You have left room " + room_str)
+                document.getElementById("r" + room_str).innerText = numerator.toString() + "/2"; 
                 joined_room = 0
                 curr_room = -1;
 
-                socket.emit("playerLeftRoom", room_num, name)
+                socket.emit("playerLeftRoom", room_str, name)
             }
             else if (hasClicked === 1){
 
@@ -134,7 +133,7 @@
                     numerator += 1;
  
                     /* Rely on server to make changes to room numbers */
-                    socket.emit('join', room_num, name)
+                    socket.emit('join', room_str, name)
                    
                 }
             }
@@ -220,7 +219,7 @@
         board.changeColor(row, col, newColor)
     })
 
-    socket.on("playerLeft", (room_num, player) => {
+    socket.on("playerLeft", (room_str, player) => {
         alert("Game is over. \"" + player + "\" has left.")
 
         //RESET PARAMS; will create function for initialization later
@@ -233,7 +232,7 @@
         document.getElementById("opponent").innerText = "";
 
         document.getElementById("leaveGame").style.visibility = "hidden";
-        document.getElementById("r" + room_num).innerText = "0/2";
+        document.getElementById("r" + room_str).innerText = "0/2";
 
         startHandler();
 

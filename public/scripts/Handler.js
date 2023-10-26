@@ -119,7 +119,7 @@ export class Handler{
 
             if (async_flag){
                 this.putTurn("red")
-            } 
+            }
             else{
                 this.game.color = "red"
             }

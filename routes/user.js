@@ -4,6 +4,7 @@ const router = express.Router()
 const users = []
 
 router.get("/", (req, res) => {
+    //get all users
     res.status(200).send(users);
   })
   
