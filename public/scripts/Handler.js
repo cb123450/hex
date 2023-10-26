@@ -3,24 +3,28 @@ import Board from "./js/Board.js"
 // require('dotenv').config();
 const test = true;
 //if MODE == 0 --> test else production
-const domain = process.env.MODE ? 'http://localhost:3000':'http://44.217.57.246';
+//const domain = process.env.MODE ? 'http://localhost:3000':'http://44.217.57.246';
 
 export class Handler{
     myColor;
     board; 
     game;
     room_str; //a String
+    mode;
+    domain;
 
-    constructor(board, game, room_str){
+    constructor(board, game, room_str, mode){
         this.board = board;
         this.game = game;
         this.room_str = room_str;
+        this.mode = mode;
+        this.domain = this.mode ? 'http://localhost:3000':'http://44.217.57.246';
     }
 
     async getTurn() {
         try {
             let res = await axios({
-                url: domain + '/turn',
+                url: this.domain + '/turn',
                 method: 'get',
                 timeout: 8000,
                 headers: {
@@ -40,7 +44,7 @@ export class Handler{
     async putTurn(newTurn){
         try{
             let res = await axios({
-                url: domain + '/turn',
+                url: this.domain + '/turn',
                 method: 'put',
                 timeout: 8000,
                 headers: {

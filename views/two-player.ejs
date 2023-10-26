@@ -43,17 +43,16 @@
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-<script>
-    var v = "<%=mode%>";
-    console.log(v)
-</script>
+
 <script type="module">
 
-
+    import mode from "/scripts/mode.js";
     import Board from "/scripts/js/Board.js";
     import Game from "/scripts/js/Game.js"
     import Handler from "/scripts/Handler.js"
-    import {putUser, getUsers} from "/scripts/user.js"
+    //import {putUser, getUsers} from "/scripts/user.js"
+
+    //let m = mode("<%=mode%>");
 
     const socket = io();
     let board = new Board(socket);
@@ -192,7 +191,7 @@
 
         game.color = color;
 
-        handler = new Handler(board, game, curr_room.toString());
+        handler = new Handler(board, game, curr_room.toString(), "<%=mode%>");
 
         asyncButtonHandler = handler.getAsyncButtonHandler(game.color);
         startHandler = handler.getStartHandler(true);
