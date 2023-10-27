@@ -70,7 +70,7 @@ module.exports = {
                 */
             });
 
-            server.on("colorChange", (e, room_num) =>{
+            server.on("colorChange", (e) =>{
                 if(e.row != null && e.col != null && e.myColor != null){
                     //io.emit("colorChange", e)
                     io.sockets.in(e.room_num).emit("colorChange", e)

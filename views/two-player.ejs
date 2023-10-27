@@ -225,7 +225,7 @@
             document.getElementById("curr").innerText="Red";
         }   
         game.turn += 1
-
+        console.log("client received colorChange")
         board.changeColor(row, col, newColor)
     })
 

@@ -9,7 +9,7 @@ export class Handler{
     myColor;
     board; 
     game;
-    room_num; //a String
+    room_num; 
     mode;
     domain;
 
@@ -87,7 +87,7 @@ export class Handler{
 
                         this.putTurn(newTurn).then( () => {
                             this.board.changeColor(r_coord, c_coord, color);
-                            this.board.socket.on(this.room_str).emit("colorChange", {row: r_coord, col: c_coord, myColor: color, room_str: this.room_str})
+                            this.board.socket.on(this.room_num).emit("colorChange", {row: r_coord, col: c_coord, myColor: color, room_num: this.room_num})
     
                             let win = this.board.checkWin(color);
     
