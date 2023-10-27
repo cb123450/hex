@@ -20,11 +20,12 @@ module.exports = {
             server.on("join", function(room_str, player){
                 /*
                 room_str is a string and player is a Player object as defined in two-player.ejs
-                const player = {name : "",  
-                    color : "",
-                    curr_room : -1,
-                    inGame: false
-                    }
+                function Player(name, color, curr_room, inGame){
+                    this.name = name;
+                    this.color = color;
+                    this.curr_room = curr_room;
+                    this.inGame = inGame;
+                }
                 */
                 let room_num = parseInt(room_str);
                 
@@ -34,6 +35,8 @@ module.exports = {
                     io.sockets.emit("roomJoined", room_num);
                     
                     /* FIRST PERSON TO JOIN IS RED*/
+                    player.curr_room = room_num;
+                    player.inGame = true;
                     if (rooms[room_num-1] == 0){
                         player.color = "red";
                         curr_players[room_num].push(player);
@@ -49,7 +52,6 @@ module.exports = {
                         io.sockets.in(room_num).emit("gameStarted", curr_players[room_num])
                     }
                 }
-                
             });
 
             server.on("playerLeftRoom", function(room_str, name){
@@ -73,12 +75,13 @@ module.exports = {
             });
 
             //room_num is a string
-            server.on("leaveGame", function(room_num, user_name){
-                const index = parseInt(room_num) - 1;
+            server.on("leaveGame", function(room_num, name){
+                io.sockets.in(room_num).emit("playerLeft", room_num, {}, name);
+
+                const index = room_num - 1;
                 rooms[index] = 0;
                 curr_players[index] = [];
 
-                io.sockets.in(room_num).emit("playerLeft", room_num, user_name);
                 console.log("server received leaveGame")
             });
 

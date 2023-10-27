@@ -63,22 +63,18 @@
     var start_button = document.getElementById("start-button");
 
     /* START SIDEBAR SETUP*/
-    const player = {name : "",  
-                    color : "",
-                    curr_room : -1,
-                    inGame: false
-                    }
-    // let name;
-    // let joined_room = 0;
-    // let curr_room = -1;
-    // let gameStarted = 0;
+    function Player(name, color, curr_room, inGame){
+        this.name = name;
+        this.color = color;
+        this.curr_room = curr_room;
+        this.inGame = inGame;
+    }
 
-    // let color = null;
-    
+    let me = new Player("", "", -1, false);
+    let opponent = new Player("", "", -1, false);
 
     let asyncButtonHandler;
     let startHandler;
-    let opponent;
 
     document.getElementById("curr").innerText="Red";
 
@@ -87,8 +83,8 @@
             alert("Enter a name in order to join a room")
         }
         else{
-            player.name = name;
-            document.getElementById("user").innerText=player.name;
+            me.name = name;
+            document.getElementById("user").innerText=me.name;
         }
     }
 
@@ -105,19 +101,19 @@
         return clicked_room;
     }
 
-    function handleAlreadyInRoom(){
+    function handleAlreadyInRoom(evt, clicked_room){
         let room_str = evt.target.className.split('_')[1];
         let numerator = parseInt(document.getElementById("r" + room_str)?.innerText?.split("/")[0]);
 
-        if (player.curr_room === clicked_room){
-            if (!player.inGame){
+        if (me.curr_room === clicked_room){
+            if (!me.inGame){
                 //leave current room
                 numerator -= 1;
                 alert("You have left room " + room_str)
                 document.getElementById("r" + room_str).innerText = numerator.toString() + "/2"; 
-                player.curr_room = -1;
+                me.curr_room = -1;
 
-                socket.emit("playerLeftRoom", room_str, player)
+                socket.emit("playerLeftRoom", room_str, me)
             }
             else{
                 alert("Leave the game to join another room.")
@@ -134,26 +130,28 @@
             name = document.getElementById("name").value;
             nameHandler(name) 
         }
-        else if (player.name !== null && player.name !== ""){
+        else if (me.name !== null && me.name !== ""){
             let clicked_room = roomSelected(evt);
 
             if (clicked_room !== -1){
-                if (player.curr_room === -1){
+                if (me.curr_room === -1){
                     //if the player has clicked on a room for the first time
                     let room_str = evt.target.className.split('_')[1];
 
                     /* Rely on socket to make changes to room numbers, i.e. see socket.on("roomJoined") below*/
-                    socket.emit('join', room_str, player)
+                    me.curr_room = parseInt(room_str);
+                    socket.emit('join', room_str, me);
                 }
                 else{
-                    handleAlreadyInRoom();
+                    handleAlreadyInRoom(evt, clicked_room);
                 }
             }
         }
 
-        if (player.inGame){
+        if (me.inGame){
             if (evt.target.id === "leaveGame"){
-            socket.emit("leaveGame", curr_room.toString(), name);
+                console.log("test")
+                socket.emit("leaveGame", me.curr_room, me.name);
             }  
             else{
                 //event delegation instead of a separate handler for the grid
@@ -191,16 +189,17 @@
 
 
     socket.on("gameStarted", (players) => { 
-        console.log("gameStarted", players);
-        player.inGame = 1;
-        const my_index = players.map(e => e.name).indexOf(player.name);
+        //inGame, color, and curr_room are set in the server, which passes sends the new player objects here
+        const my_index = players.map(e => e.name).indexOf(me.name);
 
-        let opponent = players[1 - my_index];
-        let my_color = players[my_index].color;
+        opponent = players[1 - my_index];
+        me = players[my_index];
+
+        let my_color = me.color;
 
         game.color = my_color;
 
-        handler = new Handler(board, game, player.curr_room, "<%=mode%>");
+        handler = new Handler(board, game, me.curr_room, "<%=mode%>");
 
         asyncButtonHandler = handler.getAsyncButtonHandler(game.color);
         startHandler = handler.getStartHandler(true);
@@ -229,20 +228,17 @@
         board.changeColor(row, col, newColor)
     })
 
-    socket.on("playerLeft", (room_str, player) => {
-        alert("Game is over. \"" + player + "\" has left.")
+    socket.on("playerLeft", (room_num, player, name) => {
+        alert("Game is over. \"" + name + "\" has left.")
 
-        //RESET PARAMS; will create function for initialization later
-        player.inGame = 0;
-        player.curr_room = -1;
-        joined_room = 0;
-        color = null;
+        //RESET PARAMS; player is sent from server and is empty
+        me = player;
         
         document.getElementById("color").innerText = "";
         document.getElementById("opponent").innerText = "";
 
         document.getElementById("leaveGame").style.visibility = "hidden";
-        document.getElementById("r" + room_str).innerText = "0/2";
+        document.getElementById("r" + room_num.toString()).innerText = "0/2";
 
         startHandler();
 
@@ -253,7 +249,7 @@
 
     socket.on("disconnect", () => {
         console.log("disconnect")
-        if (gameStarted){
+        if (player.inGame){
             socket.emit("leaveGame", curr_room.toString(), name);
         }
     });
