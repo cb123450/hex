@@ -17,7 +17,7 @@ module.exports = {
                 //checkt this to see if can use to kick people from rooms
             });
             
-            server.on("join", function(room_str, player){
+            server.on("join", function(room_num, player){
                 /*
                 room_str is a string and player is a Player object as defined in two-player.ejs
                 function Player(name, color, curr_room, inGame){
@@ -26,9 +26,7 @@ module.exports = {
                     this.curr_room = curr_room;
                     this.inGame = inGame;
                 }
-                */
-                let room_num = parseInt(room_str);
-                
+                */                
                 if (room_num < 7 && rooms[room_num-1] < 2){
 
                     server.join(room_num);
@@ -36,7 +34,8 @@ module.exports = {
                     
                     /* FIRST PERSON TO JOIN IS RED*/
                     player.curr_room = room_num;
-                    player.inGame = true;
+
+                    player.inGame = true; //player object on the server and player object on the client are different so this won't cause errors
                     if (rooms[room_num-1] == 0){
                         player.color = "red";
                         curr_players[room_num].push(player);
@@ -54,17 +53,21 @@ module.exports = {
                 }
             });
 
-            server.on("playerLeftRoom", function(room_str, name){
+            server.on("playerLeftRoom", function(room_num, name){
                 //TODO: switch from `name` to `id` after implementing authentication
 
-                const room_num = parseInt(room_str);
                 server.leave(room_num)
 
-                server.broadcast.emit("roomLeft", room_str)
+                server.broadcast.emit("roomLeft", room_num)
                 rooms[room_num - 1] -= 1;
 
                 const index = curr_players[room_num].indexOf(obj => obj.name === name);
-                curr_players[room_num].splice(index, 1);
+                curr_players[room_num].splice(index, 1); 
+                /*delete one object starting at index `index
+                you actually don't need to splice because `playerLeftRoom` event can 
+                only be sent from the client side when only 1 player has joined the room
+                Maybe allow observers into rooms and add chat feature later on
+                */
             });
 
             server.on("colorChange", (e, room_num) =>{
@@ -76,7 +79,7 @@ module.exports = {
 
             //room_num is a string
             server.on("leaveGame", function(room_num, name){
-                io.sockets.in(room_num).emit("playerLeft", room_num, {}, name);
+                io.sockets.in(room_num).emit("playerLeft", room_num, name);
 
                 const index = room_num - 1;
                 rooms[index] = 0;
@@ -85,8 +88,9 @@ module.exports = {
                 console.log("server received leaveGame")
             });
 
-            server.on("getTurn", () => { 
-                io.emit("rooms", rooms);
+            //send the count of number of players in a given rooms
+            server.on("getRoomCounts", () => { 
+                io.emit("roomCounts", rooms);
             })
 
         });

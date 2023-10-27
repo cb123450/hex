@@ -112,8 +112,9 @@
                 alert("You have left room " + room_str)
                 document.getElementById("r" + room_str).innerText = numerator.toString() + "/2"; 
                 me.curr_room = -1;
-
-                socket.emit("playerLeftRoom", room_str, me)
+                
+                let room_num = parseInt(room_str);
+                socket.emit("playerLeftRoom", room_num, me.name)
             }
             else{
                 alert("Leave the game to join another room.")
@@ -139,8 +140,9 @@
                     let room_str = evt.target.className.split('_')[1];
 
                     /* Rely on socket to make changes to room numbers, i.e. see socket.on("roomJoined") below*/
-                    me.curr_room = parseInt(room_str);
-                    socket.emit('join', room_str, me);
+                    let room_num = parseInt(room_str);
+                    me.curr_room = room_num;
+                    socket.emit('join', room_num, me);
                 }
                 else{
                     handleAlreadyInRoom(evt, clicked_room);
@@ -176,14 +178,13 @@
         }
     });
 
-    socket.on("roomLeft", (room_str) => {
-        let room_num = parseInt(room_str)
-        let numerator = parseInt(document.getElementById("r" + room_str)?.innerText?.split("/")[0]);
+    socket.on("roomLeft", (room_num) => {
+        let numerator = parseInt(document.getElementById("r" + room_num.toString())?.innerText?.split("/")[0]);
         
         // numerator should always be 1 or 2 but it's still good to check
         if (numerator === 1 || numerator === 2){
             numerator -= 1;
-            document.getElementById("r" + room_str).innerText = numerator.toString() + "/2";
+            document.getElementById("r" + room_num.toString()).innerText = numerator.toString() + "/2";
         }
     });
 
@@ -228,11 +229,11 @@
         board.changeColor(row, col, newColor)
     })
 
-    socket.on("playerLeft", (room_num, player, name) => {
+    socket.on("playerLeft", (room_num, name) => {
         alert("Game is over. \"" + name + "\" has left.")
 
-        //RESET PARAMS; player is sent from server and is empty
-        me = player;
+        //RESET PARAMS; player is sent from server and is empty, but keep old name
+        me = new Player(me.name, "", -1, false);
         
         document.getElementById("color").innerText = "";
         document.getElementById("opponent").innerText = "";
@@ -255,15 +256,14 @@
     });
 
     /* 
-    Get the data about rooms whenever a new user connects
+    Update the number of users in each room when a new user connects
     */
 
     socket.on("connect", () => {
-        socket.emit("getTurn");
-        console.log("sent getTurn")
+        socket.emit("getRoomCounts");
     })
 
-    socket.on("rooms", (rooms) => {
+    socket.on("roomCounts", (rooms) => {
         let i = 1;
         while (i < 7){
             document.getElementById("r" + i.toString()).innerText = rooms[i-1].toString() + "/2";
