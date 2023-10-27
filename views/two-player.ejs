@@ -250,8 +250,8 @@
 
     socket.on("disconnect", () => {
         console.log("disconnect")
-        if (player.inGame){
-            socket.emit("leaveGame", curr_room.toString(), name);
+        if (me.inGame){
+            socket.emit("leaveGame", me.curr_room, me.name);
         }
     });
 

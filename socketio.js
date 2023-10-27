@@ -4,7 +4,7 @@ const { Socket } = require("socket.io-client")
 module.exports = {
     getio: (server) => {
 
-        const rooms = [0, 0, 0, 0, 0, 0, 0];
+        const room_count = [0, 0, 0, 0, 0, 0, 0];
         const curr_players = [[], [], [], [], [], [], []];
 
         const io = new Server(server);
@@ -14,7 +14,7 @@ module.exports = {
 
             server.on("disconnect", () => {                
                 console.log("Client has disconnected");
-                //checkt this to see if can use to kick people from rooms
+                //check this to see if can use to kick people from rooms
             });
             
             server.on("join", function(room_num, player){
@@ -27,7 +27,7 @@ module.exports = {
                     this.inGame = inGame;
                 }
                 */                
-                if (room_num < 7 && rooms[room_num-1] < 2){
+                if (room_num < 7 && room_count[room_num-1] < 2){
 
                     server.join(room_num);
                     io.sockets.emit("roomJoined", room_num);
@@ -36,7 +36,7 @@ module.exports = {
                     player.curr_room = room_num;
 
                     player.inGame = true; //player object on the server and player object on the client are different so this won't cause errors
-                    if (rooms[room_num-1] == 0){
+                    if (room_count[room_num-1] == 0){
                         player.color = "red";
                         curr_players[room_num].push(player);
                     }
@@ -45,9 +45,9 @@ module.exports = {
                         curr_players[room_num].push(player);
                     }
                     
-                    rooms[room_num-1] += 1;
+                    room_count[room_num-1] += 1;
 
-                    if (rooms[room_num-1] == 2){
+                    if (room_count[room_num-1] == 2){
                         io.sockets.in(room_num).emit("gameStarted", curr_players[room_num])
                     }
                 }
@@ -59,7 +59,7 @@ module.exports = {
                 server.leave(room_num)
 
                 server.broadcast.emit("roomLeft", room_num)
-                rooms[room_num - 1] -= 1;
+                room_count[room_num - 1] -= 1;
 
                 const index = curr_players[room_num].indexOf(obj => obj.name === name);
                 curr_players[room_num].splice(index, 1); 
@@ -82,7 +82,7 @@ module.exports = {
                 io.sockets.in(room_num).emit("playerLeft", room_num, name);
 
                 const index = room_num - 1;
-                rooms[index] = 0;
+                room_count[index] = 0;
                 curr_players[index] = [];
 
                 console.log("server received leaveGame")
@@ -90,7 +90,7 @@ module.exports = {
 
             //send the count of number of players in a given rooms
             server.on("getRoomCounts", () => { 
-                io.emit("roomCounts", rooms);
+                io.emit("roomCounts", room_count);
             })
 
         });
