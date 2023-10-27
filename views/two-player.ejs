@@ -63,12 +63,17 @@
     var start_button = document.getElementById("start-button");
 
     /* START SIDEBAR SETUP*/
-    let name;
-    let joined_room = 0;
-    let curr_room = -1;
-    let gameStarted = 0;
+    const player = {name : "",  
+                    color : "",
+                    curr_room : -1,
+                    inGame: false
+                    }
+    // let name;
+    // let joined_room = 0;
+    // let curr_room = -1;
+    // let gameStarted = 0;
 
-    let color = null;
+    // let color = null;
     
 
     let asyncButtonHandler;
@@ -77,64 +82,94 @@
 
     document.getElementById("curr").innerText="Red";
 
-    document.addEventListener("click", function(evt){
-
-        let hasClicked = 0;
-        let clicked_room = -1;
-
-        if (evt.target.id === "enterName"){
-            name = document.getElementById("name").value;
-            document.getElementById("user").innerText=name;
-
-            if (name == null || name == ''){
-                alert("Enter a name in order to join a room")
-            }
+    function nameHandler(name){
+        if (name == null || name == ''){
+            alert("Enter a name in order to join a room")
         }
+        else{
+            player.name = name;
+            document.getElementById("user").innerText=player.name;
+        }
+    }
 
+    function roomSelected(evt){
+        /* ROOMS ARE 1-INDEXED AND WAITING ROOM IS ROOM 7 */
         let i = 0;
-
-        /* ROOMS ARE 1-INDEXEX AND WAITING ROOM IS ROOM 7 */
+        let clicked_room = -1;
         while (i < 8){
             if (evt.target.matches(".b_" + i.toString())){
-                hasClicked = 1;
                 clicked_room = i
             }
             i += 1;
         }
+        return clicked_room;
+    }
 
-        if (hasClicked === 1 && (name == null || name == '')){
-            alert("Enter a name and press enter in order to join a room")
-        }
-        else{
-            let room_str = evt.target.className.split('_')[1];
-            let numerator = parseInt(document.getElementById("r" + room_str)?.innerText?.split("/")[0]);
-
-            if (hasClicked && curr_room == clicked_room && gameStarted == 0){
+    function checkLeaveGame(){
+        if (player.curr_room !== clicked_room){
+            if (!player.inGame){
                 numerator -= 1;
                 alert("You have left room " + room_str)
                 document.getElementById("r" + room_str).innerText = numerator.toString() + "/2"; 
-                joined_room = 0
-                curr_room = -1;
+                player.curr_room = -1;
 
-                socket.emit("playerLeftRoom", room_str, name)
+                socket.emit("playerLeftRoom", room_str, player.name)
             }
-            else if (hasClicked === 1){
+            else{
+                alert("Leave the game to join another room.")
+            }
+        }
+        else (player.curr_room !== -1){
+            if (player.inGame){
+                
+            }
+            else{
+                alert("You can only join 1 room at a time. Click on your current room to leave it.")
+            }
+        }
+                    else if (player.curr_room !== -1){
+                        
+                    }
+    }
 
-                if (joined_room === 1 && gameStarted){
-                    alert("Leave the game to join another room.")
-                }
-                else if (joined_room === 1){
-                    alert("You can only join 1 room at a time. Click on your current room to leave it.")
+    document.addEventListener("click", function(evt){
+
+        if (evt.target.id === "enterName"){
+            name = document.getElementById("name").value;
+            nameHandler(name) 
+        }
+        
+        if (player.name !== null && player.name !== ""){
+            let clicked_room = roomSelected(evt);
+            
+            //if the player has clicked on a room for the first time
+            if (clicked_room !== -1){
+                
+                if (player.curr_room === -1){
+                    player.curr_room = clicked_room;
+
+                    let room_str = evt.target.className.split('_')[1];
+                    let numerator = parseInt(document.getElementById("r" + room_str)?.innerText?.split("/")[0]);
+
+                    checkLeaveGame();
                 }
                 else{
-                    joined_room = 1;
-                    curr_room = clicked_room;
+
+                }
+
+                
+                else{
+
                     
-                    numerator += 1;
- 
-                    /* Rely on server to make changes to room numbers */
-                    socket.emit('join', room_str, name)
-                   
+                    else{
+                        player.curr_room = clicked_room;
+                        
+                        numerator += 1;
+
+                        /* Rely on server to make changes to room numbers */
+                        socket.emit('join', room_str, name)
+                        
+                    }
                 }
             }
         }
@@ -146,7 +181,7 @@
         }
 
         //event delegation instead of a separate handler for the grid
-        if (gameStarted){
+        if (player.inGame){
             asyncButtonHandler(evt);
         }
 
@@ -181,14 +216,15 @@
     socket.on("gameStarted", (players) => { 
         //alert("The game has started!")
         
-        gameStarted = 1;
+        player.inGame = 1;
         console.log("gameStarted", players);
-        const my_index = players.map(e => e.user_name).indexOf(name);
+        const my_index = players.map(e => e.user_name).indexOf(player.name);
 
         opponent = players[1 - my_index].user_name;
         color = players[my_index].color;
 
         game.color = color;
+        player.color = color
 
         handler = new Handler(board, game, curr_room.toString(), "<%=mode%>");
 
@@ -223,8 +259,8 @@
         alert("Game is over. \"" + player + "\" has left.")
 
         //RESET PARAMS; will create function for initialization later
-        gameStarted = 0;
-        curr_room = -1;
+        player.inGame = 0;
+        player.curr_room = -1;
         joined_room = 0;
         color = null;
         
@@ -258,7 +294,6 @@
     })
 
     socket.on("rooms", (rooms) => {
-        console.log("test")
         let i = 1;
         while (i < 7){
             document.getElementById("r" + i.toString()).innerText = rooms[i-1].toString() + "/2";
