@@ -117,7 +117,7 @@
                 document.getElementById("r" + room_str).innerText = numerator.toString() + "/2"; 
                 player.curr_room = -1;
 
-                socket.emit("playerLeftRoom", room_str, player.name)
+                socket.emit("playerLeftRoom", room_str, player)
             }
             else{
                 alert("Leave the game to join another room.")
@@ -140,17 +140,10 @@
             if (clicked_room !== -1){
                 if (player.curr_room === -1){
                     //if the player has clicked on a room for the first time
-                    player.curr_room = clicked_room;
                     let room_str = evt.target.className.split('_')[1];
-                    let numerator = parseInt(document.getElementById("r" + room_str)?.innerText?.split("/")[0]); 
-                    console.log(numerator)
-                    numerator += 1;
-                    console.log(numerator)
 
-                    document.getElementById("r" + room_str).innerText = numerator.toString() + "/2"; 
-
-                    /* Rely on server to make changes to room numbers */
-                    socket.emit('join', room_str, name)
+                    /* Rely on socket to make changes to room numbers, i.e. see socket.on("roomJoined") below*/
+                    socket.emit('join', room_str, player)
                 }
                 else{
                     handleAlreadyInRoom();
@@ -176,7 +169,7 @@
     // room_num is a string
     socket.on("roomJoined", (room_num) => {
 
-        let numerator = parseInt(document.getElementById("r" + room_num)?.innerText?.split("/")[0]);
+        let numerator = parseInt(document.getElementById("r" + room_num.toString())?.innerText?.split("/")[0]);
         
         // numerator should always be 0 or 1 but it's still good to check
         if (numerator === 0 || numerator === 1){
@@ -185,38 +178,36 @@
         }
     });
 
-    socket.on("roomLeft", (room_num) => {
-        let numerator = parseInt(document.getElementById("r" + room_num)?.innerText?.split("/")[0]);
+    socket.on("roomLeft", (room_str) => {
+        let room_num = parseInt(room_str)
+        let numerator = parseInt(document.getElementById("r" + room_str)?.innerText?.split("/")[0]);
         
         // numerator should always be 1 or 2 but it's still good to check
         if (numerator === 1 || numerator === 2){
             numerator -= 1;
-            document.getElementById("r" + room_num.toString()).innerText = numerator.toString() + "/2";
+            document.getElementById("r" + room_str).innerText = numerator.toString() + "/2";
         }
     });
 
 
     socket.on("gameStarted", (players) => { 
-        //alert("The game has started!")
-        
-        player.inGame = 1;
         console.log("gameStarted", players);
-        const my_index = players.map(e => e.user_name).indexOf(player.name);
+        player.inGame = 1;
+        const my_index = players.map(e => e.name).indexOf(player.name);
 
-        opponent = players[1 - my_index].user_name;
-        color = players[my_index].color;
+        let opponent = players[1 - my_index];
+        let my_color = players[my_index].color;
 
-        game.color = color;
-        player.color = color
+        game.color = my_color;
 
-        handler = new Handler(board, game, curr_room.toString(), "<%=mode%>");
+        handler = new Handler(board, game, player.curr_room, "<%=mode%>");
 
         asyncButtonHandler = handler.getAsyncButtonHandler(game.color);
         startHandler = handler.getStartHandler(true);
 
         startHandler();
 
-        document.getElementById("opponent").innerText=opponent;
+        document.getElementById("opponent").innerText=opponent.name;
         document.getElementById("color").innerText = game.color;
         document.getElementById("leaveGame").style.visibility = 'visible';
 

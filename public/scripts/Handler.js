@@ -9,14 +9,14 @@ export class Handler{
     myColor;
     board; 
     game;
-    room_str; //a String
+    room_num; //a String
     mode;
     domain;
 
-    constructor(board, game, room_str, mode){
+    constructor(board, game, room_num, mode){
         this.board = board;
         this.game = game;
-        this.room_str = room_str;
+        this.room_num = room_num;
         this.mode = mode;
         this.domain = this.mode ? 'http://localhost:3000':'http://44.217.57.246';
     }
