@@ -105,9 +105,13 @@
         return clicked_room;
     }
 
-    function checkLeaveGame(){
-        if (player.curr_room !== clicked_room){
+    function handleAlreadyInRoom(){
+        let room_str = evt.target.className.split('_')[1];
+        let numerator = parseInt(document.getElementById("r" + room_str)?.innerText?.split("/")[0]);
+
+        if (player.curr_room === clicked_room){
             if (!player.inGame){
+                //leave current room
                 numerator -= 1;
                 alert("You have left room " + room_str)
                 document.getElementById("r" + room_str).innerText = numerator.toString() + "/2"; 
@@ -119,17 +123,9 @@
                 alert("Leave the game to join another room.")
             }
         }
-        else (player.curr_room !== -1){
-            if (player.inGame){
-                
-            }
-            else{
-                alert("You can only join 1 room at a time. Click on your current room to leave it.")
-            }
+        else{
+            alert("Click on the room you are in to leave it.")
         }
-                    else if (player.curr_room !== -1){
-                        
-                    }
     }
 
     document.addEventListener("click", function(evt){
@@ -138,51 +134,38 @@
             name = document.getElementById("name").value;
             nameHandler(name) 
         }
-        
-        if (player.name !== null && player.name !== ""){
+        else if (player.name !== null && player.name !== ""){
             let clicked_room = roomSelected(evt);
-            
-            //if the player has clicked on a room for the first time
+
             if (clicked_room !== -1){
-                
                 if (player.curr_room === -1){
+                    //if the player has clicked on a room for the first time
                     player.curr_room = clicked_room;
-
                     let room_str = evt.target.className.split('_')[1];
-                    let numerator = parseInt(document.getElementById("r" + room_str)?.innerText?.split("/")[0]);
+                    let numerator = parseInt(document.getElementById("r" + room_str)?.innerText?.split("/")[0]); 
+                    console.log(numerator)
+                    numerator += 1;
+                    console.log(numerator)
 
-                    checkLeaveGame();
+                    document.getElementById("r" + room_str).innerText = numerator.toString() + "/2"; 
+
+                    /* Rely on server to make changes to room numbers */
+                    socket.emit('join', room_str, name)
                 }
                 else{
-
-                }
-
-                
-                else{
-
-                    
-                    else{
-                        player.curr_room = clicked_room;
-                        
-                        numerator += 1;
-
-                        /* Rely on server to make changes to room numbers */
-                        socket.emit('join', room_str, name)
-                        
-                    }
+                    handleAlreadyInRoom();
                 }
             }
         }
 
-        console.log(evt.target.id)
-
-        if (evt.target.id === "leaveGame"){
-            socket.emit("leaveGame", curr_room.toString(), name);
-        }
-
-        //event delegation instead of a separate handler for the grid
         if (player.inGame){
-            asyncButtonHandler(evt);
+            if (evt.target.id === "leaveGame"){
+            socket.emit("leaveGame", curr_room.toString(), name);
+            }  
+            else{
+                //event delegation instead of a separate handler for the grid
+                asyncButtonHandler(evt);
+            }
         }
 
         evt.stopPropagation;
