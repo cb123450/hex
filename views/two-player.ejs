@@ -18,7 +18,7 @@
     
     <div class = "spacing"> </div>
     <div class="grid" id = "grid">
-
+        
         <% if(!isAuthenticated) { %>
             <p id="login"><a href="/login/">Login</a></p>
         <% } else { %>
@@ -130,9 +130,15 @@
     }
 
     document.addEventListener("click", function(evt){
+        
+        console.log(evt.target.id);
 
-        if (evt.target.id === "enterName"){
+        if ("<%=isAuthenticated%>" == "false" && evt.target.id != "home" && evt.target.id != "auth"){
+            alert("Login to play 2 Player Mode");
+        }
+        else if (evt.target.id === "enterName"){
             name = document.getElementById("name").value;
+            const userInfo = 
             nameHandler(name) 
         }
         else if (me.name !== null && me.name !== ""){
@@ -156,7 +162,6 @@
 
         if (me.inGame){
             if (evt.target.id === "leaveGame"){
-                console.log("test")
                 socket.emit("leaveGame", me.curr_room, me.name);
             }  
             else{

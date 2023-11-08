@@ -3,7 +3,6 @@ const express = require('express');
 require('dotenv').config();
 var path = require('path');
 
-const http = require('http')
 const https = require('https');
 const fs = require('fs');
 
@@ -65,6 +64,15 @@ app.get('/computer', function(req, res) {
   res.render('computer', {mode : process.env.MODE});
 });
 
+app.get('/login', function(req, res) {
+  console.log("test")
+  res.oidc.login({
+    returnTo: '/two-player',
+    authorizationParams: {
+      redirect_uri: 'http://localhost:80/two-player',
+    },
+  })
+});
 
 const options = {
   key: fs.readFileSync('key.pem', 'utf-8'),
