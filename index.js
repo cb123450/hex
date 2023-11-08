@@ -59,7 +59,6 @@ app.get('/two-player', function(req, res) {
   console.log(req.oidc.isAuthenticated());
   res.render('two-player', {mode : process.env.MODE, port : process.env.PORT,
     isAuthenticated: req.oidc.isAuthenticated()});
-  // res.render('two-player');
 });
 
 app.get('/computer', function(req, res) {
@@ -77,9 +76,9 @@ const options = {
 const httpsServer = https.createServer(options, app);
 
 const socketio = require("./socketio.js");
-const io = socketio.getio(httpsServer)
+const io = socketio.getio(httpsServer);
 
 httpsServer.listen(PORT, ()=>{
   console.log("Server running on PORT " + PORT)
-}) 
+});
 
