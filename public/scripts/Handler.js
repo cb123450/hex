@@ -13,8 +13,8 @@ export class Handler{
         this.game = game;
         this.room_num = room_num;
         this.mode = mode;
-        let local = 'http://localhost:'+port;
-        this.domain = this.mode ? local:'http://44.217.57.246';
+        let local = 'https://localhost:'+port;
+        this.domain = this.mode ? local:'https://44.217.57.246';
     }
 
     async getTurn() {

@@ -2,8 +2,10 @@ const { auth } = require('express-openid-connect');
 const express = require('express');
 require('dotenv').config();
 var path = require('path');
-const fs = require('fs');
+
+const http = require('http')
 const https = require('https');
+const fs = require('fs');
 
 const config = {
   authRequired: false,
@@ -28,7 +30,7 @@ app.use(function(req, res, next) {
   next();
 });
 
-// const http = require('http')
+
 // const server = http.createServer(app)
 
 app.use(express.json())
@@ -66,17 +68,18 @@ app.get('/computer', function(req, res) {
 
 
 const options = {
-  key: fs.readFileSync('key.pem'),
-  cert: fs.readFileSync('cert.pem'),
+  key: fs.readFileSync('key.pem', 'utf-8'),
+  cert: fs.readFileSync('cert.pem', 'utf-8'),
   passphrase: process.env.SMALLSECRET,
 };
 
-const server = https.createServer(options, app);
+//const httpServer = http.createServer(app); 
+const httpsServer = https.createServer(options, app);
 
 const socketio = require("./socketio.js");
-const io = socketio.getio(server)
+const io = socketio.getio(httpsServer)
 
-server.listen(PORT, ()=>{
+httpsServer.listen(PORT, ()=>{
   console.log("Server running on PORT " + PORT)
 }) 
 
