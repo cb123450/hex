@@ -60,99 +60,109 @@ li{
 }
 
 #user-container{
-    grid-row: 1;
+    grid-row: 2;
     grid-column: 16 / 20;
     font-size: 2vw;
     margin: .75vw;
 }
 #opponent-container{
-    grid-row: 1;
+    grid-row: 2;
     grid-column: 22 / 28;
     font-size: 2vw;
     margin: .75vw;
 }
 #color-assignment{
-    grid-row: 2;
+    grid-row: 3;
     grid-column: 16 / 20;
     font-size: 2vw;
     margin: .75vw;
 }
 #turn{
-    grid-row: 2;
+    grid-row: 3;
     grid-column: 22 / 28;
     font-size: 2vw;
     margin: .75vw;
 }
 #name{
-    grid-row: 3;
+    grid-row: 4;
     grid-column: 19 / 29;
     font-size: 1.5vw;
     margin: .75vw;
     height: 2vw;
 }
 #enterName{
-    grid-row: 4;
+    grid-row: 5;
     grid-column: 19 / 29;
     font-size: 1.5vw;
     margin: .75vw;
     height: 3vw;
 }
 #room1{
-    grid-row: 5;
+    grid-row: 6;
     grid-column: 19 / 24;
     font-size: 1.5vw;
     margin: .75vw;
     height: 3vw;
 }
 #room2{
-    grid-row: 5;
+    grid-row: 6;
     grid-column: 24 / 29;
     font-size: 1.5vw;
     margin: .75vw;
     height: 3vw;
 }
 #room3{
-    grid-row: 6;
+    grid-row: 7;
     grid-column: 19 / 24;
     font-size: 1.5vw;
     margin: .75vw;
     height: 3vw;
 }
 #room4{
-    grid-row: 6;
+    grid-row: 7;
     grid-column: 24 / 29;
     font-size: 1.5vw;
     margin: .75vw;
     height: 3vw;
 }
 #room5{
-    grid-row: 7;
+    grid-row: 8;
     grid-column: 19 / 24;
     font-size: 1.5vw;
     margin: .75vw;
     height: 3vw;
 }
 #room6{
-    grid-row: 7;
+    grid-row: 8;
     grid-column: 24 / 29;
     font-size: 1.5vw;
     margin: .75vw;
     height: 3vw;
 }
 #room7{
-    grid-row: 8;
+    grid-row: 9;
     grid-column: 21 / 27;
     font-size: 1.5vw;
     margin: .75vw;
     height: 3vw;
 }
 #leaveGame{
-    grid-row: 9;
+    grid-row: 10;
     grid-column: 21 / 27;
     font-size: 1.5vw;
     margin: .75vw;
     height: 3vw;
     visibility: hidden;
 }
-
-
+#login{
+    grid-row: 1;
+    grid-column: 16 / 20;
+    font-size: 2vw;
+    margin: .75vw;
+}
+#logout{
+    grid-row: 1;
+    grid-column: 22 / 28;
+    font-size: 2vw;
+    margin: .75vw;
+}

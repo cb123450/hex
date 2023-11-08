@@ -1,13 +1,22 @@
-
-//CORRECT SERVER (index.js file)
+const { auth } = require('express-openid-connect');
 const express = require('express')
-const app = express()
-
 require('dotenv').config();
+var path = require('path')
+
+const config = {
+  authRequired: false,
+  auth0Logout: true,
+  secret: process.env.SECRET,
+  baseURL: process.env.BASEURL,
+  clientID: process.env.CLIENTID,
+  issuerBaseURL: process.env.ISSUER,
+};
+
+const app = express()
 
 const PORT = process.env.PORT;
 
-var path = require('path')
+app.use(auth(config));
 
 app.use(function(req, res, next) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -20,6 +29,8 @@ app.use(function(req, res, next) {
 const http = require('http')
 const server = http.createServer(app)
 app.use(express.json())
+
+
 
 const turnRoute = require('./routes/turn')
 app.use('/turn', turnRoute)
@@ -42,14 +53,15 @@ app.get('/solo', function(req, res) {
 });
 
 app.get('/two-player', function(req, res) {
-  res.render('two-player', {mode : process.env.MODE});
+  console.log(req.oidc.isAuthenticated());
+  res.render('two-player', {mode : process.env.MODE, port : process.env.PORT,
+    isAuthenticated: req.oidc.isAuthenticated()});
+  // res.render('two-player');
 });
 
 app.get('/computer', function(req, res) {
   res.render('computer', {mode : process.env.MODE});
 });
-
-//app.use(express.static(path.join(__dirname, "/public"))); 
 
 const socketio = require("./socketio.js");
 const io = socketio.getio(server)

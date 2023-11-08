@@ -1,10 +1,5 @@
 import Board from "./js/Board.js"
 
-// require('dotenv').config();
-const test = true;
-//if MODE == 0 --> test else production
-//const domain = process.env.MODE ? 'http://localhost:3000':'http://44.217.57.246';
-
 export class Handler{
     myColor;
     board; 
@@ -13,12 +8,13 @@ export class Handler{
     mode;
     domain;
 
-    constructor(board, game, room_num, mode){
+    constructor(board, game, room_num, mode, port){
         this.board = board;
         this.game = game;
         this.room_num = room_num;
         this.mode = mode;
-        this.domain = this.mode ? 'http://localhost:3000':'http://44.217.57.246';
+        let local = 'http://localhost:'+port;
+        this.domain = this.mode ? local:'http://44.217.57.246';
     }
 
     async getTurn() {
