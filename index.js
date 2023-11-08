@@ -1,7 +1,9 @@
 const { auth } = require('express-openid-connect');
-const express = require('express')
+const express = require('express');
 require('dotenv').config();
-var path = require('path')
+var path = require('path');
+const fs = require('fs');
+const https = require('https');
 
 const config = {
   authRequired: false,
@@ -12,7 +14,7 @@ const config = {
   issuerBaseURL: process.env.ISSUER,
 };
 
-const app = express()
+const app = express();
 
 const PORT = process.env.PORT;
 
@@ -26,11 +28,10 @@ app.use(function(req, res, next) {
   next();
 });
 
-const http = require('http')
-const server = http.createServer(app)
+// const http = require('http')
+// const server = http.createServer(app)
+
 app.use(express.json())
-
-
 
 const turnRoute = require('./routes/turn')
 app.use('/turn', turnRoute)
@@ -62,6 +63,15 @@ app.get('/two-player', function(req, res) {
 app.get('/computer', function(req, res) {
   res.render('computer', {mode : process.env.MODE});
 });
+
+
+const options = {
+  key: fs.readFileSync('key.pem'),
+  cert: fs.readFileSync('cert.pem'),
+  passphrase: process.env.SMALLSECRET,
+};
+
+const server = https.createServer(options, app);
 
 const socketio = require("./socketio.js");
 const io = socketio.getio(server)
