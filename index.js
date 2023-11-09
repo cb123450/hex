@@ -64,15 +64,12 @@ app.get('/computer', function(req, res) {
   res.render('computer', {mode : process.env.MODE});
 });
 
-app.get('/login', function(req, res) {
-  console.log("test")
+app.get('/custom-login', function(req, res) {
   res.oidc.login({
     returnTo: '/two-player',
-    authorizationParams: {
-      redirect_uri: 'http://localhost:80/two-player',
-    },
   })
 });
+
 
 const options = {
   key: fs.readFileSync('key.pem', 'utf-8'),
