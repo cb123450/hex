@@ -133,7 +133,7 @@
         
         console.log(evt.target.id);
 
-        if ("<%=isAuthenticated%>" == "false" && evt.target.id != "home" && evt.target.id != "auth"){
+        if ("<%=isAuthenticated%>" == "false" && evt.target.id != "home" && evt.target.id != "auth" && evt.target.id != ""){
             alert("Login to play 2 Player Mode");
         }
         else if (evt.target.id === "enterName"){
