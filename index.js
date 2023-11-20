@@ -65,7 +65,6 @@ app.get('/computer', function(req, res) {
 });
 
 app.get('/custom-login', function(req, res) {
-  console.log("S" + res.oidc.user)
   res.oidc.login({
     returnTo: '/two-player',
   })

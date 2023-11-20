@@ -48,6 +48,8 @@ module.exports = {
                     room_count[room_num-1] += 1;
 
                     if (room_count[room_num-1] == 2){
+                        curr_players[0].inGame = true;
+                        curr_players[1].inGame = true;
                         io.sockets.in(room_num).emit("gameStarted", curr_players[room_num])
                     }
                 }

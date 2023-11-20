@@ -129,6 +129,13 @@
         }
     }
 
+    window.addEventListener('beforeunload', (event) => {
+        //kick this player and their opponent from their room if they close the tab
+        if (me.inGame){
+            socket.emit("leaveGame", me.curr_room, me.name);
+        }
+    });
+
     document.addEventListener("click", function(evt){
         
         console.log(evt.target.id);
@@ -172,6 +179,8 @@
 
         evt.stopPropagation;
     })
+
+
 
     /* END SIDEBAR SETUP*/
     
