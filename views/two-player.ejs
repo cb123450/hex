@@ -9,6 +9,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
+
     <div class = grid-header> 
         <button class = "header" id = "home" onclick="window.location.href='/';">
             <span> HOME </span>
@@ -23,15 +24,14 @@
             <p id="login"><a href="/custom-login/">Login</a></p>
         <% } else { %>
             <p id="logout"><a href="/logout/">Logout</a></p>
+            
         <% } %>
 
-        <p id="user-container"> You: <span id="user"></span> </p>
+        <p id="user-container"> Username: <span id="user"></span> </p>
         <p id="opponent-container"> Opponent: <span id="opponent"></span> </p>
         <p id="color-assignment"> You are: <span id="color"></span></p>
         <p id="turn"><span id="curr"></span>'s Move</p>
 
-        <input type="text" placeholder="Name" id="name" autocomplete="off">
-        <button id="enterName">Enter your Name</button>
         <button class = "b_1" id="room1"><b class = "b_1">Join Room 1: </b><span class="b_1" id="r1">0/2</span></button>
         <button class = "b_2" id="room2"><b class = "b_2">Join Room 2: </b><span class="b_2" id="r2">0/2</span></button>
         <button class = "b_3" id="room3"><b class = "b_3">Join Room 3: </b><span class="b_3" id="r3">0/2</span></button>
@@ -42,7 +42,6 @@
         <button class = "b_7" id="room7"><b class = "b_7">Join Waiting Room</b></button>
         <button class = "b_8" id="leaveGame"><b class = "util">Leave Game</b></button>
     </div>
-
 </body>
 
 <script>var exports = {};</script>
@@ -64,6 +63,12 @@
     let handler;
     let gameArr;
 
+    //get ejs variables
+    let mode = '<%-mode%>'
+    let port = '<%-port%>'
+    let isAuthenticated = '<%-isAuthenticated%>'
+    let user = JSON.parse('<%-user%>')
+
     var start_button = document.getElementById("start-button");
 
     /* START SIDEBAR SETUP*/
@@ -80,16 +85,13 @@
     let asyncButtonHandler;
     let startHandler;
 
-    document.getElementById("curr").innerText="Red";
+    document.getElementById("curr").innerText="Red";    
 
-    function nameHandler(name){
-        if (name == null || name == ''){
-            alert("Enter a name in order to join a room")
-        }
-        else{
-            me.name = name;
-            document.getElementById("user").innerText=me.name;
-        }
+    if (user != undefined){
+        if (user.nickname != undefined){
+            document.getElementById("user").innerText=user.nickname;
+            me.name = user.nickname;
+        }  
     }
 
     function roomSelected(evt){
@@ -140,15 +142,11 @@
         
         console.log(evt.target.id);
 
-        if ("<%=isAuthenticated%>" == "false" && evt.target.id != "home" && evt.target.id != "auth" && evt.target.id != ""){
+        if (isAuthenticated == false && evt.target.id != "home" && evt.target.id != "auth" && evt.target.id != ""){
             alert("Login to play 2 Player Mode");
         }
-        else if (evt.target.id === "enterName"){
-            name = document.getElementById("name").value;
-            const userInfo = 
-            nameHandler(name) 
-        }
-        else if (me.name !== null && me.name !== ""){
+        else{
+
             let clicked_room = roomSelected(evt);
 
             if (clicked_room !== -1){
@@ -169,6 +167,7 @@
 
         if (me.inGame){
             if (evt.target.id === "leaveGame"){
+                console.log("T")
                 socket.emit("leaveGame", me.curr_room, me.name);
             }  
             else{

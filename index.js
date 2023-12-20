@@ -1,4 +1,6 @@
 const { auth } = require('express-openid-connect');
+const { requiresAuth } = require('express-openid-connect');
+
 const express = require('express');
 require('dotenv').config();
 var path = require('path');
@@ -33,6 +35,7 @@ app.use(function(req, res, next) {
 // const server = http.createServer(app)
 
 app.use(express.json())
+app.use(express.urlencoded({extended: true}))
 
 const turnRoute = require('./routes/turn')
 app.use('/turn', turnRoute)
@@ -55,9 +58,15 @@ app.get('/solo', function(req, res) {
 });
 
 app.get('/two-player', function(req, res) {
-  console.log(req.oidc.isAuthenticated());
-  res.render('two-player', {mode : process.env.MODE, port : process.env.PORT,
-    isAuthenticated: req.oidc.isAuthenticated()});
+  //console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+  //console.log("nickname" + req.oidc.user)
+  res.render('two-player', {
+    mode : process.env.MODE, 
+    port : process.env.PORT,
+    isAuthenticated: req.oidc.isAuthenticated(), 
+    user: JSON.stringify(req.oidc.user),
+    abc: "abc",
+  });
 });
 
 app.get('/computer', function(req, res) {
@@ -69,7 +78,6 @@ app.get('/custom-login', function(req, res) {
     returnTo: '/two-player',
   })
 });
-
 
 const options = {
   key: fs.readFileSync('key.pem', 'utf-8'),

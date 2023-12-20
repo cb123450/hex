@@ -65,6 +65,10 @@ li{
     font-size: 2vw;
     margin: .75vw;
 }
+#user{
+    display: inline;
+    font-size: 3vh;
+}
 #opponent-container{
     grid-row: 2;
     grid-column: 22 / 28;
@@ -72,13 +76,13 @@ li{
     margin: .75vw;
 }
 #color-assignment{
-    grid-row: 3;
+    grid-row: 4;
     grid-column: 16 / 20;
     font-size: 2vw;
     margin: .75vw;
 }
 #turn{
-    grid-row: 3;
+    grid-row: 4;
     grid-column: 22 / 28;
     font-size: 2vw;
     margin: .75vw;
