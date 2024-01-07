@@ -55,7 +55,7 @@
     import Board from "/scripts/js/Board.js";
     import Game from "/scripts/js/Game.js"
     import Handler from "/scripts/Handler.js"
-    //import {putUser, getUsers} from "/scripts/user.js"
+    import {putUser, getUsers} from "/scripts/user.js"
 
     const socket = io();
     let board = new Board(socket);
@@ -67,7 +67,22 @@
     let mode = '<%-mode%>'
     let port = '<%-port%>'
     let isAuthenticated = '<%-isAuthenticated%>'
-    let user = JSON.parse('<%-user%>')
+    let user = "";
+
+    //add user to database
+    if (isAuthenticated){
+        if ('<%-user%>' !== ''){
+            user = JSON.parse('<%-user%>')
+            const email =  new String(user['name']);
+            const nickname =  new String(user['nickname']);
+            const res = putUser(mode, email, nickname);
+            console.log("res: " + res);
+        }
+    }
+    // How to fetch user data:
+    // console.log("getUsers()")
+    // const res = await getUsers(mode);
+    // console.log(res[0]);
 
     var start_button = document.getElementById("start-button");
 
@@ -167,7 +182,6 @@
 
         if (me.inGame){
             if (evt.target.id === "leaveGame"){
-                console.log("T")
                 socket.emit("leaveGame", me.curr_room, me.name);
             }  
             else{

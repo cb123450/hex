@@ -1,8 +1,11 @@
 const test = true;
-const domain = process.env.MODE ? 'http://localhost:3000':'http://44.217.57.246';
+const domain = "";
+const url = 'https://localhost:80';
+// const domain = process.env.MODE ? 'http://localhost:3000':'http://44.217.57.246';
 
-export async function putUser(user){
+export async function putUser(mode, _email, _nickname){
     try{
+        const domain = mode ? url:'http://44.217.57.246';
         let res = await axios({
             url: domain + '/user',
             method: 'put',
@@ -11,20 +14,33 @@ export async function putUser(user){
                 'Content-Type': 'application/json',
             },
             data: {
-                name: user.name, }
+                email: _email,
+                nickname: _nickname }
         })
-        if (res.status == 200){
-            //console.log(res.status)
+        if (res.status == 500){
+            console.log(res.data.error)
+        }
+        else if (res.status == 409){
+            console.log(res.data.error);
+        }
+        else if (res.status == 200){
+            console.log(res.data);
         }
         return res.data 
     }
     catch (e){
-        console.error(e);
+        if (e.response && e.response.data && e.response.data.error) {
+            console.error(e.response.data.error);
+        }
+        else{
+            console.error("An unknown error occurred");
+        }
     }
 }
 
-export async function getUsers() {
+export async function getUsers(mode) {
     try {
+        const domain = mode ? url:'http://44.217.57.246';
         let res = await axios({
             url: domain + '/user',
             method: 'get',

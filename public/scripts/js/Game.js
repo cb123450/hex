@@ -2,7 +2,7 @@ export class Game {
     constructor(board) {
         this.board = board;
         this.turn = 0;
-        this.curr_player = "";
+        this.color = "";
     }
 }
 export default Game;

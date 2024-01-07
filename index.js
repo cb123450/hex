@@ -2,6 +2,7 @@ const { auth } = require('express-openid-connect');
 const { requiresAuth } = require('express-openid-connect');
 
 const express = require('express');
+
 require('dotenv').config();
 var path = require('path');
 
@@ -16,6 +17,23 @@ const config = {
   clientID: process.env.CLIENTID,
   issuerBaseURL: process.env.ISSUER,
 };
+
+const mysql = require('mysql2');
+
+const connection = mysql.createConnection({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME
+});
+
+connection.connect((err) => {
+  if (err) {
+    console.error('Error connecting to database:', err);
+    return;
+  }
+  console.log('Connected to database');
+});
 
 const app = express();
 
@@ -65,7 +83,6 @@ app.get('/two-player', function(req, res) {
     port : process.env.PORT,
     isAuthenticated: req.oidc.isAuthenticated(), 
     user: JSON.stringify(req.oidc.user),
-    abc: "abc",
   });
 });
 
