@@ -10,19 +10,19 @@ COPY . .
 
 EXPOSE 443
 
-RUN npm run devStart
+CMD ["npm", "run", "devStart"]
 
-FROM node:14-alpine AS production
+# FROM node:14-alpine AS production
 
-WORKDIR /usr/src/app
+# WORKDIR /usr/src/app
 
-COPY --from=build /usr/src/app/dist ./dist
-COPY --from=build /usr/src/app/package*.json ./
+# COPY --from=build /usr/src/app/dist ./dist
+# COPY --from=build /usr/src/app/package*.json ./
 
-RUN apk add --no-cache certbot
+# RUN apk add --no-cache certbot
 
-EXPOSE 443
+# EXPOSE 443
 
-CMD ["certbot", "certonly", "--standalone", "-d", "hexgame0.com"]
+# RUN certbot certonly --standalone -d hexgame0.com
 
-RUN npm run start
+# RUN npm run start

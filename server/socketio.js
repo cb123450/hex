@@ -1,5 +1,5 @@
-const {Server} = require("socket.io")
-const { Socket } = require("socket.io-client")
+const { Server } = require("socket.io");
+const  {Socket } = require("socket.io-client");
 
 module.exports = {
     getio: (server) => {

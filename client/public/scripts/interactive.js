@@ -1,4 +1,4 @@
-import { Queue } from "./utility.js";
+import { Queue } from "./js/utility.js";
 import { getTileArray, getTileGraph, getTurn, incrementTurn, getSocket } from "./playGame.js";
 const socket = getSocket();
 export function buttonHandler(evt) {

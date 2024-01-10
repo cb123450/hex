@@ -1,4 +1,4 @@
-import { changeColor } from "./interactive.js";
+import { changeColor } from "./js/interactive.js";
 import { drawBoard, createTiles } from "./gameBoard.js";
 import { io } from "socket.io-client";
 const domain = process.env.MODE ? 'http://localhost:3000':'http://44.217.57.246';

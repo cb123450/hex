@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "commonjs",
   "scripts": {
-    "start": "node index.js",
-    "devStart": "nodemon index.js",
+    "start": "NODE_ENV=production node index.js",
+    "devStart": "NODE_ENV=development nodemon index.js",
     "build": "tsc --build",
     "clean": "tsc --build --clean"
   },
