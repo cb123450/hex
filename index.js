@@ -2,6 +2,7 @@ const { auth } = require('express-openid-connect');
 const { requiresAuth } = require('express-openid-connect');
 
 const express = require('express');
+const app = express();
 
 require('dotenv').config();
 var path = require('path');
@@ -17,6 +18,19 @@ const config = {
   clientID: process.env.CLIENTID,
   issuerBaseURL: process.env.ISSUER,
 };
+
+app.use(auth(config));
+
+app.use(function(req, res, next) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  next();
+});
+
+
+const PORT = process.env.PORT;
 
 const mysql = require('mysql2');
 
@@ -35,22 +49,6 @@ connection.connect((err) => {
   console.log('Connected to database');
 });
 
-const app = express();
-
-const PORT = process.env.PORT;
-
-app.use(auth(config));
-
-app.use(function(req, res, next) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  res.setHeader('Access-Control-Allow-Credentials', true);
-  next();
-});
-
-
-// const server = http.createServer(app)
 
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
@@ -76,8 +74,6 @@ app.get('/solo', function(req, res) {
 });
 
 app.get('/two-player', function(req, res) {
-  //console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
-  //console.log("nickname" + req.oidc.user)
   res.render('two-player', {
     mode : process.env.MODE, 
     port : process.env.PORT,
@@ -96,13 +92,24 @@ app.get('/custom-login', function(req, res) {
   })
 });
 
-const options = {
-  key: fs.readFileSync('key.pem', 'utf-8'),
-  cert: fs.readFileSync('cert.pem', 'utf-8'),
-  passphrase: process.env.SMALLSECRET,
-};
+let options;
 
-//const httpServer = http.createServer(app); 
+const environment = process.env.NODE_ENV || 'testing';
+
+if (environment === 'production'){
+  options = {
+    key: fs.readFileSync('/etc/letsencrypt/live/hexgame0.com/privkey.pem', 'utf-8'),
+    cert: fs.readFileSync('/etc/letsencrypt/live/hexgame0.com/fullchain.pem', 'utf-8'),
+  };
+}
+else{
+  options = {
+    key: fs.readFileSync('key.pem', 'utf-8'),
+    cert: fs.readFileSync('cert.pem', 'utf-8'),
+    passphrase: process.env.SMALLSECRET,
+  };
+}
+
 const httpsServer = https.createServer(options, app);
 
 const socketio = require("./socketio.js");
