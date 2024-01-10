@@ -1,5 +1,4 @@
-const { auth } = require('express-openid-connect');
-const { requiresAuth } = require('express-openid-connect');
+const { auth, requiresAuth } = require('express-openid-connect');
 
 const express = require('express');
 const app = express();
@@ -59,10 +58,10 @@ app.use('/turn', turnRoute)
 const userRoute = require('./routes/user')
 app.use('/user', userRoute)
 
-app.set('views', path.join(__dirname, 'views'))
+app.set('views', path.join(__dirname, './../client/views'))
 app.set('view engine', 'ejs')
 
-app.use(express.static(__dirname + '/public'));
+app.use(express.static(__dirname + './../client/public'));
 
 // index 
 app.get('/', function(req, res) {

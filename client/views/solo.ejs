@@ -5,7 +5,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Solo</title>
-    <script defer src = "http://localhost:3000/socket.io/socket.io.js"></script>
     <link rel="stylesheet" href = "/stylesheets/hex-solo.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
@@ -30,9 +29,9 @@
 <script>var exports = {};</script>
 <script type = "module">
 
-    import Board from "/scripts/js/Board.js";
-    import Game from "/scripts/js/Game.js"
-    import Handler from "/scripts/Handler.js"
+    import Board from "./scripts/js/Board.js";
+    import Game from "./scripts/js/Game.js"
+    import Handler from "./scripts/Handler.js"
 
     var start_button = document.getElementById("start-button");
     document.getElementById("curr").innerText="Red";
