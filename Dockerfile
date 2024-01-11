@@ -26,4 +26,4 @@ WORKDIR /server
 
 EXPOSE 443
 
-CMD ["npm", "run", "devStart"]
+CMD ["npm", "run", "start"]

@@ -95,11 +95,54 @@ let options;
 
 const environment = process.env.NODE_ENV || 'testing';
 
+const { exec } = require('child_process');
+
+
 if (environment === 'production'){
+  exec('sudo yum install certbot -y', (error, stdout, stderr) => {
+    if (error) {
+      console.error("Error installing Certbot: ${error.message}");
+      return;
+    }
+
+    //obtain certificate
+    exec('sudo certbot certonly --standalone -d hexgame0.com -d www.hexgame0.com', (error, stdout, stderr) => {
+      if (error) {
+        console.error('Error obtaining certificate: ${error.message}');
+        return;
+      }
+
+      console.log('Certificate obtained successfully.');
+
+      const cronJobCommand = '0 3 * * 0 sudo certbot renew';
+
+      exec('echo "${cronJobCommand}" | crontab -', (error, stdout, stderr) => {
+        if (error) {
+          console.error('Error adding cron job: ${error.message}');
+          return;
+        }
+
+        console.log('Cron job added successfully.');
+
+        //list current cron jobs
+        exec('crontab -l', (error, stdout, stderr) => {
+          if (error) {
+            console.error('Error listing cron jobs: ${error.message}');
+            return;
+          }
+
+          console.log('Current cron jobs:');
+          console.log(stdout);
+        });
+      });
+    });
+  });
+  
   options = {
     key: fs.readFileSync('/etc/letsencrypt/live/hexgame0.com/privkey.pem', 'utf-8'),
     cert: fs.readFileSync('/etc/letsencrypt/live/hexgame0.com/fullchain.pem', 'utf-8'),
   };
+
 }
 else{
   options = {
