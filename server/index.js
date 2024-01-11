@@ -6,6 +6,8 @@ const app = express();
 require('dotenv').config();
 var path = require('path');
 
+//in production nginx will make http -> https
+const http = require('http'); 
 const https = require('https');
 const fs = require('fs');
 
@@ -28,8 +30,12 @@ app.use(function(req, res, next) {
   next();
 });
 
-
-const PORT = process.env.PORT;
+const environment = process.env.NODE_ENV;
+mode = 1
+if (environment === "production"){
+  mode = 0;
+}
+const PORT = 80;
 
 const mysql = require('mysql2');
 
@@ -72,10 +78,12 @@ app.get('/solo', function(req, res) {
   res.render('solo', {mode : process.env.MODE});
 });
 
+let MODE = (process.env.NODE_ENV === "development") ? 1 : 0;
+
 app.get('/two-player', function(req, res) {
   res.render('two-player', {
-    mode : process.env.MODE, 
-    port : process.env.PORT,
+    mode : MODE, 
+    port : PORT,
     isAuthenticated: req.oidc.isAuthenticated(), 
     user: JSON.stringify(req.oidc.user),
   });
@@ -93,118 +101,15 @@ app.get('/custom-login', function(req, res) {
 
 let options;
 
-const environment = process.env.NODE_ENV || 'testing';
+
 
 const { exec } = require('child_process');
 
 
+let server;
+
 if (environment === 'production'){
-  // exec('sudo yum install cronie -y', (error, stdout, stderr) => {
-  //   if (error) {
-  //     console.error("Error installing crontab: ${error.message}");
-  //     return;
-  //   }
-  //   exec('curl https://get.acme.sh | sh', (error, stdout, stderr) => {
-  //     if (error) {
-  //       console.error("Error installing acme.sh: ${error.message}");
-  //       return;
-  //     }
-  //     //issue certificate
-  //     exec('~/.acme.sh/acme.sh --issue -d hexgame0.com -d www.hexgame0.com --standalone', (error, stdout, stderr) => {
-  //       if (error) {
-  //         console.error("Error issuing certificate: ${error.message}");
-  //         return;
-  //       }
-  //       //install certificate to nginx
-  //       exec('acme.sh --install-cert -d hexgame0.com \
-  //       --key-file       /path/to/keyfile/in/nginx/key.pem  \
-  //       --fullchain-file /path/to/fullchain/nginx/cert.pem \
-  //       --reloadcmd     "service nginx force-reload"', (error, stdout, stderr) => {
-  //         if (error) {
-  //           console.error('Error obtaining certificate: ${error.message}');
-  //           return;
-  //         }
-
-  //         console.log('Certificate obtained successfully.');
-
-  //         const cronJobCommand = '0 3 * * 0 sudo certbot renew';
-
-  //         exec('echo "${cronJobCommand}" | crontab -', (error, stdout, stderr) => {
-  //           if (error) {
-  //             console.error('Error adding cron job: ${error.message}');
-  //             return;
-  //           }
-
-  //           console.log('Cron job added successfully.');
-
-  //           //list current cron jobs
-  //           exec('crontab -l', (error, stdout, stderr) => {
-  //             if (error) {
-  //               console.error('Error listing cron jobs: ${error.message}');
-  //               return;
-  //             }
-  //             console.log('Current cron jobs:');
-  //             console.log(stdout);
-  //           });
-  //         });
-  //       });
-  //     });
-  //   });
-  // });
-  // exec('wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm', (error, stdout, stderr) => {
-  //   if (error) {
-  //     console.error("Error getting EPEL: ${error.message}");
-  //     return;
-  //   }
-  //   exec('sudo rpm -ihv --nodeps ./epel-release-latest-8.noarch.rpm', (error, stdout, stderr) => {
-  //     if (error) {
-  //       console.error("Error installing EPEL: ${error.message}");
-  //       return;
-  //     }
-  //     exec('sudo yum install certbot -y', (error, stdout, stderr) => {
-  //       if (error) {
-  //         console.error("Error installing certbot: ${error.message}");
-  //         return;
-  //       }
-  //       //obtain certificate
-  //       exec('sudo certbot certonly --standalone -d hexgame0.com -d www.hexgame0.com', (error, stdout, stderr) => {
-  //         if (error) {
-  //           console.error('Error obtaining certificate: ${error.message}');
-  //           return;
-  //         }
-
-  //         console.log('Certificate obtained successfully.');
-
-  //         const cronJobCommand = '0 3 * * 0 sudo certbot renew';
-
-  //         exec('echo "${cronJobCommand}" | crontab -', (error, stdout, stderr) => {
-  //           if (error) {
-  //             console.error('Error adding cron job: ${error.message}');
-  //             return;
-  //           }
-
-  //           console.log('Cron job added successfully.');
-
-  //           //list current cron jobs
-  //           exec('crontab -l', (error, stdout, stderr) => {
-  //             if (error) {
-  //               console.error('Error listing cron jobs: ${error.message}');
-  //               return;
-  //             }
-  //             console.log('Current cron jobs:');
-  //             console.log(stdout);
-  //           });
-  //         });
-  //       });
-  //     });
-  //   });
-  // });
-
-  options = {
-    key: fs.readFileSync('/etc/letsencrypt/live/hexgame0.com/privkey.pem', 'utf-8'),
-    cert: fs.readFileSync('/etc/letsencrypt/live/hexgame0.com/fullchain.pem', 'utf-8'),
-  };
-
+  server = http.createServer();
 }
 else{
   options = {
@@ -212,14 +117,16 @@ else{
     cert: fs.readFileSync('cert.pem', 'utf-8'),
     passphrase: process.env.SMALLSECRET,
   };
+  server = https.createServer(options, app);
+
 }
 
-const httpsServer = https.createServer(options, app);
-
 const socketio = require("./socketio.js");
-const io = socketio.getio(httpsServer);
+const io = socketio.getio(server);
 
-httpsServer.listen(PORT, ()=>{
+server.listen(PORT, ()=>{
   console.log("Server running on PORT " + PORT)
 });
+
+
 
