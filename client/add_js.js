@@ -16,7 +16,6 @@ filePaths.forEach(filePath => {
         const updatedData = data.replace(/import\s*\{\s*([a-zA-Z_$0-9]*\,*\s*[a-zA-Z_$0-9]*)\s*\}\s*from\s*["'](\.\/[a-zA-Z_$0-9]*)["']\s*;/g,
         `import { $1 } from "$2.js";`
         );
-        console.log(updatedData)
       
         // Write the updated content back to the file
         fs.writeFile(filePath, updatedData, 'utf8', (writeErr) => {
