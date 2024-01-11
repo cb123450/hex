@@ -99,45 +99,107 @@ const { exec } = require('child_process');
 
 
 if (environment === 'production'){
-  exec('sudo yum install certbot -y', (error, stdout, stderr) => {
-    if (error) {
-      console.error("Error installing Certbot: ${error.message}");
-      return;
-    }
+  // exec('sudo yum install cronie -y', (error, stdout, stderr) => {
+  //   if (error) {
+  //     console.error("Error installing crontab: ${error.message}");
+  //     return;
+  //   }
+  //   exec('curl https://get.acme.sh | sh', (error, stdout, stderr) => {
+  //     if (error) {
+  //       console.error("Error installing acme.sh: ${error.message}");
+  //       return;
+  //     }
+  //     //issue certificate
+  //     exec('~/.acme.sh/acme.sh --issue -d hexgame0.com -d www.hexgame0.com --standalone', (error, stdout, stderr) => {
+  //       if (error) {
+  //         console.error("Error issuing certificate: ${error.message}");
+  //         return;
+  //       }
+  //       //install certificate to nginx
+  //       exec('acme.sh --install-cert -d hexgame0.com \
+  //       --key-file       /path/to/keyfile/in/nginx/key.pem  \
+  //       --fullchain-file /path/to/fullchain/nginx/cert.pem \
+  //       --reloadcmd     "service nginx force-reload"', (error, stdout, stderr) => {
+  //         if (error) {
+  //           console.error('Error obtaining certificate: ${error.message}');
+  //           return;
+  //         }
 
-    //obtain certificate
-    exec('sudo certbot certonly --standalone -d hexgame0.com -d www.hexgame0.com', (error, stdout, stderr) => {
-      if (error) {
-        console.error('Error obtaining certificate: ${error.message}');
-        return;
-      }
+  //         console.log('Certificate obtained successfully.');
 
-      console.log('Certificate obtained successfully.');
+  //         const cronJobCommand = '0 3 * * 0 sudo certbot renew';
 
-      const cronJobCommand = '0 3 * * 0 sudo certbot renew';
+  //         exec('echo "${cronJobCommand}" | crontab -', (error, stdout, stderr) => {
+  //           if (error) {
+  //             console.error('Error adding cron job: ${error.message}');
+  //             return;
+  //           }
 
-      exec('echo "${cronJobCommand}" | crontab -', (error, stdout, stderr) => {
-        if (error) {
-          console.error('Error adding cron job: ${error.message}');
-          return;
-        }
+  //           console.log('Cron job added successfully.');
 
-        console.log('Cron job added successfully.');
+  //           //list current cron jobs
+  //           exec('crontab -l', (error, stdout, stderr) => {
+  //             if (error) {
+  //               console.error('Error listing cron jobs: ${error.message}');
+  //               return;
+  //             }
+  //             console.log('Current cron jobs:');
+  //             console.log(stdout);
+  //           });
+  //         });
+  //       });
+  //     });
+  //   });
+  // });
+  // exec('wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm', (error, stdout, stderr) => {
+  //   if (error) {
+  //     console.error("Error getting EPEL: ${error.message}");
+  //     return;
+  //   }
+  //   exec('sudo rpm -ihv --nodeps ./epel-release-latest-8.noarch.rpm', (error, stdout, stderr) => {
+  //     if (error) {
+  //       console.error("Error installing EPEL: ${error.message}");
+  //       return;
+  //     }
+  //     exec('sudo yum install certbot -y', (error, stdout, stderr) => {
+  //       if (error) {
+  //         console.error("Error installing certbot: ${error.message}");
+  //         return;
+  //       }
+  //       //obtain certificate
+  //       exec('sudo certbot certonly --standalone -d hexgame0.com -d www.hexgame0.com', (error, stdout, stderr) => {
+  //         if (error) {
+  //           console.error('Error obtaining certificate: ${error.message}');
+  //           return;
+  //         }
 
-        //list current cron jobs
-        exec('crontab -l', (error, stdout, stderr) => {
-          if (error) {
-            console.error('Error listing cron jobs: ${error.message}');
-            return;
-          }
+  //         console.log('Certificate obtained successfully.');
 
-          console.log('Current cron jobs:');
-          console.log(stdout);
-        });
-      });
-    });
-  });
-  
+  //         const cronJobCommand = '0 3 * * 0 sudo certbot renew';
+
+  //         exec('echo "${cronJobCommand}" | crontab -', (error, stdout, stderr) => {
+  //           if (error) {
+  //             console.error('Error adding cron job: ${error.message}');
+  //             return;
+  //           }
+
+  //           console.log('Cron job added successfully.');
+
+  //           //list current cron jobs
+  //           exec('crontab -l', (error, stdout, stderr) => {
+  //             if (error) {
+  //               console.error('Error listing cron jobs: ${error.message}');
+  //               return;
+  //             }
+  //             console.log('Current cron jobs:');
+  //             console.log(stdout);
+  //           });
+  //         });
+  //       });
+  //     });
+  //   });
+  // });
+
   options = {
     key: fs.readFileSync('/etc/letsencrypt/live/hexgame0.com/privkey.pem', 'utf-8'),
     cert: fs.readFileSync('/etc/letsencrypt/live/hexgame0.com/fullchain.pem', 'utf-8'),
