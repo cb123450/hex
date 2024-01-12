@@ -6,6 +6,15 @@ const app = express();
 require('dotenv').config();
 var path = require('path');
 
+const http = require('http');
+
+const httpServer = http.createServer((req, res) => {
+  // Redirect to HTTPS
+  res.writeHead(301, { Location: `https://${req.headers.host}${req.url}` });
+  res.end();
+});
+
+
 const https = require('https');
 const fs = require('fs');
 
@@ -133,6 +142,10 @@ else{
     passphrase: process.env.SMALLSECRET,
   };
 }
+
+httpServer.listen(80, () => {
+  console.log('HTTP server listening on port 80');
+});
 
 const server = https.createServer(options, app);
 const socketio = require("./socketio.js");
