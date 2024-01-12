@@ -24,6 +24,6 @@ COPY . .
 
 WORKDIR /server
 
-EXPOSE 80
+EXPOSE 443
 
-CMD ["npm", "devStart"]
+CMD ["npm", "run", "start"]
