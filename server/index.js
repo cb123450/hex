@@ -6,8 +6,6 @@ const app = express();
 require('dotenv').config();
 var path = require('path');
 
-//in production nginx will make http -> https
-const http = require('http'); 
 const https = require('https');
 const fs = require('fs');
 
@@ -31,11 +29,8 @@ app.use(function(req, res, next) {
 });
 
 const environment = process.env.NODE_ENV;
-mode = 1
-if (environment === "production"){
-  mode = 0;
-}
-const PORT = 80;
+
+const PORT = 443;
 
 const mysql = require('mysql2');
 
@@ -71,6 +66,7 @@ app.use(express.static(__dirname + './../client/public'));
 
 // index 
 app.get('/', function(req, res) {
+  console.log('app.get('/') called');
   res.render('index');
 });
 
@@ -78,7 +74,10 @@ app.get('/solo', function(req, res) {
   res.render('solo', {mode : process.env.MODE});
 });
 
-let MODE = (process.env.NODE_ENV === "development") ? 1 : 0;
+let MODE = (process.env.NODE_ENV === "production") ? 0 : 1;
+console.log("Mode: ", MODE)
+console.log("NODE_ENV: ", process.env.NODE_ENV)
+
 
 app.get('/two-player', function(req, res) {
   res.render('two-player', {
@@ -101,15 +100,13 @@ app.get('/custom-login', function(req, res) {
 
 let options;
 
-
-
 const { exec } = require('child_process');
 
-
-let server;
-
 if (environment === 'production'){
-  server = http.createServer();
+  options = {
+    key: fs.readFileSync('/etc/letsencrypt/live/hexgame0.com/privkey.pem', 'utf-8'),
+    cert: fs.readFileSync('/etc/letsencrypt/live/hexgame0.com/fullchain.pem', 'utf-8'),
+  };
 }
 else{
   options = {
@@ -117,10 +114,9 @@ else{
     cert: fs.readFileSync('cert.pem', 'utf-8'),
     passphrase: process.env.SMALLSECRET,
   };
-  server = https.createServer(options, app);
-
 }
 
+const server = https.createServer(options, app);
 const socketio = require("./socketio.js");
 const io = socketio.getio(server);
 

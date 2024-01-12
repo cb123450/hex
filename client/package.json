@@ -16,9 +16,7 @@
     "axios": "^1.4.0",
     "http": "^0.0.1-security",
     "typescript": "^5.1.6",
-    "ws": "^8.13.0"
-  },
-  "devDependencies": {
+    "ws": "^8.13.0",
     "@types/node": "^20.10.8"
   }
 }
