@@ -9,11 +9,15 @@ var path = require('path');
 const https = require('https');
 const fs = require('fs');
 
+const environment = process.env.NODE_ENV;
+
+baseurl = (environment === "production") ? "https://hexgame0.com/" : "https://localhost:443/";
+console.log("baseurl: ", baseurl)
 const config = {
   authRequired: false,
   auth0Logout: true,
   secret: process.env.SECRET,
-  baseURL: process.env.BASEURL,
+  baseURL: baseurl,
   clientID: process.env.CLIENTID,
   issuerBaseURL: process.env.ISSUER,
 };
@@ -27,8 +31,6 @@ app.use(function(req, res, next) {
   res.setHeader('Access-Control-Allow-Credentials', true);
   next();
 });
-
-const environment = process.env.NODE_ENV;
 
 const PORT = 443;
 
@@ -78,6 +80,9 @@ let MODE = (process.env.NODE_ENV === "production") ? 0 : 1;
 console.log("Mode: ", MODE)
 console.log("NODE_ENV: ", process.env.NODE_ENV)
 
+let dom = (environment === "production") ? 'https://hexgame0.com' : 'https://localhost:443';
+const after_auth = dom + '/two-player';
+const callback = dom + '/callback';
 
 app.get('/two-player', function(req, res) {
   res.render('two-player', {
@@ -88,13 +93,26 @@ app.get('/two-player', function(req, res) {
   });
 });
 
+app.get('/callback', (req, res) =>
+  res.oidc.callback({
+    redirectUri: after_auth,
+  })
+);
+
+app.post('/callback', express.urlencoded({ extended: false }), (req, res) =>
+  res.oidc.callback()
+);
+
 app.get('/computer', function(req, res) {
   res.render('computer', {mode : process.env.MODE});
 });
 
 app.get('/custom-login', function(req, res) {
   res.oidc.login({
-    returnTo: '/two-player',
+    returnTo: after_auth,
+    // authorizationParams: {
+    //   redirect_uri: callback,
+    // },
   })
 });
 
