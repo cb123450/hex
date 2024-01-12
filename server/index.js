@@ -6,21 +6,12 @@ const app = express();
 require('dotenv').config();
 var path = require('path');
 
-const http = require('http');
-
-const httpServer = http.createServer((req, res) => {
-  // Redirect to HTTPS
-  res.writeHead(301, { Location: `https://${req.headers.host}${req.url}` });
-  res.end();
-});
-
-
 const https = require('https');
 const fs = require('fs');
 
 const environment = process.env.NODE_ENV;
 
-baseurl = (environment === "production") ? "https://hexgame0.com/" : "https://localhost:443/";
+baseurl = (environment === "production") ? "https://44.217.57.246/" : "https://localhost:443/";
 console.log("baseurl: ", baseurl)
 const config = {
   authRequired: false,
@@ -85,11 +76,11 @@ app.get('/solo', function(req, res) {
   res.render('solo', {mode : process.env.MODE});
 });
 
-let MODE = (process.env.NODE_ENV === "production") ? 0 : 1;
+let MODE = (environment === "production") ? 1 : 0;
 console.log("Mode: ", MODE)
 console.log("NODE_ENV: ", process.env.NODE_ENV)
 
-let dom = (environment === "production") ? 'https://hexgame0.com' : 'https://localhost:443';
+let dom = (environment === "production") ? 'https://44.217.57.246' : 'https://localhost:443';
 const after_auth = dom + '/two-player';
 const callback = dom + '/callback';
 
@@ -109,7 +100,9 @@ app.get('/callback', (req, res) =>
 );
 
 app.post('/callback', express.urlencoded({ extended: false }), (req, res) =>
-  res.oidc.callback()
+  res.oidc.callback({
+    redirectUri: after_auth,
+  })
 );
 
 app.get('/computer', function(req, res) {
@@ -119,9 +112,9 @@ app.get('/computer', function(req, res) {
 app.get('/custom-login', function(req, res) {
   res.oidc.login({
     returnTo: after_auth,
-    // authorizationParams: {
-    //   redirect_uri: callback,
-    // },
+    authorizationParams: {
+      redirect_uri: callback,
+    },
   })
 });
 
@@ -142,10 +135,6 @@ else{
     passphrase: process.env.SMALLSECRET,
   };
 }
-
-httpServer.listen(80, () => {
-  console.log('HTTP server listening on port 80');
-});
 
 const server = https.createServer(options, app);
 const socketio = require("./socketio.js");
