@@ -11,7 +11,7 @@ const fs = require('fs');
 
 const environment = process.env.NODE_ENV;
 
-baseurl = (environment === "production") ? "https://44.217.57.246/" : "https://localhost:443/";
+baseurl = (environment === "production") ? "https://hexgame0.com/" : "https://localhost:443/";
 console.log("baseurl: ", baseurl)
 const config = {
   authRequired: false,
@@ -20,6 +20,9 @@ const config = {
   baseURL: baseurl,
   clientID: process.env.CLIENTID,
   issuerBaseURL: process.env.ISSUER,
+  routes: {
+    login: false,
+  }
 };
 
 app.use(auth(config));
@@ -80,7 +83,7 @@ let MODE = (environment === "production") ? 1 : 0;
 console.log("Mode: ", MODE)
 console.log("NODE_ENV: ", process.env.NODE_ENV)
 
-let dom = (environment === "production") ? 'https://44.217.57.246' : 'https://localhost:443';
+let dom = (environment === "production") ? 'https://hexgame0.com' : 'https://localhost:443';
 const after_auth = dom + '/two-player';
 const callback = dom + '/callback';
 
