@@ -1,0 +1,22 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "",
+  "type": "module",
+  "scripts": {
+    "build": "tsc --build && node add_js.js",
+    "clean": "tsc --build --clean"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/socket.io-client": "^3.0.0",
+    "axios": "^1.4.0",
+    "http": "^0.0.1-security",
+    "typescript": "^5.1.6",
+    "ws": "^8.13.0",
+    "@types/node": "^20.10.8"
+  }
+}

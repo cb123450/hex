@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solo</title>
+    <link rel="stylesheet" href = "/stylesheets/hex-solo.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class = grid-header> 
+        <button class = "header" id = "home" onclick="window.location.href='/';">
+            <p> HOME </p>
+        </button>
+
+        <button class = "header" id="start-button">
+            <p> RESTART </p>
+        </button>
+    </div> 
+    <div id="spacing"></div>
+    <div class="grid" id = "grid">
+        <div id="turn-container">
+            <p id="turn"><span id="curr"></span>'s Move</p>
+        </div>  
+    </div>
+    
+</body>
+<script>var exports = {};</script>
+<script type = "module">
+
+    import Board from "./scripts/js/Board.js";
+    import Game from "./scripts/js/Game.js"
+    import Handler from "./scripts/Handler.js"
+
+    var start_button = document.getElementById("start-button");
+    document.getElementById("curr").innerText="Red";
+
+    let board = new Board("no-socket");
+    let game = new Game(board);
+    let handler = new Handler(board, game, "<%=mode%>");
+
+    grid?.addEventListener("click", handler.getButtonHandler(game), false);
+    let restart = handler.getStartHandler(false)
+
+    start_button?.addEventListener("click", restart, false);
+</script>
+</html>
