@@ -64,7 +64,7 @@
     let gameArr;
 
     //get ejs variables
-    let mode = '<%-mode%>'
+    let mode = ('<%-mode%>' === '1') ? 1 : 0;
     let port = '<%-port%>'
     let isAuthenticated = '<%-isAuthenticated%>'
     let user = "";
@@ -232,7 +232,7 @@
         game.color = my_color;
 
         //mode and port are passed into this ejs file from node.js server
-        handler = new Handler(board, game, me.curr_room, "<%=mode%>", "<%=port%>");
+        handler = new Handler(board, game, me.curr_room, mode, "<%=port%>");
 
         asyncButtonHandler = handler.getAsyncButtonHandler(game.color);
         startHandler = handler.getStartHandler(true);
