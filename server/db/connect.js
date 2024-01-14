@@ -42,7 +42,7 @@ async function putUser(req, res) {
         const selectRes = await queryAsync(db.connection, 'SELECT * FROM users WHERE email = ?', [_email]);
         console.log("SelectRes: ", selectRes);
 
-        if (selectRes.length > 0) {
+        if (selectRes[0].length > 0) {
             res.status(409).send({ error: 'User with this email already exists' });
         } else {
             const insertResult = await queryAsync(
@@ -61,16 +61,7 @@ async function putUser(req, res) {
 }
 
 async function queryAsync(connection, sql, values) {
-    return new Promise((resolve, reject) => {
-        connection.query(sql, values, (err, result) => {
-            if (err) {
-                reject(err);
-            }
-            else {
-                resolve(result);
-            }
-        })
-    })
+    return connection.query(sql, values);
 }
 
 module.exports = {
