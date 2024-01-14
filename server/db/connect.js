@@ -37,8 +37,6 @@ async function putUser(req, res) {
         const _nickname = req.body.nickname;
         const _email = req.body.email;
 
-        console.log(_email, _nickname);
-
         const selectRes = await queryAsync(db.connection, 'SELECT * FROM users WHERE email = ?', [_email]);
         console.log("SelectRes: ", selectRes);
 
