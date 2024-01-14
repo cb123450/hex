@@ -1,3 +1,5 @@
+const { getUsers, putUser } = require("../db/connect.js")
+
 const express = require("express");
 const router = express.Router()
 
@@ -13,56 +15,8 @@ const connection = mysql.createConnection({
 
 const users = []
 
-router.get("/", (req, res) => {
-    //get all users
-    connection.query('SELECT * FROM users', (err, result) => {
-        if (err) {
-            console.error('Error executing MySQL query: ', err);
-            res.status(500).send({error : 'Internal Server Error'});
-            return;
-        }
-        res.status(200).send(result);
-    });
-  });
+router.get("/", getUsers);
 
-//check if user has already registered with this email
-router.put('/', (req, res) => {
-    const _nickname = req.body.nickname;
-    const _email = req.body.email;
-    // console.log(nickname);
-    // console.log(email);
-    //INSERT INTO users (nickname, email, created_at) VALUES ('JohnDoe', 'john@example.com', NOW());
-    
-    connection.query(    
-        'SELECT * FROM users WHERE email = ?',
-        [_email],
-        (selectErr, selectRes) => {
-            if (selectErr){
-                console.error("Error executing SELECT query on server: ", selectErr);
-                res.status(500).send({error: 'Internal Server Error'});
-                return;
-            }
-
-            if (selectRes.length > 0){
-                //email already has an account
-                res.status(409).send({error: 'User with this email already exists'});
-            } else {
-                //email does not exist, insert new row into `users` table
-                connection.query(
-                    'INSERT INTO users (nickname, email, created_at) VALUES (?, ?, NOW())',
-                    [_nickname, _email],
-                    (err, results)=>{
-                        if (err){
-                            console.error("Error executing INSERT query on server: ", err);
-                            res.status(500).send({error: 'Internal Server Error'});
-                            return;
-                        }
-                        res.status(200).send({nickname: _nickname, email: _email});
-                    }
-                );  
-            }
-        }
-    )
-})
+router.put('/', putUser);
 
 module.exports = router
