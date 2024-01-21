@@ -1,39 +1,39 @@
-# name: Deploy to EC2
-# on:
-#   push:
-#     branches:
-#       - main
-# jobs:
-#   deploy:
-#     runs-on: ubuntu:latest
-#     steps:
-#       - name: Checkout code
-#         uses: actions/checkout@v3
+name: Deploy to EC2
+on:
+  push:
+    branches:
+      - main
+jobs:
+  deploy:
+    runs-on: ubuntu:latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-#       - name: Set up Node.js 
-#         uses: actions/setup-node@v3
-#         with:
-#           node-version: '18'
-#       - name: Build and push Docker image
-#         run: |
-#           echo "Building Docker image..."
-#           docker build --platform linux/amd64 -t prod .
-#           echo "Tagging Docker images..."
-#           docker tag prod:latest ${{ secrets.DOCKER_REPO_URL}}/prod:latest
-#           echo "Logging into Docker registry"
-#           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-#           echo "Pushing Docker image"
-#           docker push ${{ secrets.DOCKER_REPO_URL }}/prod:latest
+      - name: Set up Node.js 
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+      - name: Build and push Docker image
+        run: |
+          echo "Building Docker image..."
+          docker build --platform linux/amd64 -t prod .
+          echo "Tagging Docker images..."
+          docker tag prod:latest ${{ secrets.DOCKER_REPO_URL}}/prod:latest
+          echo "Logging into Docker registry"
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          echo "Pushing Docker image"
+          docker push ${{ secrets.DOCKER_REPO_URL }}/prod:latest
       
-#       - name: SSH into EC2 instance and deploy
-#         uses: appleboy/ssh-action@master
-#         with:
-#           host: ${{ secrets.EC2_HOST }}
-#           username: ${{ secrets.EC2_USERNAME }}
-#           key: ${{ secrets.MY_EC2_SSH_KEY }}
-#           script: |
-#             sudo docker pull ${{ secrets.DOCKER_REPO_URL }}/dummy-server:latest
-#             sudo docker stop my-node-app || true
-#             sudo docker rm my-node-app || true
-#             sudo docker run -d -p 443:443 --name my-node-app -v /etc/letsencrypt/live/hexgame0.com/privkey.pem:/etc/letsencrypt/live/hexgame0.com/privkey.pem -v /etc/letsencrypt/live/hexgame0.com/fullchain.pem:/etc/letsencrypt/live/hexgame0.com/fullchain.pem --restart always ${{ secrets.DOCKER_REPO_URL }}/dummy-server:latest
+      - name: SSH into EC2 instance and deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.MY_EC2_SSH_KEY }}
+          script: |
+            sudo docker pull ${{ secrets.DOCKER_REPO_URL }}/dummy-server:latest
+            sudo docker stop my-node-app || true
+            sudo docker rm my-node-app || true
+            sudo docker run -d -p 443:443 --name my-node-app -v /etc/letsencrypt/live/hexgame0.com/privkey.pem:/etc/letsencrypt/live/hexgame0.com/privkey.pem -v /etc/letsencrypt/live/hexgame0.com/fullchain.pem:/etc/letsencrypt/live/hexgame0.com/fullchain.pem --restart always ${{ secrets.DOCKER_REPO_URL }}/dummy-server:latest
 
