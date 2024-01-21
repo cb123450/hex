@@ -1,11 +1,11 @@
 const test = true;
 const domain = "";
 const local = 'https://localhost';
-const hex = 'https://44.217.57.246'
+const hex = 'https://hexgame0.com'
 
 export async function putUser(mode, _email, _nickname){
     try{
-        const domain = mode ? local : hex;
+        const domain = mode ? hex : local;
         let res = await axios({
             url: domain + '/user',
             method: 'put',
@@ -40,7 +40,7 @@ export async function putUser(mode, _email, _nickname){
 
 export async function getUsers(mode) {
     try {
-        const domain = mode ? local : hex;
+        const domain = mode ? hex : local;
         let res = await axios({
             url: domain + '/user',
             method: 'get',
