@@ -12,11 +12,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/node": "^20.10.8",
     "@types/socket.io-client": "^3.0.0",
     "axios": "^1.4.0",
     "http": "^0.0.1-security",
+    "react-hexgrid": "^2.0.1",
     "typescript": "^5.1.6",
-    "ws": "^8.13.0",
-    "@types/node": "^20.10.8"
+    "ws": "^8.13.0"
   }
 }
