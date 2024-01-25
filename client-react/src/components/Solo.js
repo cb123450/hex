@@ -12,16 +12,27 @@ const initialState = { selectedHexes: [], redHexes: [], blueHexes: [], player: "
 const reducer = (state, action) => {
     switch (action.type) {
         case 'RED_TURN':
-            return { selectedHexes: [...state.selectedHexes, { q: action.q, r: action.r}],
-            redHexes: [...state.redHexes, { q: action.q, r: action.r}],
-            blueHexes: [...state.blueHexes],
-            player: 'Blue' };
+            return { 
+                selectedHexes: [...state.selectedHexes, { q: action.q, r: action.r}],
+                redHexes: [...state.redHexes, { q: action.q, r: action.r}],
+                blueHexes: [...state.blueHexes],
+                player: 'Blue' 
+            };
         case 'BLUE_TURN':
             state.player = "Red"
-            return { selectedHexes: [...state.selectedHexes, { q: action.q, r: action.r}],
-            redHexes: [...state.redHexes],
-            blueHexes: [...state.blueHexes, { q: action.q, r: action.r}],
-            player: 'Red'};
+            return { 
+                selectedHexes: [...state.selectedHexes, { q: action.q, r: action.r}],
+                redHexes: [...state.redHexes],
+                blueHexes: [...state.blueHexes, { q: action.q, r: action.r}],
+                player: 'Red'
+            };
+        case 'RESTART':
+            return {
+                selectedHexes: [],
+                redHexes: [],
+                blueHexes: [],
+                player: 'Red'
+            }
     }
 }
 
@@ -140,11 +151,20 @@ const Solo = () => {
         }
     }
 
+    const handleRestart = () => {
+        dispatch( {type: 'RESTART'})
+    }
+
     return (
             <div className="min-h-screen flex flex-col w-full h-full items-center justify-between">
                 <h1 className="text-3xl md:text-4xl lg:text-5xl">Solo Mode</h1>
-                <Link to='/'>Go to Home</Link>
                 <Player player={state.player}/>
+                <div className="bg-gray-200 text-gray-800 text-3xl md:text-4xl lg:text-5xl rounded">
+                    <button onClick={handleRestart}>
+                        Restart
+                    </button>
+                </div>
+                <Link to='/'>Go to Home</Link>
                 
                 <div>
                     <HexGrid width={window.innerWidth} height={window.innerHeight}>
