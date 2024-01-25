@@ -1,6 +1,8 @@
 import React, {useState} from 'react';
 import { Link } from 'react-router-dom';
-import { HexGrid, Layout, Hexagon, Pattern, GridGenerator } from 'react-hexgrid';
+import { HexGrid, Layout, Hexagon, GridGenerator } from 'react-hexgrid';
+import { css } from "@emotion/react"
+import { COLORS } from "../colors.jsx"
 
 
 const Solo = () => {
@@ -24,11 +26,12 @@ const Solo = () => {
                     <HexGrid width={window.innerWidth} height={window.innerHeight}>
                     <Layout size={{ x: 4, y: 4 }} spacing={1.1} flat={false}>
                         { hexagons.map((hex, i) => <Hexagon key={i} q={hex.q} r={hex.r} s={hex.s} 
-                        fill={`url(#${redPatternId})`}
+                        cellStyle={selectedHex && selectedHex.q === hex.q && selectedHex.r === hex.r ? {
+                            fill: COLORS.red[2]} : {fill: COLORS.yellow[2]
+                          }}
                         onClick={() => handleClick(hex.q, hex.r)}
                         />) }
                     </Layout>
-                    <Pattern id={redPatternId} link={redPatternLink} />
                     </HexGrid>
                 </div>
             </div>
