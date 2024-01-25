@@ -1,7 +1,6 @@
 import React, {useState, useReducer, useEffect} from 'react';
 import { Link } from 'react-router-dom';
 import { HexGrid, Layout, Hexagon, GridGenerator } from 'react-hexgrid';
-import { css } from "@emotion/react"
 import { COLORS } from "../colors.jsx"
 import Player from "./Player.js"
 
@@ -167,7 +166,7 @@ const Solo = () => {
                 <Link to='/'>Go to Home</Link>
                 
                 <div>
-                    <HexGrid width={window.innerWidth} height={window.innerHeight}>
+                    <HexGrid width={800} height={600}>
                     <Layout size={{ x: 4, y: 4 }} spacing={1.1} flat={false}>
                         { hexagons.map((hex, i) => <Hexagon key={i} q={hex.q} r={hex.r} s={hex.s} 
                         cellStyle={!state.selectedHexes.some(selectedHex => selectedHex.q === hex.q && selectedHex.r === hex.r) ? {
