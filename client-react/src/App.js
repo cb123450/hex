@@ -4,7 +4,7 @@ import './index.css';
 
 const App = () => {
   return (
-    <div>
+    <div className="bg-blue-200">
         <AppRouter />
     </div>
   )

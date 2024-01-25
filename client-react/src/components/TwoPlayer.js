@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom';
 
 const TwoPlayer = () => {
     return (
-        <div>
-            <h1>TwoPlayer Page</h1>
-            <Link to='/'>Go to Home</Link>
+        <div className="flex flex-col w-full space-y-4 items-center">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl">Two Player Mode</h1>
+            <Link to='/'>Home</Link>
         </div>
     );
 };
