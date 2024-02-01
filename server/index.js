@@ -47,37 +47,36 @@ app.use('/turn', turnRoute)
 const userRoute = require('./routes/user')
 app.use('/user', userRoute)
 
-app.set('views', path.join(__dirname, './../client/views'))
-app.set('view engine', 'ejs')
-
-app.use(express.static(__dirname + './../client/public'));
+//server static files
+app.use(express.static(path.join(__dirname, '../client-react/build')));
 
 // index 
-app.get('/', function(req, res) {
-  console.log('app.get('/') called');
-  res.render('index');
-});
-
-app.get('/solo', function(req, res) {
-  res.render('solo', {mode : process.env.MODE});
-});
 
 let MODE = (environment === "production") ? 1 : 0;
-console.log("Mode: ", MODE)
-console.log("NODE_ENV: ", process.env.NODE_ENV)
 
 let dom = (environment === "production") ? 'https://hexgame0.com' : 'https://localhost:443';
+
 const after_auth = dom + '/two-player';
 const callback = dom + '/callback';
 
-app.get('/two-player', function(req, res) {
-  res.render('two-player', {
-    mode : MODE, 
-    port : PORT,
-    isAuthenticated: req.oidc.isAuthenticated(), 
-    user: JSON.stringify(req.oidc.user),
-  });
+const isAuthenticated = (req, res, next) => {
+  if (req.oidc.isAuthenticated()) {
+    //pass control to the next middleware/route handler
+    return next();
+  } else {
+    return res.status(401).json({ isAuthenticated: false });
+  }
+};
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client-react/build', 'index.html'));
 });
+
+
+app.get('/api/auth', isAuthenticated, (req, res) => {
+  res.json({ isAuthenticated: true, user: req.oidc.user });
+});
+
 
 app.get('/callback', (req, res) =>
   res.oidc.callback({
@@ -90,10 +89,6 @@ app.post('/callback', express.urlencoded({ extended: false }), (req, res) =>
     redirectUri: after_auth,
   })
 );
-
-app.get('/computer', function(req, res) {
-  res.render('computer', {mode : process.env.MODE});
-});
 
 app.get('/custom-login', function(req, res) {
   res.oidc.login({
