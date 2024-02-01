@@ -6,9 +6,10 @@
   "type": "commonjs",
   "scripts": {
     "start": "NODE_ENV=production node index.js",
-    "devStart": "concurrently \"npm run start:client\" \"npm run start:server\"",
-    "start:client": "cd client-react && npm start",
-    "start:server": "node index.js",
+    "start:client": "cd ../client-react && npm run start",
+    "build:client": "cd ../client-react && npm run build",
+    "start:server": "nodemon index.js",
+    "devStart": "concurrently \"npm run start:client -- --watch\" \"npm run start:server\" --restart",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

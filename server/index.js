@@ -37,6 +37,14 @@ app.use(function(req, res, next) {
 
 const PORT = 443;
 
+app.get('/custom-login', function(req, res) {
+  res.oidc.login({
+    returnTo: after_auth,
+    authorizationParams: {
+      redirect_uri: callback,
+    },
+  })
+});
 
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
@@ -89,15 +97,6 @@ app.post('/callback', express.urlencoded({ extended: false }), (req, res) =>
     redirectUri: after_auth,
   })
 );
-
-app.get('/custom-login', function(req, res) {
-  res.oidc.login({
-    returnTo: after_auth,
-    authorizationParams: {
-      redirect_uri: callback,
-    },
-  })
-});
 
 let options;
 
