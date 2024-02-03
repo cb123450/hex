@@ -38,7 +38,7 @@ const TwoPlayer = () => {
     const hexagons = GridGenerator.parallelogram(-5, 5, -5, 5);
 
     const [state, dispatch] = useReducer(reducer, initialState);
-
+    
     /*
     -5 -- q --- 5
 

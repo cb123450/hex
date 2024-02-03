@@ -38,11 +38,11 @@ module.exports = {
                     player.inGame = true; //player object on the server and player object on the client are different so this won't cause errors
                     if (room_count[room_num-1] == 0){
                         player.color = "red";
-                        curr_players[room_num].push(player);
+                        curr_players[room_num-1].push(player);
                     }
                     else{
                         player.color = "blue";
-                        curr_players[room_num].push(player);
+                        curr_players[room_num-1].push(player);
                     }
                     
                     room_count[room_num-1] += 1;
@@ -61,15 +61,9 @@ module.exports = {
                 server.leave(room_num)
 
                 server.broadcast.emit("roomLeft", room_num)
-                room_count[room_num - 1] -= 1;
+                room_count[room_num - 1] = 0;
+                curr_players[room_num - 1] = []
 
-                const index = curr_players[room_num].indexOf(obj => obj.name === name);
-                curr_players[room_num].splice(index, 1); 
-                /*delete one object starting at index `index
-                you actually don't need to splice because `playerLeftRoom` event can 
-                only be sent from the client side when only 1 player has joined the room
-                Maybe allow observers into rooms and add chat feature later on
-                */
             });
 
             server.on("colorChange", (e) =>{
@@ -83,9 +77,8 @@ module.exports = {
             server.on("leaveGame", function(room_num, name){
                 io.sockets.in(room_num).emit("playerLeft", room_num, name);
 
-                const index = room_num - 1;
-                room_count[index] = 0;
-                curr_players[index] = [];
+                room_count[room_num-1] = 0;
+                curr_players[room_num-1] = [];
 
                 console.log("server received leaveGame")
             });
