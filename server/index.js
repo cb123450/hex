@@ -66,6 +66,7 @@ else{
 
 const server = https.createServer(options, app);
 const socketio = require("./socketio.js");
+
 const io = socketio.getio(server);
 
 
@@ -75,6 +76,7 @@ if (environment !== 'production') {
     target: 'http://localhost:3000',
     changeOrigin: true,
     cache: false,
+    wss: true, // Enable WebSocket support
   });
 
   app.use('*', (req, res, next) => {

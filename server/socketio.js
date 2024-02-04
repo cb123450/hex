@@ -7,7 +7,16 @@ module.exports = {
         const room_count = [0, 0, 0, 0, 0, 0, 0];
         const curr_players = [[], [], [], [], [], [], []];
 
-        const io = new Server(server);
+        const io = new Server(server, {
+            cors: {
+                origin: "https://localhost:3000",
+                methods: ["GET", "POST"],
+                credentials: true,
+            },
+            path: "/wss", // Set the correct path for WebSocket connections
+        });
+
+        io.listen(server)
 
         io.on("connection", (server) => {
             console.log("Client has connected");
@@ -17,8 +26,10 @@ module.exports = {
                 //check this to see if can use to kick people from rooms
             });
             
-            server.on("join", function(room_num, player){
+            server.on("join", function(roomNum, player){
                 /*
+                roomNum is 0-indexed
+
                 room_str is a string and player is a Player object as defined in two-player.ejs
                 function Player(name, color, curr_room, inGame){
                     this.name = name;
@@ -26,31 +37,33 @@ module.exports = {
                     this.curr_room = curr_room;
                     this.inGame = inGame;
                 }
-                */                
-                if (room_num < 7 && room_count[room_num-1] < 2){
-
-                    server.join(room_num);
-                    io.sockets.emit("roomJoined", room_num);
+                */   
+                console.log(roomNum, room_count[roomNum])
+                if (roomNum < 7 && room_count[roomNum] < 2){
+                    
+                    server.join(roomNum);
+                    io.sockets.emit("roomJoined", roomNum);
+                    console.log("emited roomJoined")
                     
                     /* FIRST PERSON TO JOIN IS RED*/
-                    player.curr_room = room_num;
+                    player.curr_room = roomNum;
 
                     player.inGame = true; //player object on the server and player object on the client are different so this won't cause errors
-                    if (room_count[room_num-1] == 0){
+                    if (room_count[roomNum] == 0){
                         player.color = "red";
-                        curr_players[room_num-1].push(player);
+                        curr_players[roomNum].push(player);
                     }
                     else{
                         player.color = "blue";
-                        curr_players[room_num-1].push(player);
+                        curr_players[roomNum].push(player);
                     }
                     
-                    room_count[room_num-1] += 1;
+                    room_count[roomNum] += 1;
 
-                    if (room_count[room_num-1] == 2){
+                    if (room_count[roomNum] == 2){
                         curr_players[0].inGame = true;
                         curr_players[1].inGame = true;
-                        io.sockets.in(room_num).emit("gameStarted", curr_players[room_num])
+                        io.sockets.in(roomNum).emit("gameStarted", curr_players[roomNum])
                     }
                 }
             });
