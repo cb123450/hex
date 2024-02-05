@@ -9,14 +9,10 @@ module.exports = {
 
         const io = new Server(server, {
             cors: {
-                origin: "https://localhost:3000",
+                origin: "http://localhost:3000",
                 methods: ["GET", "POST"],
-                credentials: true,
             },
-            path: "/wss", // Set the correct path for WebSocket connections
         });
-
-        io.listen(server)
 
         io.on("connection", (server) => {
             console.log("Client has connected");
@@ -30,8 +26,10 @@ module.exports = {
                 /*
                 roomNum is 0-indexed
 
-                room_str is a string and player is a Player object as defined in two-player.ejs
-                function Player(name, color, curr_room, inGame){
+                room_str is a string and player is a Player object 
+                
+                Player(name, color, curr_room, inGame){
+                    this.id = id;
                     this.name = name;
                     this.color = color;
                     this.curr_room = curr_room;
@@ -43,7 +41,6 @@ module.exports = {
                     
                     server.join(roomNum);
                     io.sockets.emit("roomJoined", roomNum);
-                    console.log("emited roomJoined")
                     
                     /* FIRST PERSON TO JOIN IS RED*/
                     player.curr_room = roomNum;
@@ -95,6 +92,10 @@ module.exports = {
 
                 console.log("server received leaveGame")
             });
+
+            server.on("getPlayers", (e) => {
+                io.sockets.in(e.roomNum_0).emit("playersMessage", curr_players[roomNum_0])
+            })
 
             //send the count of number of players in a given rooms
             server.on("getRoomCounts", () => { 

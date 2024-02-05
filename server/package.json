@@ -24,7 +24,7 @@
     "http-proxy-middleware": "^2.0.6",
     "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.6.5",
-    "socket.io": "^4.7.2",
+    "socket.io": "^4.7.4",
     "socket.io-client": "^4.7.4"
   },
   "devDependencies": {
