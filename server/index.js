@@ -1,7 +1,10 @@
 const { auth, requiresAuth } = require('express-openid-connect');
+const expressWs = require('express-ws'); // Import express-ws
 
 const express = require('express');
+
 const app = express();
+expressWs(app);
 
 require('dotenv').config();
 var path = require('path');
@@ -65,9 +68,30 @@ else{
 }
 
 const server = https.createServer(options, app);
-const socketio = require("./socketio.js");
 
-const io = socketio.getio(server);
+app.ws('/ws', (ws, req) => {
+  console.log('A new client connected');
+
+  // Handle incoming messages
+  ws.on('message', (message) => {
+    console.log(`Received message: ${message}`);
+
+    // Broadcast the message to all connected clients
+    app.getWss().clients.forEach((client) => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(message);
+      }
+    });
+  });
+
+  // Handle client disconnection
+  ws.on('close', () => {
+    console.log('Client disconnected');
+  });
+});
+
+// const socketio = require("./socketio.js");
+// const io = socketio.getio(server);
 
 
 // Forward requests to React development server during development
