@@ -4,6 +4,7 @@ import { HexGrid, Layout, Hexagon, GridGenerator } from 'react-hexgrid';
 import { COLORS } from "../colors.jsx"
 import Player from "./Player.js"
 import Games from "./Games.js"
+import io from 'socket.io-client';
 
 const initialState = { selectedHexes: [], redHexes: [], blueHexes: [], player: "Red"};
 
@@ -132,10 +133,120 @@ const TwoPlayer = () => {
         }
     }, [state.selectedHexes])
 
+    // useEffect(() => {
+    //     const socket = io("https://localhost:443")
+
+    //     socket.on("roomJoined", (room_num) => {
+
+    //         let numerator = parseInt(document.getElementById("r" + room_num.toString())?.innerText?.split("/")[0]);
+            
+    //         // numerator should always be 0 or 1 but it's still good to check
+    //         if (numerator === 0 || numerator === 1){
+    //             numerator += 1;
+    //             document.getElementById("r" + room_num.toString()).innerText = numerator.toString() + "/2";
+    //         }
+    //     });
+    
+    //     socket.on("roomLeft", (room_num) => {
+    //         let numerator = parseInt(document.getElementById("r" + room_num.toString())?.innerText?.split("/")[0]);
+            
+    //         // numerator should always be 1 or 2 but it's still good to check
+    //         if (numerator === 1 || numerator === 2){
+    //             numerator -= 1;
+    //             document.getElementById("r" + room_num.toString()).innerText = numerator.toString() + "/2";
+    //         }
+    //     });
+    
+    
+    //     socket.on("gameStarted", (players) => { 
+    //         //inGame, color, and curr_room are set in the server, which passes sends the new player objects here
+    //         const my_index = players.map(e => e.name).indexOf(me.name);
+    
+    //         opponent = players[1 - my_index];
+    //         me = players[my_index];
+    
+    //         let my_color = me.color;
+    
+    //         game.color = my_color;
+    
+    //         //mode and port are passed into this ejs file from node.js server
+    //         handler = new Handler(board, game, me.curr_room, mode, "<%=port%>");
+    
+    //         asyncButtonHandler = handler.getAsyncButtonHandler(game.color);
+    //         startHandler = handler.getStartHandler(true);
+    
+    //         startHandler();
+    
+    //         document.getElementById("opponent").innerText=opponent.name;
+    //         document.getElementById("color").innerText = game.color;
+    //         document.getElementById("leaveGame").style.visibility = 'visible';
+    
+    //     })
+    
+    //     socket.on("colorChange", (e) => {
+    //         let row = e.row
+    //         let col = e.col;
+    //         let newColor = e.myColor;
+            
+    //         if (newColor === "red"){
+    //             document.getElementById("curr").innerText="Blue";
+    //         }
+    //         else{
+    //             document.getElementById("curr").innerText="Red";
+    //         }   
+    //         game.turn += 1
+    //         console.log("client received colorChange")
+    //         board.changeColor(row, col, newColor)
+    //     })
+    
+    //     socket.on("playerLeft", (room_num, name) => {
+    //         alert("Game is over. \"" + name + "\" has left.")
+    
+    //         //RESET PARAMS; player is sent from server and is empty, but keep old name
+    //         me = new Player(me.name, "", -1, false);
+            
+    //         document.getElementById("color").innerText = "";
+    //         document.getElementById("opponent").innerText = "";
+    
+    //         document.getElementById("leaveGame").style.visibility = "hidden";
+    //         document.getElementById("r" + room_num.toString()).innerText = "0/2";
+    
+    //         startHandler();
+    
+    //         socket.emit("getTurn");
+    
+    //         console.log("received playerLeft")
+    //     });
+    
+    //     socket.on("disconnect", () => {
+    //         console.log("disconnect")
+    //         if (me.inGame){
+    //             socket.emit("leaveGame", me.curr_room, me.name);
+    //         }
+    //     });
+    
+    //     /* 
+    //     Update the number of users in each room when a new user connects
+    //     */
+    
+    //     socket.on("connect", () => {
+    //         socket.emit("getRoomCounts");
+    //     })
+    
+    //     socket.on("roomCounts", (rooms) => {
+    //         let i = 1;
+    //         while (i < 7){
+    //             document.getElementById("r" + i.toString()).innerText = rooms[i-1].toString() + "/2";
+    //             i += 1;
+    //         }
+    //     });
+    // })
+
     const handleClick = (q, r) => {
         const hexAlreadySelected = state.selectedHexes.some(selectedHex => selectedHex.q === q && selectedHex.r === r);
         
         if (!hexAlreadySelected){
+
             const most_recent_player = state.player;
             if (state.player==="Red") {
                 //component rerenders when dispatch is called

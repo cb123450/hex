@@ -1,16 +1,14 @@
 const { auth, requiresAuth } = require('express-openid-connect');
-const expressWs = require('express-ws'); // Import express-ws
 
 const express = require('express');
-
 const app = express();
-expressWs(app);
 
 require('dotenv').config();
 var path = require('path');
 
 const https = require('https');
 const fs = require('fs');
+const { WebSocketServer } = require('ws');
 
 // const environment = process.env.NODE_ENV;
 const environment = "dev";
@@ -68,16 +66,17 @@ else{
 }
 
 const server = https.createServer(options, app);
+const wss = new WebSocketServer({ server : server, path : "/socket" }); // Create a WebSocket server
 
-app.ws('/ws', (ws, req) => {
+wss.on('connection', (ws) => {
   console.log('A new client connected');
 
   // Handle incoming messages
   ws.on('message', (message) => {
     console.log(`Received message: ${message}`);
-
+    
     // Broadcast the message to all connected clients
-    app.getWss().clients.forEach((client) => {
+    wss.clients.forEach((client) => {
       if (client.readyState === WebSocket.OPEN) {
         client.send(message);
       }
@@ -100,11 +99,11 @@ if (environment !== 'production') {
     target: 'http://localhost:3000',
     changeOrigin: true,
     cache: false,
-    wss: true, // Enable WebSocket support
+    ws: false, // Enable WebSocket support
   });
 
-  app.use('*', (req, res, next) => {
-    console.log("HERE")
+  app.use(['/', '/solo', '/two-player', '/computer'], (req, res, next) => {
+    console.log("HERE");
     proxy(req, res, next);
   });
 }
