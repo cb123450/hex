@@ -68,19 +68,33 @@ else{
 const server = https.createServer(options, app);
 const wss = new WebSocketServer({ server : server, path : "/socket" }); // Create a WebSocket server
 
+const rooms = {};
+
 wss.on('connection', (ws) => {
   console.log('A new client connected');
 
   // Handle incoming messages
   ws.on('message', (message) => {
-    console.log(`Received message: ${message}`);
-    
-    // Broadcast the message to all connected clients
-    wss.clients.forEach((client) => {
-      if (client.readyState === WebSocketServer.OPEN) {
-        client.send(message);
+    try {
+      if (message && message !== null){
+        const parsedMessage = JSON.parse(message);
+
+        console.log(`Server received message: ${JSON.stringify(parsedMessage)}`);
+  
+        if (parsedMessage.type === 'roomJoin') {
+          handleRoomJoin(parsedMessage.roomNumber, ws)
+        }
+  
+        // Broadcast the message to all connected clients
+        wss.clients.forEach((client) => {
+          if (client.readyState === WebSocketServer.OPEN) {
+            client.send(JSON.stringify(parsedMessage));
+          }
+        });
       }
-    });
+    } catch (error) {
+      console.error('Error parsing incoming message:', error);
+    }
   });
 
   // Handle client disconnection
@@ -89,8 +103,29 @@ wss.on('connection', (ws) => {
   });
 });
 
-// const socketio = require("./socketio.js");
-// const io = socketio.getio(server);
+//roomId is a number
+function handleRoomJoin(roomId, ws) {
+  if (!rooms[roomId]) {
+    rooms[roomId] = {players: [ws]}
+
+    //update number of players in room
+    console.log("Server sent roomCount message")
+    ws.send(JSON.stringify({type:"roomCount", message: {roomNum: roomId, playerCount: 1}}))
+  }
+  else {
+    if (rooms[roomId].players.length < 2){
+      rooms[roomId].players.push(ws)
+
+      //update number of players in room
+      console.log("Server sent roomCount message")
+      ws.send(JSON.stringify({type:"roomCount", message: {roomNum: roomId, playerCount: 2}}))
+    }
+    else{
+      console.log("Server sent roomFull message")
+      ws.send(JSON.stringify({type:'roomFull', message:'Room is full'}));
+    }
+  }
+}
 
 
 // Forward requests to React development server during development

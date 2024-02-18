@@ -35,7 +35,7 @@ const reducer = (state, action) => {
     }
 }
 
-const TwoPlayer = () => {
+const TwoPlayer = (props) => {
     const hexagons = GridGenerator.parallelogram(-5, 5, -5, 5);
 
     const [state, dispatch] = useReducer(reducer, initialState);
@@ -281,7 +281,7 @@ const TwoPlayer = () => {
                         />) }
                     </Layout>
                     </HexGrid>
-                    <Games/>
+                    <Games production={props.production}/>
                 </div>
                 
             </div>

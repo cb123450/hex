@@ -5,7 +5,7 @@ import './index.css';
 const App = () => {
   return (
     <div className="bg-blue-200">
-        <AppRouter />
+        <AppRouter production={process.env.REACT_APP_PRODUCTION}/>
     </div>
   )
 }

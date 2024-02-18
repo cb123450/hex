@@ -5,13 +5,13 @@ import Solo from './Solo';
 import TwoPlayer from './TwoPlayer';
 import Computer from './Computer';
 
-const AppRouter = () => {
+const AppRouter = (props) => {
     return (
         <Router>
             <Routes>
                 <Route path='/' element={<Home />} />
                 <Route path='/solo' element={<Solo />} />
-                <Route path='/two-player' element={<TwoPlayer />} />
+                <Route path='/two-player' element={<TwoPlayer production={props.production} />} />
                 <Route path='/computer' element={<Computer />} />
             </Routes>
         </Router>
